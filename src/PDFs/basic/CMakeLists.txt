@@ -16,7 +16,6 @@ goofit_add_pdf_library(
   InterHistPdf.cu
   JohnsonSUPdf.cu
   KinLimitBWPdf.cu
-  LandauPdf.cu
   NovosibirskPdf.cu
   PolynomialPdf.cu
   ScaledGaussianPdf.cu

@@ -1,8 +1,4 @@
-cmake_minimum_required(VERSION 3.9...3.15)
-
-if(${CMAKE_VERSION} VERSION_LESS 3.12)
-  cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
-endif()
+cmake_minimum_required(VERSION 3.18...3.20)
 
 project(
   GOOFIT
@@ -134,17 +130,16 @@ set(GOOFIT_CUDA_OR_GRAINSIZE
 configure_file("${GOOFIT_SOURCE_DIR}/include/goofit/detail/ThrustOverrideConfig.h.in"
                "${GOOFIT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h")
 
-set(GOOFIT_CXX_STANDARD
-    "11"
+set(CMAKE_CXX_STANDARD
+    "14"
     CACHE STRING
           "Set a version of C++ standerd (11,14,...) to use. Must match ROOT if using ROOT.")
-set(GOOFIT_CXX_CUDA_STANDARD
-    "11"
+set(CMAKE_CUDA_STANDARD
+    "14"
     CACHE STRING "Set a version of C++ standerd (11,14,...) to use in CUDA.")
 
 ### C++ settings ###
 macro(GOOFIT_SETUP_STD)
-  set(CMAKE_CXX_STANDARD ${GOOFIT_CXX_STANDARD})
   set(CMAKE_CXX_EXTENSIONS OFF)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
   set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -323,7 +318,6 @@ endif()
 macro(GOOFIT_OPTIONAL_CUDA)
   if(GOOFIT_DEVICE STREQUAL CUDA)
     enable_language(CUDA)
-    set(CMAKE_CUDA_STANDARD ${GOOFIT_CXX_CUDA_STANDARD})
     set(CMAKE_CUDA_STANDARD_REQUIRED ON)
     set(CMAKE_CUDA_EXTENSIONS OFF)
 
@@ -354,19 +348,6 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
   # Note that this should be the only nvlink command
   string(APPEND CMAKE_CUDA_FLAGS " -Xnvlink=--disable-warnings")
   string(APPEND CMAKE_CUDA_FLAGS " -Xcompiler=-Wno-attributes")
-
-  if(NOT DEFINED GOOFIT_ARCH OR GOOFIT_ARCH)
-    cmake_cuda_arch_select(FLAGS ARCH_FLAGS READABLE ARCH_FLAGS_readable ARCHS ${GOOFIT_ARCH})
-    string(REPLACE ";" ", " READ_ARCH_FLAGS "${ARCH_FLAGS_readable}")
-    string(REPLACE ";" " " ARCH_FLAGS "${ARCH_FLAGS}")
-    string(APPEND CMAKE_CUDA_FLAGS " ${ARCH_FLAGS}")
-    set(CMAKE_CUDA_FLAGS
-        "${CMAKE_CUDA_FLAGS}"
-        CACHE INTERNAL "")
-    message(STATUS "Compiling for GPU arch: ${READ_ARCH_FLAGS}")
-  else()
-    message(STATUS "Not compiling for a specific GPU arch")
-  endif()
 
   set(THRUST_INCLUDE_DIR "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
 
@@ -454,12 +435,15 @@ endif()
 
 # If either ROOT not found or Minuit2 not included
 if(NOT TARGET ROOT::Minuit2)
-  add_subdirectory("extern/Minuit2")
-  set_target_properties(Minuit2 PROPERTIES FOLDER extern)
-  set_target_properties(Minuit2Math PROPERTIES FOLDER extern)
-  target_compile_definitions(Minuit2Math PUBLIC MATHCORE_STANDALONE)
-  add_library(ROOT::Minuit2 ALIAS Minuit2)
+  # Minuit2_ROOT should be set
+  find_package(Minuit2 CONFIG REQUIRED)
+  get_property(
+    minuit_include_dir
+    TARGET Minuit2::Minuit2
+    PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+  message(STATUS "Found Minuit2 at ${minuit_include_dir}")
   message(STATUS "Using standalone Minuit2")
+  add_library(ROOT::Minuit2 ALIAS Minuit2::Minuit2)
 endif()
 target_link_libraries(GooFit_Common INTERFACE ROOT::Minuit2)
 
@@ -736,9 +720,6 @@ endif()
 
 add_feature_info("GOOFIT_DEVICE=${GOOFIT_DEVICE}" ON "The device to compile for")
 add_feature_info("GOOFIT_HOST=${GOOFIT_HOST}" ON "The host system to compile for")
-if(GOOFIT_DEVICE STREQUAL CUDA)
-  add_feature_info("ARCH_FLAGS=${READ_ARCH_FLAGS}" ON "Readable GPU arch flags")
-endif()
 
 feature_option(GOOFIT_KMATRIX)
 feature_option(GOOFIT_TRACE)

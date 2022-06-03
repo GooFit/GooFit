@@ -10,7 +10,6 @@
 
 #include <random>
 
-using namespace std;
 using namespace GooFit;
 
 TEST_CASE("Minuit1 Exp fit", "[minuit1][root][fit][exp]") {

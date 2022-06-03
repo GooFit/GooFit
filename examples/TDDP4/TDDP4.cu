@@ -15,7 +15,6 @@
 #include <goofit/Variable.h>
 #include <thrust/count.h>
 
-using namespace std;
 using namespace GooFit;
 
 // Constants used in more than one PDF component.
@@ -148,9 +147,9 @@ int main(int argc, char **argv) {
     Variable constantOne{"constantOne", 1};
     Variable constantZero{"constantZero", 0};
 
-    vector<Observable> observables{m12, m34, cos12, cos34, phi, eventNumber, dtime, sigmat};
-    vector<Variable> offsets{constantZero, constantZero};
-    vector<Variable> coefficients{constantOne};
+    std::vector<Observable> observables{m12, m34, cos12, cos34, phi, eventNumber, dtime, sigmat};
+    std::vector<Variable> offsets{constantZero, constantZero};
+    std::vector<Variable> coefficients{constantOne};
 
     TruthResolution dat;
     PolynomialPdf eff{"constantEff", observables, coefficients, offsets, 0};

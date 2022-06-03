@@ -5,7 +5,6 @@
 #include <goofit/fitting/FitManagerMinuit1.h>
 #include <iostream>
 
-using namespace std;
 using namespace GooFit;
 
 int main(int argc, char **argv) {

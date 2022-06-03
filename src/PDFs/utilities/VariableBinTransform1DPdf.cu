@@ -1,8 +1,6 @@
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/utilities/VariableBinTransform1DPdf.h>
 
-using namespace std;
-
 namespace GooFit {
 
 __device__ auto device_VarBinTransform1D(fptype *evt, ParameterContainer &pc) -> fptype {
@@ -29,7 +27,8 @@ __device__ auto device_VarBinTransform1D(fptype *evt, ParameterContainer &pc) ->
 __device__ device_function_ptr ptr_to_VarBinTransform1D = device_VarBinTransform1D;
 
 // Notice that bin sizes and limits can be different, for this purpose, than what's implied by the Variable members.
-__host__ VariableBinTransform1DPdf::VariableBinTransform1DPdf(std::string n, Observable _x, vector<fptype> binlimits)
+__host__
+VariableBinTransform1DPdf::VariableBinTransform1DPdf(std::string n, Observable _x, std::vector<fptype> binlimits)
     : GooPdf("VariableBinTransform1DPdf", n, _x) {
     unsigned int numLimits = binlimits.size(); // Excluding the min & max values for _x
 

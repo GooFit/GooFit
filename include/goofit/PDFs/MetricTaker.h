@@ -4,6 +4,15 @@
 
 #include <goofit/PdfBase.h>
 
+#define cuda_error_check(stat)                                                                                         \
+  {                                                                                                                    \
+    cudaErrCheck_((stat), __FILE__, __LINE__);                                                                         \
+  }
+void inline cudaErrCheck_(cudaError_t stat, const char *file, int line)
+{
+  if (stat != cudaSuccess) { fprintf(stderr, "CUDA Error: %s %s %d\n", cudaGetErrorString(stat), file, line); }
+}
+
 namespace GooFit {
 
 // Notice that operators are distinguished by the order of the operands,

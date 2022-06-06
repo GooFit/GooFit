@@ -8,6 +8,7 @@ namespace GooFit {
 /// This is a container that is used to communicate to the device PDF functions
 struct ParameterContainer {
     __device__ ParameterContainer();
+
     __device__ ParameterContainer(const ParameterContainer &pc);
 
     fptype *parameters;

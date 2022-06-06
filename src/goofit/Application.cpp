@@ -29,6 +29,15 @@
 #include <omp.h>
 #endif
 
+#define cuda_error_check(stat)                                                                                         \
+  {                                                                                                                    \
+    cudaErrCheck_((stat), __FILE__, __LINE__);                                                                         \
+  }
+void inline cudaErrCheck_(cudaError_t stat, const char *file, int line)
+{
+  if (stat != cudaSuccess) { fprintf(stderr, "CUDA Error: %s %s %d\n", cudaGetErrorString(stat), file, line); }
+}
+
 namespace GooFit {
 
 void signal_handler(int s) {
@@ -242,6 +251,18 @@ Application::Application(std::string description, int argc, char **argv)
     sigIntHandler.sa_flags = 0;
     sigaction(SIGINT, &sigIntHandler, nullptr);
 #endif
+
+    printf("Setting stack size...\n");
+    cuda_error_check(cudaDeviceSetLimit (cudaLimitMallocHeapSize, 500000000));
+    cuda_error_check(cudaDeviceSetLimit (cudaLimitStackSize, 1024*50));
+
+    size_t limit = 0;
+
+    cudaDeviceGetLimit(&limit, cudaLimitStackSize);
+    printf("New cudaLimitStackSize: %u\n", (unsigned)limit);
+    cudaDeviceGetLimit(&limit, cudaLimitMallocHeapSize);
+    printf("New cudaLimitMallocHeapSize: %u\n", (unsigned)limit);
+
 }
 
 void Application::pre_callback() {
@@ -257,11 +278,12 @@ void Application::pre_callback() {
 void Application::run() { parse(argc_, argv_); }
 
 void Application::set_device() const {
-#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
+// #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
     if(gpuDev_ >= 0) {
         cudaSetDevice(gpuDev_);
+        
     }
-#endif
+// #endif
 }
 
 auto Application::exit(const CLI::Error &e) -> int {

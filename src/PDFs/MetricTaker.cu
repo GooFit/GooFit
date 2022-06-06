@@ -111,12 +111,36 @@ MetricTaker::MetricTaker(PdfBase *dat, void *dev_functionPtr)
         host_function_table.push_back(dev_functionPtr);
         host_function_table.sync(d_function_table);
     }
+
+        printf("Setting stack size...\n");
+    cuda_error_check(cudaDeviceSetLimit (cudaLimitMallocHeapSize, 500000000));
+    cuda_error_check(cudaDeviceSetLimit (cudaLimitStackSize, 1024*50));
+
+    size_t limit = 0;
+
+    cudaDeviceGetLimit(&limit, cudaLimitStackSize);
+    printf("New cudaLimitStackSize: %u\n", (unsigned)limit);
+    cudaDeviceGetLimit(&limit, cudaLimitMallocHeapSize);
+    printf("New cudaLimitMallocHeapSize: %u\n", (unsigned)limit);
+
 }
 
 MetricTaker::MetricTaker(int fIdx, int pIdx)
     : metricIndex(0)
     , functionIdx(fIdx)
     , parameters(pIdx) {
+
+            printf("Setting stack size...\n");
+    cuda_error_check(cudaDeviceSetLimit (cudaLimitMallocHeapSize, 500000000));
+    cuda_error_check(cudaDeviceSetLimit (cudaLimitStackSize, 1024*50));
+
+    size_t limit = 0;
+
+    cudaDeviceGetLimit(&limit, cudaLimitStackSize);
+    printf("New cudaLimitStackSize: %u\n", (unsigned)limit);
+    cudaDeviceGetLimit(&limit, cudaLimitMallocHeapSize);
+    printf("New cudaLimitMallocHeapSize: %u\n", (unsigned)limit);
+
     // This constructor should only be used for binned evaluation, ie for integrals.
 }
 

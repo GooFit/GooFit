@@ -5,7 +5,6 @@
 #include <goofit/UnbinnedDataSet.h>
 #include <goofit/Variable.h>
 
-using namespace std;
 using namespace GooFit;
 
 int main(int argc, char **argv) {
@@ -15,7 +14,7 @@ int main(int argc, char **argv) {
 
     Observable xvar{"xvar", 0, log(1 + RAND_MAX / 2)};
     Observable yvar{"yvar", 0, log(1 + RAND_MAX / 2)};
-    vector<Observable> varList = {xvar, yvar};
+    std::vector<Observable> varList = {xvar, yvar};
     UnbinnedDataSet data{varList};
 
     for(int i = 0; i < 100000; ++i) {

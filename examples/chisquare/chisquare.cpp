@@ -21,11 +21,10 @@
 
 TCanvas foo;
 
-using namespace std;
 using namespace GooFit;
 
-vector<double> ratios;
-vector<double> errors;
+std::vector<double> ratios;
+std::vector<double> errors;
 
 // Global needed to put it in the fit function for ROOT
 Observable decayTime{"decayTime", 0, 10};
@@ -39,8 +38,8 @@ double integralExpSqu(double lo, double hi) {
 }
 
 void generateEvents(Observable decayTime,
-                    vector<int> &rsEvtVec,
-                    vector<int> &wsEvtVec,
+                    std::vector<int> &rsEvtVec,
+                    std::vector<int> &wsEvtVec,
                     double conCoef,
                     double linCoef,
                     double squCoef,
@@ -74,9 +73,9 @@ void generateEvents(Observable decayTime,
 }
 
 std::tuple<int, std::string> fitRatio(Observable decayTime,
-                                      vector<Variable> weights,
-                                      vector<int> &rsEvts,
-                                      vector<int> &wsEvts,
+                                      std::vector<Variable> weights,
+                                      std::vector<int> &rsEvts,
+                                      std::vector<int> &wsEvts,
                                       std::string plotName = "") {
     TH1D ratioHist("ratioHist", "", decayTime.getNumBins(), decayTime.getLowerLimit(), decayTime.getUpperLimit());
 
@@ -113,7 +112,7 @@ std::tuple<int, std::string> fitRatio(Observable decayTime,
     std::string timer_str = timer_cpu.to_string();
 
     if(!plotName.empty()) {
-        vector<fptype> values = poly.evaluateAtPoints(decayTime);
+        std::vector<fptype> values = poly.evaluateAtPoints(decayTime);
         TH1D pdfHist("pdfHist", "", decayTime.getNumBins(), decayTime.getLowerLimit(), decayTime.getUpperLimit());
 
         for(int i = 0; i < values.size(); ++i) {
@@ -174,7 +173,7 @@ void cpvFitFcn(int &npar, double *gin, double &fun, double *fp, int iflag) {
     fun = chisq;
 }
 
-void fitRatioCPU(Observable decayTime, vector<int> &rsEvts, vector<int> &wsEvts) {
+void fitRatioCPU(Observable decayTime, std::vector<int> &rsEvts, std::vector<int> &wsEvts) {
     TH1D *ratioHist
         = new TH1D("ratioHist", "", decayTime.getNumBins(), decayTime.getLowerLimit(), decayTime.getUpperLimit());
 
@@ -234,10 +233,10 @@ int main(int argc, char **argv) {
     double magPQ = 1.0;
     double magQP = 1.0 / magPQ;
 
-    vector<int> dZeroEvtsWS(decayTime.getNumBins());
-    vector<int> dZeroEvtsRS(decayTime.getNumBins());
-    vector<int> d0barEvtsWS(decayTime.getNumBins());
-    vector<int> d0barEvtsRS(decayTime.getNumBins());
+    std::vector<int> dZeroEvtsWS(decayTime.getNumBins());
+    std::vector<int> dZeroEvtsRS(decayTime.getNumBins());
+    std::vector<int> d0barEvtsWS(decayTime.getNumBins());
+    std::vector<int> d0barEvtsRS(decayTime.getNumBins());
 
     double dZeroLinearCoef = magPQ * sqrt(rSubD) * (y_mix * cos(delta + wpPhi) - x_mix * sin(delta + wpPhi));
     double d0barLinearCoef = magQP * sqrt(rBarD) * (y_mix * cos(delta - wpPhi) - x_mix * sin(delta - wpPhi));
@@ -252,7 +251,7 @@ int main(int argc, char **argv) {
     Variable linearCoef("linearCoef", 0, 0.01, -1, 1);
     Variable secondCoef("secondCoef", 0, 0.01, -1, 1);
 
-    vector<Variable> weights = {constaCoef, linearCoef, secondCoef};
+    std::vector<Variable> weights = {constaCoef, linearCoef, secondCoef};
 
     int retval1, retval2;
     std::string fit1, fit2;

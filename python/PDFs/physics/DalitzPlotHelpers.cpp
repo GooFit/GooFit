@@ -12,11 +12,7 @@ using namespace GooFit;
 
 void init_DalitzPlotHelpers(py::module &m) {
 
-    py::class_<VetoInfo>(m,"VetoInfo")
-        .def(py::init<Variable, Variable, DaughterPair>(),"minimum"_a,"maximum"_a,"cyclic_index"_a)
-        .def_readonly("minimum", &VetoInfo::minimum)
-        .def_readonly("maximum", &VetoInfo::maximum)
-        .def_readonly("cyclic_index", &VetoInfo::cyclic_index);
+    
 
     py::enum_<DaughterPair>(m, "DaughterPair")
         .value("PAIR_12", DaughterPair::PAIR_12)

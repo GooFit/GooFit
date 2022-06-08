@@ -23,7 +23,7 @@ class FCN : public Minuit2::FCNBase {
     auto operator()() const -> double;
 
     /// This value is 0.5 for ll, 1 for chi2
-    auto Up() const -> double override { return 1.0; }
+    auto Up() const -> double override { return 0.5; }
 
     /// Get a pointer to the parameters
     auto GetParams() -> Params *;

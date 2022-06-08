@@ -19,6 +19,8 @@
 #include <thrust/copy.h>
 #include <thrust/transform_reduce.h>
 
+#include <cub/cub.cuh>
+
 #include <array>
 #include <vector>
 
@@ -36,6 +38,52 @@ struct CoefSumFunctor {
     __device__ auto operator()(thrust::tuple<fpcomplex, fpcomplex> val) -> fptype {
         return (coef_i * thrust::conj<fptype>(coef_j) * thrust::get<0>(val) * thrust::conj<fptype>(thrust::get<1>(val)))
             .real();
+    }
+};
+
+struct reduce_arg_t {
+    SpecialResonanceIntegrator integrators[100];
+    fptype* result_buffer;
+    fptype* arrayAddress;
+    int effFunc;
+    int n_bins;
+    int n_blocks_per_integrator;
+};
+
+__global__ void IntegrateReduce(reduce_arg_t r) {
+    int i_integrator = blockIdx.x / r.n_blocks_per_integrator;
+    int i_thread = (threadIdx.x + blockIdx.x * blockDim.x) % (r.n_blocks_per_integrator * blockDim.x);
+    fpcomplex result_per_thread;
+    if (i_thread < r.n_bins) {
+        result_per_thread = r.integrators[i_integrator]({i_thread, r.arrayAddress, r.effFunc});                
+    } else {
+        result_per_thread = fpcomplex(0, 0);
+    }
+
+    // Just take the real component. The imaginary component will cancel.
+    fptype real_result_per_thread = result_per_thread.real();
+
+    // Specialize BlockReduce for a 1D block of  threads of type int
+    typedef cub::BlockReduce<fptype, 256> BlockReduce;
+    // Allocate shared memory for BlockReduce
+    __shared__ typename BlockReduce::TempStorage temp_storage;
+    // Compute the block-wide sum for thread0
+    fptype sum = BlockReduce(temp_storage).Sum(real_result_per_thread);
+
+
+    // This means a block cannot cross integrators, so the number of bins must
+    // be a multiple of the block size.
+    if (threadIdx.x == 0) {
+        atomicAdd(r.result_buffer + i_integrator, sum);
+    }
+}
+
+struct IntegratorCaller {
+    fptype* arrayAddress;
+    int effFunc;
+    SpecialResonanceIntegrator integrator;
+    __device__ fpcomplex operator()(int value) {
+        return integrator({value, arrayAddress, effFunc});
     }
 };
 
@@ -284,6 +332,16 @@ __host__ auto Amp3Body::normalize() -> fptype {
     thrust::constant_iterator<int> eventSize(totalEventSize);
     thrust::counting_iterator<int> eventIndex(eventOffset);
 
+    reduce_arg_t reduce_args;
+    reduce_args.arrayAddress = dalitzNormRange;
+    reduce_args.effFunc = efficiencyFunction;
+    thrust::device_vector<fptype> sum_buffer_v(100);
+    // thrust::fill(sum_buffer_v.begin(), sum_buffer_v.end(), fptype(0));
+    cudaMemset(thrust::raw_pointer_cast(sum_buffer_v.data()), 0, 100*sizeof(fptype));
+    reduce_args.result_buffer = thrust::raw_pointer_cast(sum_buffer_v.data());
+    reduce_args.n_blocks_per_integrator = (totalBins + 255) / 256;
+    reduce_args.n_bins = totalBins;
+    int amp_counter = 0;
     for(int i = 0; i < decayInfo.resonances.size(); ++i) {
         // grab the index for this resonance.
         calculators[i]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
@@ -315,6 +373,7 @@ __host__ auto Amp3Body::normalize() -> fptype {
             if((!redoIntegral[i]) && (!redoIntegral[j]))
                 continue;
 
+
             integrators[i][j]->setDalitzIndex(getFunctionIndex());
             integrators[i][j]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
             // integrators[i][j]->setEfficiencyIndex(efficiencyFunction);
@@ -322,12 +381,54 @@ __host__ auto Amp3Body::normalize() -> fptype {
             thrust::constant_iterator<int> effFunc(efficiencyFunction);
             fpcomplex dummy(0, 0);
             thrust::plus<fpcomplex> complexSum;
-            (*(integrals[i][j])) = thrust::transform_reduce(
-                thrust::make_zip_iterator(thrust::make_tuple(binIndex, arrayAddress, effFunc)),
-                thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, arrayAddress, effFunc)),
-                *(integrators[i][j]),
-                dummy,
-                complexSum);
+
+            reduce_args.integrators[amp_counter++] = *integrators[i][j];
+
+            // (*(integrals[i][j])) = thrust::transform_reduce(
+            //     thrust::make_zip_iterator(thrust::make_tuple(binIndex, arrayAddress, effFunc)),
+            //     thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, arrayAddress, effFunc)),
+            //     *(integrators[i][j]),
+            //     dummy,
+            //     complexSum);
+            // auto start = thrust::make_transform_iterator(thrust::make_tuple(binIndex, arrayAddress, effFunc), (*(integrators[i][j])));
+            // auto end = thrust::make_transform_iterator(thrust::make_tuple(binIndex + totalBins, arrayAddress, effFunc), (*(integrators[i][j])));
+
+            // struct IntegratorCaller {
+            //     fptype* arrayAddress;
+            //     int effFunc;
+            //     SpecialResonanceIntegrator integrator;
+            //     __device__ fpcomplex operator()(int value) {
+            //         return integrator({value, arrayAddress, effFunc});
+            //     }
+            // };
+
+            // IntegratorCaller caller {dalitzNormRange, efficiencyFunction, (*(integrators[i][j]))};
+            // auto start = thrust::make_transform_iterator(binIndex, caller);
+            // auto end = thrust::make_transform_iterator(binIndex + ), (*(integrators[i][j])));
+            // (*(integrals[i][j])) = thrust::reduce(
+            //     // thrust::make_transform_iterator(thrust::make_tuple(binIndex, arrayAddress, effFunc), (*(integrators[i][j]))),
+            //     // thrust::make_transform_iterator(thrust::make_tuple(binIndex + totalBins, arrayAddress, effFunc), (*(integrators[i][j]))),
+            //     // *(integrators[i][j]),
+            //     start, 
+            //     start + totalBins,
+            //     dummy,
+            //     complexSum);
+        }
+    }
+
+    // n_bins * n_resonances = 256 * grid_dim
+    int grid_size = ((totalBins + 255) / 256) * amp_counter;
+    if (amp_counter != 0) {
+        IntegrateReduce<<<grid_size,256>>>(reduce_args);
+    }
+    thrust::host_vector<fptype> host_sums(sum_buffer_v);
+    amp_counter = 0;
+    for (int i = 0; i < decayInfo.resonances.size(); i++) {
+        for (int j = 0; j < decayInfo.resonances.size(); j++) {
+            if((!redoIntegral[i]) && (!redoIntegral[j]))
+                continue;
+            fptype sum = host_sums[amp_counter++];
+            *integrals[i][j] = sum;
         }
     }
 
@@ -391,8 +492,8 @@ __host__ auto Amp3Body::fit_fractions() -> std::vector<std::vector<fptype>> {
     fptype buffer;
     fpcomplex coef_i;
     fpcomplex coef_j;
-    fpcomplex cached_i_val;
-    fpcomplex cached_j_val;
+    // fpcomplex cached_i_val;
+    // fpcomplex cached_j_val;
 
     thrust::device_vector<fpcomplex> cached_i;
     thrust::device_vector<fpcomplex> cached_j;

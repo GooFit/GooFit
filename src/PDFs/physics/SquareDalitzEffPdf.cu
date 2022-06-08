@@ -32,8 +32,8 @@ __device__ auto device_SquareDalitzEff(fptype *evt, ParameterContainer &pc) -> f
     int idx = pc.getObservable(0);
     int idy = pc.getObservable(1);
 
-    fptype x = RO_CACHE(evt[idx]);
-    fptype y = RO_CACHE(evt[idy]);
+    fptype x = evt[idx];
+    fptype y = evt[idy];
 
     // Define coefficients
     fptype c0 = pc.getParameter(0);

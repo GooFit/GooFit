@@ -16,8 +16,6 @@ from goofit import *
 # In[2]:
 
 
-
-
 # In[3]:
 
 

@@ -11,9 +11,6 @@
 using namespace GooFit;
 
 void init_DalitzPlotHelpers(py::module &m) {
-
-    
-
     py::enum_<DaughterPair>(m, "DaughterPair")
         .value("PAIR_12", DaughterPair::PAIR_12)
         .value("PAIR_13", DaughterPair::PAIR_13)

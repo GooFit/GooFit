@@ -15,7 +15,6 @@ See *.cu file for more details
 #include <thrust/device_vector.h>
 #include <thrust/iterator/constant_iterator.h>
 
-
 namespace GooFit {
 
 class ResonancePdf;

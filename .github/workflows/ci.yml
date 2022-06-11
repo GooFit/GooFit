@@ -27,7 +27,7 @@ jobs:
         submodules: true
 
     - name: Configure
-      run: cmake -S . -B build -DGOOFIT_DEVICE=OMP -DGOOFIT_CXX_STANDARD=14
+      run: cmake -S . -B build -DGOOFIT_DEVICE=OMP -DCMAKE_CXX_STANDARD=14
     - name: Build
       run: cmake --build build -j "$(getconf _NPROCESSORS_ONLN)"
     - name: Run Tests
@@ -74,7 +74,7 @@ jobs:
     - name: Add wget and python3
       run: apt-get update && apt-get install -y wget python3-dev
     - name: Install Modern CMake
-      run: wget -qO- "https://cmake.org/files/v3.23/cmake-3.23.1-linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C /usr/local
+      run: wget -qO- "https://cmake.org/files/v3.23/cmake-3.23.2-linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C /usr/local
     - name: Configure
       run: cmake -S . -B build -DGOOFIT_ARCH=3.5 -DGOOFIT_SPLASH=OFF
     - name: Build
@@ -90,106 +90,28 @@ jobs:
       with:
         submodules: true
 
-    - name: CMake 3.9 OMP
+    - name: CMake 3.18 OMP
       uses: ./.github/actions/cmake_config
       with:
-        version: 3.9.6
+        version: 3.18.6
         options: -DGOOFIT_DEVICE=OMP
       if: success() || failure()
-    - name: CMake 3.9 CUDA
+    - name: CMake 3.18 CUDA
       uses: ./.github/actions/cmake_config
       with:
-        version: 3.9.6
+        version: 3.18.6
         options: -DGOOFIT_DEVICE=CUDA
       if: success() || failure()
 
-    - name: CMake 3.10 OMP
+    - name: CMake 3.23 OMP
       uses: ./.github/actions/cmake_config
       with:
-        version: 3.10.3
+        version: 3.23.1
         options: -DGOOFIT_DEVICE=OMP
       if: success() || failure()
-    - name: CMake 3.10 CUDA
+    - name: CMake 3.23 CUDA
       uses: ./.github/actions/cmake_config
       with:
-        version: 3.10.3
-        options: -DGOOFIT_DEVICE=CUDA
-      if: success() || failure()
-
-    - name: CMake 3.11 OMP
-      uses: ./.github/actions/cmake_config
-      with:
-        version: 3.11.4
-        options: -DGOOFIT_DEVICE=OMP
-      if: success() || failure()
-    - name: CMake 3.11 CUDA
-      uses: ./.github/actions/cmake_config
-      with:
-        version: 3.11.4
-        options: -DGOOFIT_DEVICE=OMP
-      if: success() || failure()
-
-    - name: CMake 3.12 OMP
-      uses: ./.github/actions/cmake_config
-      with:
-        version: 3.12.4
-        options: -DGOOFIT_DEVICE=OMP
-      if: success() || failure()
-    - name: CMake 3.12 CUDA
-      uses: ./.github/actions/cmake_config
-      with:
-        version: 3.12.4
-        options: -DGOOFIT_DEVICE=CUDA
-      if: success() || failure()
-
-    - name: CMake 3.13 OMP
-      uses: ./.github/actions/cmake_config
-      with:
-        version: 3.13.5
-        options: -DGOOFIT_DEVICE=OMP
-      if: success() || failure()
-    - name: CMake 3.13 CUDA
-      uses: ./.github/actions/cmake_config
-      with:
-        version: 3.13.5
-        options: -DGOOFIT_DEVICE=CUDA
-      if: success() || failure()
-
-    - name: CMake 3.14 OMP
-      uses: ./.github/actions/cmake_config
-      with:
-        version: 3.14.7
-        options: -DGOOFIT_DEVICE=OMP
-      if: success() || failure()
-    - name: CMake 3.14 CUDA
-      uses: ./.github/actions/cmake_config
-      with:
-        version: 3.14.7
-        options: -DGOOFIT_DEVICE=CUDA
-      if: success() || failure()
-
-    - name: CMake 3.15 OMP
-      uses: ./.github/actions/cmake_config
-      with:
-        version: 3.15.7
-        options: -DGOOFIT_DEVICE=OMP
-      if: success() || failure()
-    - name: CMake 3.15 CUDA
-      uses: ./.github/actions/cmake_config
-      with:
-        version: 3.15.7
-        options: -DGOOFIT_DEVICE=CUDA
-      if: success() || failure()
-
-    - name: CMake 3.16 OMP
-      uses: ./.github/actions/cmake_config
-      with:
-        version: 3.16.4
-        options: -DGOOFIT_DEVICE=OMP
-      if: success() || failure()
-    - name: CMake 3.16 CUDA
-      uses: ./.github/actions/cmake_config
-      with:
-        version: 3.16.4
+        version: 3.23.1
         options: -DGOOFIT_DEVICE=CUDA
       if: success() || failure()

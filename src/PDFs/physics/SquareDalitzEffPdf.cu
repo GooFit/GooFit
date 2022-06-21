@@ -32,7 +32,6 @@ __device__ auto device_SquareDalitzEff(fptype *evt, ParameterContainer &pc) -> f
     int idx = pc.getObservable(0);
     int idy = pc.getObservable(1);
 
-
     // don't use RO_CACHE as this is used as efficiency for Amp3Body
     fptype x = evt[idx];
     fptype y = evt[idy];

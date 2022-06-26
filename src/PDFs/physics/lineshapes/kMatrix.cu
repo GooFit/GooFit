@@ -103,8 +103,8 @@ Lineshapes::kMatrix::kMatrix(std::string name,
                              Variable sA,
                              Variable s0_prod,
                              Variable s0_scatt,
-                             std::array<Variable, NCHANNELS> fscat,
-                             std::array<Variable, NPOLES *(NPOLES + 1)> poles,
+                             std::vector<Variable> fscat,
+                             std::vector<Variable> poles,
                              Variable mass,
                              Variable width,
                              unsigned int L,
@@ -112,6 +112,13 @@ Lineshapes::kMatrix::kMatrix(std::string name,
                              FF FormFac,
                              fptype radius)
     : Lineshape("kMatrix", name, L, Mpair, FormFac, radius) {
+    
+    if(fscat.size() != NCHANNELS)
+        throw GooFit::GeneralError("You must have {} channels in fscat, not {}", NCHANNELS, fscat.size());
+
+    if(poles.size() != NPOLES * (NPOLES + 1))
+        throw GooFit::GeneralError("You must have {}x{} channels in poles, not {}", NPOLES, NPOLES + 1, poles.size());
+    
     registerConstant(pterm);
     registerConstant(is_pole ? 1 : 0);
 

@@ -20,6 +20,9 @@ __device__ auto kMatrixFunction(fptype Mpair, fptype m1, fptype m2, ParameterCon
 
     // parameter index
     unsigned int idx = 0;
+    //get relevant parameters when dealing with a single pole/prod
+    unsigned int pterm = pc.getConstant(1);
+    bool is_pole       = pc.getConstant(2) == 1;
 
     // Read parameters, in the same order as they are registered at the bottom of this file
     fptype sA0      = pc.getParameter(idx++);
@@ -31,25 +34,8 @@ __device__ auto kMatrixFunction(fptype Mpair, fptype m1, fptype m2, ParameterCon
     fptype pmasses[NCHANNELS];
     fptype couplings[NCHANNELS][NCHANNELS];
 
-    fpcomplex beta[NCHANNELS];
-    fpcomplex f_prod[NCHANNELS];
-
     for(double &i : fscat) {
         i = pc.getParameter(idx++);
-    }
-
-    // in the next two sets of parameters the index is used two times in the same line, therefore it must be incremented
-    // two times afterwards
-    for(auto &i : beta) {
-        i = fpcomplex(pc.getParameter(idx), pc.getParameter(idx + 1));
-        idx++;
-        idx++;
-    }
-
-    for(auto &i : f_prod) {
-        i = fpcomplex(pc.getParameter(idx), pc.getParameter(idx + 1));
-        idx++;
-        idx++;
     }
 
     for(int i = 0; i < NPOLES; i++) {
@@ -91,49 +77,50 @@ __device__ auto kMatrixFunction(fptype Mpair, fptype m1, fptype m2, ParameterCon
 
     fpcomplex ret(0, 0), pole(0, 0), prod(0, 0);
 
-    for(int pterm = 0; pterm < NPOLES; pterm++) {
+    if(is_pole){ //pole
         fpcomplex M = 0;
         for(int i = 0; i < NCHANNELS; i++) {
             fptype coupling = couplings[pterm][i];
             M += F[0][i] * coupling;
         }
-        pole = M / (POW2(pmasses[pterm]) - s);
-        ret  = ret + beta[pterm] * pole;
-
-        prod = F[0][pterm] * (1 - s0_prod) / (s - s0_prod);
-        ret  = ret + f_prod[pterm] * prod;
+        ret = M / (POW2(pmasses[pterm]) - s);        
     }
-
+     else{ //prod
+	    ret = F[0][pterm] * (1 - s0_prod) / (s - s0_prod);
+        }
+    
+    
     return ret;
 } // kMatrixFunction
+
 
 __device__ resonance_function_ptr ptr_to_kMatrix = kMatrixFunction;
 
 Lineshapes::kMatrix::kMatrix(std::string name,
-                             Variable a_r,
-                             Variable a_i,
+                             unsigned int pterm,
+                             bool is_pole,
                              Variable sA0,
                              Variable sA,
                              Variable s0_prod,
                              Variable s0_scatt,
-                             std::vector<Variable> beta_r,
-                             std::vector<Variable> beta_i,
-                             std::vector<Variable> f_prod_r,
-                             std::vector<Variable> f_prod_i,
                              std::vector<Variable> fscat,
                              std::vector<Variable> poles,
+                             Variable mass,
+                             Variable width,
                              unsigned int L,
                              unsigned int Mpair,
                              FF FormFac,
                              fptype radius)
     : Lineshape("kMatrix", name, L, Mpair, FormFac, radius) {
+    
     if(fscat.size() != NCHANNELS)
         throw GooFit::GeneralError("You must have {} channels in fscat, not {}", NCHANNELS, fscat.size());
 
     if(poles.size() != NPOLES * (NPOLES + 1))
         throw GooFit::GeneralError("You must have {}x{} channels in poles, not {}", NPOLES, NPOLES + 1, poles.size());
-
-    registerConstant(Mpair);
+    
+    registerConstant(pterm);
+    registerConstant(is_pole ? 1 : 0);
 
     registerParameter(sA0);
     registerParameter(sA);
@@ -142,16 +129,6 @@ Lineshapes::kMatrix::kMatrix(std::string name,
 
     for(int i = 0; i < NCHANNELS; i++) {
         registerParameter(fscat.at(i));
-    }
-
-    for(int i = 0; i < NCHANNELS; i++) {
-        registerParameter(beta_r.at(i));
-        registerParameter(beta_i.at(i));
-    }
-
-    for(int i = 0; i < NCHANNELS; i++) {
-        registerParameter(f_prod_r.at(i));
-        registerParameter(f_prod_i.at(i));
     }
 
     for(int i = 0; i < NPOLES * (NPOLES + 1); i++) {

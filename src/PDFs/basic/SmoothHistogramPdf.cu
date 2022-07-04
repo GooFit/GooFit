@@ -25,7 +25,8 @@ __device__ auto device_EvalHistogram(fptype *evt, ParameterContainer &pc) -> fpt
         int varIndex      = pc.getObservable(i);
         int lowerBoundIdx = 3 * (i + 1);
 
-        fptype currVariable = RO_CACHE(evt[varIndex]);
+        // don't use RO_CACHE as this is used as efficiency for Amp3Body
+        fptype currVariable = evt[varIndex];
         fptype lowerBound   = pc.getConstant(i * 3 + 4);
         fptype step         = pc.getConstant(i * 3 + 5);
 

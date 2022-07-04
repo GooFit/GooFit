@@ -104,6 +104,8 @@ __device__ auto SpecialResonanceIntegrator::operator()(thrust::tuple<int, fptype
     while(pc.funcIdx < effFunc)
         pc.incrementIndex();
 
+    // make sure that the efficiency function does not use RO_CACHE to access events, as this will cause a crash on GPU
+    // (accessing stack memory is not allowed with ldg)
     fptype eff = callFunction(events, pc);
 
     // Multiplication by eff, not sqrt(eff), is correct:

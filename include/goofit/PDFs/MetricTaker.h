@@ -4,6 +4,7 @@
 
 #include <goofit/PdfBase.h>
 
+#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
 #define cuda_error_check(stat)                                                                                         \
     { cudaErrCheck_((stat), __FILE__, __LINE__); }
 
@@ -12,6 +13,7 @@ void inline cudaErrCheck_(cudaError_t stat, const char *file, int line) {
         fprintf(stderr, "CUDA Error: %s %s %d\n", cudaGetErrorString(stat), file, line);
     }
 }
+#endif
 
 namespace GooFit {
 

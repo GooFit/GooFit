@@ -131,9 +131,9 @@ __device__ void luDecomposition(fpcomplex A[NCHANNELS][NCHANNELS],
 }
 
 __device__ bool luInverse(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex inverse[NCHANNELS][NCHANNELS]) {
-    fpcomplex U[NCHANNELS][NCHANNELS];
-    fpcomplex L[NCHANNELS][NCHANNELS];
-    fpcomplex Linv[NCHANNELS][NCHANNELS];
+    fpcomplex U[NCHANNELS][NCHANNELS] = {0};
+    fpcomplex L[NCHANNELS][NCHANNELS] = {0};
+    fpcomplex Linv[NCHANNELS][NCHANNELS] = {0};
     luDecomposition(A, U, L);
 
     // Compute intermediate matrix Linv.
@@ -170,58 +170,18 @@ __device__ void getPropagator(const fptype kMatrix[NCHANNELS][NCHANNELS],
                               const fpcomplex phaseSpace[NCHANNELS],
                               fpcomplex F[NCHANNELS][NCHANNELS],
                               fptype adlerTerm) {
+
     fpcomplex tMatrix[NCHANNELS][NCHANNELS];
     tMatrix[0][0] = fpcomplex(0, 0);
 
     for(unsigned int i = 0; i < NCHANNELS; ++i) {
         for(unsigned int j = 0; j < NCHANNELS; ++j) {
             tMatrix[i][j] = (i == j ? 1. : 0.) - fpcomplex(0, adlerTerm) * kMatrix[i][j] * phaseSpace[j];
-            // printf("tMatrix(%i,%i) = (%f,%f), kMatrix(%i,%i) = %f, phaseSpace = (%f,%f) \n",
-            //       i,
-            //       j,
-            //       tMatrix[i][j].real(),
-            //       tMatrix[i][j].imag(),
-            //       i,
-            //       j,
-            //       kMatrix[i][j],
-            //       phaseSpace[j].real(),
-            //       phaseSpace[j].imag());
         }
     }
-
-    /*#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-    // Here we assume that some values are 0
-        F = compute_inverse5<-1,
-                                -1,
-                                0,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                0,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1>(tMatrix);
-    #else
-    */
-
+    
     luInverse(tMatrix, F);
     return;
-    //#endif
 }
 
 } // namespace GooFit

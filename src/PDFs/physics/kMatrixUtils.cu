@@ -131,8 +131,8 @@ __device__ void luDecomposition(fpcomplex A[NCHANNELS][NCHANNELS],
 }
 
 __device__ bool luInverse(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex inverse[NCHANNELS][NCHANNELS]) {
-    fpcomplex U[NCHANNELS][NCHANNELS] = {0};
-    fpcomplex L[NCHANNELS][NCHANNELS] = {0};
+    fpcomplex U[NCHANNELS][NCHANNELS]    = {0};
+    fpcomplex L[NCHANNELS][NCHANNELS]    = {0};
     fpcomplex Linv[NCHANNELS][NCHANNELS] = {0};
     luDecomposition(A, U, L);
 
@@ -170,7 +170,6 @@ __device__ void getPropagator(const fptype kMatrix[NCHANNELS][NCHANNELS],
                               const fpcomplex phaseSpace[NCHANNELS],
                               fpcomplex F[NCHANNELS][NCHANNELS],
                               fptype adlerTerm) {
-
     fpcomplex tMatrix[NCHANNELS][NCHANNELS];
     tMatrix[0][0] = fpcomplex(0, 0);
 
@@ -179,7 +178,7 @@ __device__ void getPropagator(const fptype kMatrix[NCHANNELS][NCHANNELS],
             tMatrix[i][j] = (i == j ? 1. : 0.) - fpcomplex(0, adlerTerm) * kMatrix[i][j] * phaseSpace[j];
         }
     }
-    
+
     luInverse(tMatrix, F);
     return;
 }

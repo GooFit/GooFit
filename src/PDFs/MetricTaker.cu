@@ -114,7 +114,7 @@ MetricTaker::MetricTaker(PdfBase *dat, void *dev_functionPtr)
 
     // Set a larger stack size. Needed for the kMatrix because the stack size
     // can't be determined at runtime.
-    cuda_error_check(cudaDeviceSetLimit(cudaLimitStackSize, 1024*50));
+    cuda_error_check(cudaDeviceSetLimit(cudaLimitStackSize, 1024 * 50));
 }
 
 MetricTaker::MetricTaker(int fIdx, int pIdx)
@@ -125,7 +125,7 @@ MetricTaker::MetricTaker(int fIdx, int pIdx)
 
     // Set a larger stack size. Needed for the kMatrix because the stack size
     // can't be determined at runtime.
-    cuda_error_check(cudaDeviceSetLimit(cudaLimitStackSize, 1024*50));
+    cuda_error_check(cudaDeviceSetLimit(cudaLimitStackSize, 1024 * 50));
 }
 
 } // namespace GooFit

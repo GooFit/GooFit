@@ -270,10 +270,10 @@ for k in range(4):
     print("would leave you with", len(accepted_m12[0]), "out of", numEvents, "events")
 
 print(accepted_m12[0])
-plt.figure()
-plt.hist(accepted_m12[0], bins=100)
-# plt.savefig('amp4body_amplitude_plots/siggen_example_m12.png')
-plt.savefig("amp4body_td_amplitude_plots/siggen_example_m12.png")
+# plt.figure()
+# plt.hist(accepted_m12[0], bins=100)
+# # plt.savefig('amp4body_amplitude_plots/siggen_example_m12.png')
+# plt.savefig("amp4body_td_amplitude_plots/siggen_example_m12.png")
 
 
 def plot_multi_body_resonance(amplitude, index):

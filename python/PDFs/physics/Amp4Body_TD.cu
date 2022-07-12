@@ -47,13 +47,15 @@ void init_Amp4Body_TD(py::module &m) {
 
                  std::tie(particles, variables, weights, flags) = self.GenerateSig(numEvents);
 
-                 py::array_t<fptype> pyparticles{{(size_t)4, numEvents, (size_t)4}};
-                 py::array_t<fptype> pyvariables{{(size_t)6, numEvents}};
-                 py::array_t<fptype> pyweights{static_cast<py::ssize_t>(numEvents)};
-                 py::array_t<bool> pyflags{static_cast<py::ssize_t>(numEvents)};
+                size_t nAcc = weights.size();
+
+                 py::array_t<fptype> pyparticles{{(size_t)4, nAcc, (size_t)4}};
+                 py::array_t<fptype> pyvariables{{(size_t)6, nAcc}};
+                 py::array_t<fptype> pyweights{static_cast<py::ssize_t>(nAcc)};
+                 py::array_t<bool> pyflags{static_cast<py::ssize_t>(nAcc)};
 
                  for(int i = 0; i < 4; i++) {
-                     for(int j = 0; j < numEvents; j++) {
+                     for(int j = 0; j < nAcc; j++) {
                          for(int k = 0; k < 4; k++) {
                              pyparticles.mutable_at(i, j, k) = (*(particles[i]))[j].get(k);
                          }
@@ -61,16 +63,16 @@ void init_Amp4Body_TD(py::module &m) {
                  }
 
                  for(int i = 0; i < 6; i++) {
-                     for(int j = 0; j < numEvents; j++) {
+                     for(int j = 0; j < nAcc; j++) {
                          pyvariables.mutable_at(i, j) = (*(variables[i]))[j];
                      }
                  }
 
-                 for(int i = 0; i < numEvents; i++) {
+                 for(int i = 0; i < nAcc; i++) {
                      pyweights.mutable_at(i) = weights[i];
                  }
 
-                 for(int i = 0; i < numEvents; i++) {
+                 for(int i = 0; i < nAcc; i++) {
                      pyflags.mutable_at(i) = flags[i];
                  }
                  delete variables[0];

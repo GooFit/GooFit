@@ -111,6 +111,12 @@ MetricTaker::MetricTaker(PdfBase *dat, void *dev_functionPtr)
         host_function_table.push_back(dev_functionPtr);
         host_function_table.sync(d_function_table);
     }
+
+    // Set a larger stack size. Needed for the kMatrix because the stack size
+    // can't be determined at runtime.
+#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
+    cuda_error_check(cudaDeviceSetLimit(cudaLimitStackSize, 1024 * 50));
+#endif
 }
 
 MetricTaker::MetricTaker(int fIdx, int pIdx)
@@ -118,6 +124,12 @@ MetricTaker::MetricTaker(int fIdx, int pIdx)
     , functionIdx(fIdx)
     , parameters(pIdx) {
     // This constructor should only be used for binned evaluation, ie for integrals.
+
+    // Set a larger stack size. Needed for the kMatrix because the stack size
+    // can't be determined at runtime.
+#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
+    cuda_error_check(cudaDeviceSetLimit(cudaLimitStackSize, 1024 * 50));
+#endif
 }
 
 } // namespace GooFit

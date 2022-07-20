@@ -13,8 +13,8 @@ __device__ auto device_DalitzVeto(fptype *evt, ParameterContainer &pc) -> fptype
     fptype d2m     = pc.getParameter(2);
     fptype d3m     = pc.getParameter(3);
 
-    fptype x = RO_CACHE(evt[idx1]);
-    fptype y = RO_CACHE(evt[idx2]);
+    fptype x = evt[idx1];
+    fptype y = evt[idx2];
 
     fptype massSum = motherM * motherM + d1m * d1m + d2m * d2m + d3m * d3m;
     fptype z       = massSum - x - y;

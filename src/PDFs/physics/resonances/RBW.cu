@@ -78,7 +78,7 @@ __device__ auto plainBW(fptype m12, fptype m13, fptype m23, ParameterContainer &
         result += ret;
 
         if(I > 1) {
-            cyclic_index = cyclic_index + 1 % 3;
+            cyclic_index = (cyclic_index + 1) % 3;
         }
     }
     pc.incrementIndex(1, 2, 3, 0, 1);

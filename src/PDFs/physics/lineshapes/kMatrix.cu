@@ -20,36 +20,25 @@ __device__ auto kMatrixFunction(fptype Mpair, fptype m1, fptype m2, ParameterCon
 
     // parameter index
     unsigned int idx = 0;
-
+    //get relevant parameters when dealing with a single pole/prod
+    unsigned int pterm = pc.getConstant(1);
+    bool is_pole       = pc.getConstant(2) == 1;
+    //printf("inside kMatrix lineshape\n");
+    //printf("is_pole:%s\n", is_pole?"true":"false");
     // Read parameters, in the same order as they are registered at the bottom of this file
     fptype sA0      = pc.getParameter(idx++);
     fptype sA       = pc.getParameter(idx++);
     fptype s0_prod  = pc.getParameter(idx++);
     fptype s0_scatt = pc.getParameter(idx++);
 
+    //printf("sA0:%f, sA:%f, s0_prod: %f, s0_scatt: %f\n",sA0,sA,s0_prod,s0_scatt);
+
     fptype fscat[NCHANNELS];
     fptype pmasses[NCHANNELS];
     fptype couplings[NCHANNELS][NCHANNELS];
 
-    fpcomplex beta[NCHANNELS];
-    fpcomplex f_prod[NCHANNELS];
-
     for(double &i : fscat) {
         i = pc.getParameter(idx++);
-    }
-
-    // in the next two sets of parameters the index is used two times in the same line, therefore it must be incremented
-    // two times afterwards
-    for(auto &i : beta) {
-        i = fpcomplex(pc.getParameter(idx), pc.getParameter(idx + 1));
-        idx++;
-        idx++;
-    }
-
-    for(auto &i : f_prod) {
-        i = fpcomplex(pc.getParameter(idx), pc.getParameter(idx + 1));
-        idx++;
-        idx++;
     }
 
     for(int i = 0; i < NPOLES; i++) {
@@ -58,8 +47,16 @@ __device__ auto kMatrixFunction(fptype Mpair, fptype m1, fptype m2, ParameterCon
         }
         pmasses[i] = pc.getParameter(idx++);
     }
-
+    //for(int i =  0; i < NCHANNELS;i++){
+    //    printf("Pole mass %i:%f\n",i,pmasses[i]);
+    //}
     fptype s = POW2(Mpair);
+    
+    //for(int i = 0; i < NPOLES;i++){
+    //    for(int j = 0; j < NPOLES;j++){
+    //        printf("couplings (%i,%i): %f\n",i,j,couplings[i][j]);
+    //    }
+    //}
 
     // constructKMatrix
     fptype kMatrix[NCHANNELS][NCHANNELS];
@@ -67,12 +64,25 @@ __device__ auto kMatrixFunction(fptype Mpair, fptype m1, fptype m2, ParameterCon
     for(int i = 0; i < 5; i++) {
         for(int j = 0; j < 5; j++) {
             kMatrix[i][j] = 0;
-            for(int k = 0; k < 5; k++)
+            for(int k = 0; k < 5; k++){
                 kMatrix[i][j] += couplings[k][i] * couplings[k][j] / (POW2(pmasses[k]) - s);
+                //printf("kMatrix Loop 1 value (%i,%i): %f\n",i,j,couplings[k][i] * couplings[k][j] / (POW2(pmasses[k]) - s));
+                //printf("kMatrix denominator:%f\n",(POW2(pmasses[k]) - s));
+                }
             if(i == 0 || j == 0) // Scattering term
                 kMatrix[i][j] += fscat[i + j] * (1 - s0_scatt) / (s - s0_scatt);
+                //printf("kMatrix Loop 2 value (%i,%i): %f\n",i,j,kMatrix[i][j]);
+            
+            //printf("kMatrix element (%i,%i):%f\n",i,j,kMatrix[i][j]);
         }
+       
     }
+
+    //for(int i = 0; i < 5;i++){
+    //    for(int j = 0; j < 5; j++){
+    //        printf("kMatrix element (%i,%i):%f\n",i,j,kMatrix[i][j]);
+    //    }
+    //}
 
     fptype adlerTerm = (1. - sA0) * (s - sA * mPiPlus * mPiPlus / 2) / (s - sA0);
 
@@ -86,54 +96,64 @@ __device__ auto kMatrixFunction(fptype Mpair, fptype m1, fptype m2, ParameterCon
     fpcomplex F[NCHANNELS][NCHANNELS];
     getPropagator(kMatrix, phaseSpace, F, adlerTerm);
 
+    //output of F matrix after kMatrix inversion
+    for(int i = 0; i < NCHANNELS;i++){
+        for(int j = 0; j < NCHANNELS;j++){
+            //printf("F matrix (%i,%i) real: %f\n",i,j,F[i][j].real());
+            //printf("F matrix (%i,%i) imag: %f\n",i,j,F[i][j].imag());
+        }
+    }
+
     // calculates output
     pc.incrementIndex(1, idx, 1, 0, 1);
 
     fpcomplex ret(0, 0), pole(0, 0), prod(0, 0);
 
-    for(int pterm = 0; pterm < NPOLES; pterm++) {
+    if(is_pole){ //pole
         fpcomplex M = 0;
         for(int i = 0; i < NCHANNELS; i++) {
             fptype coupling = couplings[pterm][i];
             M += F[0][i] * coupling;
         }
-        pole = M / (POW2(pmasses[pterm]) - s);
-        ret  = ret + beta[pterm] * pole;
-
-        prod = F[0][pterm] * (1 - s0_prod) / (s - s0_prod);
-        ret  = ret + f_prod[pterm] * prod;
+        ret = M / (POW2(pmasses[pterm]) - s);        
     }
-
+     else{ //prod
+	    ret = F[0][pterm] * (1 - s0_prod) / (s - s0_prod);
+        }
+    
+    //printf("kMatrix real return value:%f\n",ret.real());
+    //printf("kMatrix imag return value:%f\n",ret.imag());
     return ret;
 } // kMatrixFunction
+
 
 __device__ resonance_function_ptr ptr_to_kMatrix = kMatrixFunction;
 
 Lineshapes::kMatrix::kMatrix(std::string name,
-                             Variable a_r,
-                             Variable a_i,
+                             unsigned int pterm,
+                             bool is_pole,
                              Variable sA0,
                              Variable sA,
                              Variable s0_prod,
                              Variable s0_scatt,
-                             std::vector<Variable> beta_r,
-                             std::vector<Variable> beta_i,
-                             std::vector<Variable> f_prod_r,
-                             std::vector<Variable> f_prod_i,
                              std::vector<Variable> fscat,
                              std::vector<Variable> poles,
+                             Variable mass,
+                             Variable width,
                              unsigned int L,
                              unsigned int Mpair,
                              FF FormFac,
                              fptype radius)
     : Lineshape("kMatrix", name, L, Mpair, FormFac, radius) {
+    
     if(fscat.size() != NCHANNELS)
         throw GooFit::GeneralError("You must have {} channels in fscat, not {}", NCHANNELS, fscat.size());
 
     if(poles.size() != NPOLES * (NPOLES + 1))
         throw GooFit::GeneralError("You must have {}x{} channels in poles, not {}", NPOLES, NPOLES + 1, poles.size());
-
-    registerConstant(Mpair);
+    
+    registerConstant(pterm);
+    registerConstant(is_pole ? 1 : 0);
 
     registerParameter(sA0);
     registerParameter(sA);
@@ -142,16 +162,6 @@ Lineshapes::kMatrix::kMatrix(std::string name,
 
     for(int i = 0; i < NCHANNELS; i++) {
         registerParameter(fscat.at(i));
-    }
-
-    for(int i = 0; i < NCHANNELS; i++) {
-        registerParameter(beta_r.at(i));
-        registerParameter(beta_i.at(i));
-    }
-
-    for(int i = 0; i < NCHANNELS; i++) {
-        registerParameter(f_prod_r.at(i));
-        registerParameter(f_prod_i.at(i));
     }
 
     for(int i = 0; i < NPOLES * (NPOLES + 1); i++) {

@@ -103,7 +103,7 @@ __device__ auto device_DalitzPlot(fptype *evt, ParameterContainer &pc) -> fptype
         // fptype me_imag = cResonances[i][evtNum].imag();
         // fpcomplex me = cResonances[i][evtNum];
         // fpcomplex me (me_real, me_imag);
-        fpcomplex me = RO_CACHE(cResonances[i + (16 * cacheToUse)][evtNum]);
+        fpcomplex me = RO_CACHE(cResonances[i + (16 * 20 * cacheToUse)][evtNum]);
 
         totalAmp += amp * me;
     }
@@ -227,7 +227,7 @@ __host__ void Amp3Body::setDataSize(unsigned int dataSize, unsigned int evtSize,
     numEntries  = dataSize;
     eventOffset = offset;
 
-    for(int i = 0; i < 16; i++) {
+    for(int i = 0; i < 16 * 20; i++) {
 #ifdef GOOFIT_MPI
         cachedWaves[i] = new thrust::device_vector<fpcomplex>(m_iEventsPerTask);
 #else
@@ -237,7 +237,7 @@ __host__ void Amp3Body::setDataSize(unsigned int dataSize, unsigned int evtSize,
         MEMCPY_TO_SYMBOL(cResonances,
                          &dummy,
                          sizeof(fpcomplex *),
-                         ((16 * cacheToUse) + i) * sizeof(fpcomplex *),
+                         ((16 * 20 * cacheToUse) + i) * sizeof(fpcomplex *),
                          cudaMemcpyHostToDevice);
     }
 

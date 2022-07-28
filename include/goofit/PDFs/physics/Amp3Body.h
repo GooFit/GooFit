@@ -91,7 +91,7 @@ class Amp3Body : public Amp3BodyBase {
 
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
-    thrust::device_vector<fpcomplex> *cachedWaves[16]; // Caches the BW values for each event.
+    thrust::device_vector<fpcomplex> *cachedWaves[16*20]; // Caches the BW values for each event.
     fpcomplex ***integrals;    // Caches the integrals of the BW waves for each combination of resonances.
     fpcomplex ***integrals_ff; // Caches the integrals of the BW waves for each combination of resonances (for the fit
                                // fractions).

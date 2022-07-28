@@ -6,7 +6,7 @@
 namespace GooFit {
 
 __device__ auto nonres3k(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
-    fptype alpha  = pc.getParameter(0);
+    fptype alpha = pc.getParameter(0);
 
     pc.incrementIndex(1, 1, 0, 0, 1);
 
@@ -25,7 +25,6 @@ namespace Resonances {
 
 NonRes3k::NonRes3k(std::string name, Variable ar, Variable ai, Variable alpha)
     : ResonancePdf("NonRes3k", name, ar, ai) {
-
     registerParameter(alpha);
     registerFunction("ptr_to_NONRES3k", ptr_to_NONRES3k);
 }

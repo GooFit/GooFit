@@ -10,12 +10,12 @@ __device__ auto nonres3k(fptype m12, fptype m13, fptype m23, ParameterContainer 
 
     pc.incrementIndex(1, 1, 0, 0, 1);
 
-    if(sqrt(m12)>2.0 || sqrt(m13)>2.0){
-        fptype exp12 = exp(-alpha*m12);
-        fptype exp13 = exp(-alpha*m13);
-        return fpcomplex(exp12+exp13,0.0);
-    }else{
-        return fpcomplex(0.0,0.0);
+    if(sqrt(m12) > 2.0 || sqrt(m13) > 2.0) {
+        fptype exp12 = exp(-alpha * m12);
+        fptype exp13 = exp(-alpha * m13);
+        return fpcomplex(exp12 + exp13, 0.0);
+    } else {
+        return fpcomplex(0.0, 0.0);
     }
 }
 

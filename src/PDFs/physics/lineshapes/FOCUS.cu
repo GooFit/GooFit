@@ -56,7 +56,7 @@ __device__ auto FOCUSFunction(fptype Mpair, fptype m1, fptype m2, ParameterConta
     fptype K32 = I32_adler * (-0.22147 + 0.026637 * X - 0.00092057 * POW2(X));
 
     fptype detK = K11 * K22 - K12 * K12;
-    fpcomplex del = 1 - rho1 * rho2 * detK - imag_i*(rho1 * K11 + rho2 * K22);
+    fpcomplex del = 1. - rho1 * rho2 * detK - imag_i*(rho1 * K11 + rho2 * K22);
 
     fpcomplex T11 = 1. - imag_i* rho2 * K22;
     fpcomplex T22 = 1. - imag_i* rho1 * K11;

@@ -133,7 +133,7 @@ MetricTaker::MetricTaker(int fIdx, int pIdx)
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
     cuda_error_check(cudaDeviceSetLimit(cudaLimitStackSize, CUDA_STACKSIZE));
     size_t limit = 0;
-    cudaDeviceGetLimit(&limit, cudaLimitStackSize);		    
+    cudaDeviceGetLimit(&limit, cudaLimitStackSize);
     printf("New cudaLimitStackSize: %u\n", (unsigned)limit);
 #endif
 }

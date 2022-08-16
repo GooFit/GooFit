@@ -115,7 +115,10 @@ MetricTaker::MetricTaker(PdfBase *dat, void *dev_functionPtr)
     // Set a larger stack size. Needed for the kMatrix because the stack size
     // can't be determined at runtime.
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-    cuda_error_check(cudaDeviceSetLimit(cudaLimitStackSize, 1024 * 50));
+    cuda_error_check(cudaDeviceSetLimit(cudaLimitStackSize, CUDA_STACKSIZE));
+    size_t limit = 0;
+    cudaDeviceGetLimit(&limit, cudaLimitStackSize);
+    printf("New cudaLimitStackSize: %u\n", (unsigned)limit);
 #endif
 }
 
@@ -128,7 +131,10 @@ MetricTaker::MetricTaker(int fIdx, int pIdx)
     // Set a larger stack size. Needed for the kMatrix because the stack size
     // can't be determined at runtime.
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-    cuda_error_check(cudaDeviceSetLimit(cudaLimitStackSize, 1024 * 50));
+    cuda_error_check(cudaDeviceSetLimit(cudaLimitStackSize, CUDA_STACKSIZE));
+    size_t limit = 0;
+    cudaDeviceGetLimit(&limit, cudaLimitStackSize);		    
+    printf("New cudaLimitStackSize: %u\n", (unsigned)limit);
 #endif
 }
 

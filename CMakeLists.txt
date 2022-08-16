@@ -267,6 +267,9 @@ target_compile_definitions(GooFit_Common
                            INTERFACE "-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_${GOOFIT_HOST}")
 # target_compile_definitions(GooFit_Common INTERFACE _USE_MATH_DEFINES)
 
+#define macro to set stack size (in kb)
+target_compile_definitions(GooFit_Common INTERFACE CUDA_STACKSIZE=1024) 
+
 option(GOOFIT_DEBUG "Print debugging messages" OFF)
 option(GOOFIT_TRACE "Print messages to trace the behavior of GooFit" OFF)
 

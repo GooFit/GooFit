@@ -268,7 +268,11 @@ target_compile_definitions(GooFit_Common
 # target_compile_definitions(GooFit_Common INTERFACE _USE_MATH_DEFINES)
 
 #define macro to set stack size (in kb)
-target_compile_definitions(GooFit_Common INTERFACE CUDA_STACKSIZE=1024)
+if (DEFINED GOOFIT_CUDA_STACKSIZE)
+  target_compile_definitions(GooFit_Common INTERFACE CUDA_STACKSIZE=${GOOFIT_CUDA_STACKSIZE})
+else()
+  target_compile_definitions(GooFit_Common INTERFACE CUDA_STACKSIZE=1024)
+endif()
 
 option(GOOFIT_DEBUG "Print debugging messages" OFF)
 option(GOOFIT_TRACE "Print messages to trace the behavior of GooFit" OFF)

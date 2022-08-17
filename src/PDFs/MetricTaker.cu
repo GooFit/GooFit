@@ -118,7 +118,6 @@ MetricTaker::MetricTaker(PdfBase *dat, void *dev_functionPtr)
     cuda_error_check(cudaDeviceSetLimit(cudaLimitStackSize, CUDA_STACKSIZE));
     size_t limit = 0;
     cudaDeviceGetLimit(&limit, cudaLimitStackSize);
-    printf("New cudaLimitStackSize: %u\n", (unsigned)limit);
 #endif
 }
 
@@ -134,7 +133,6 @@ MetricTaker::MetricTaker(int fIdx, int pIdx)
     cuda_error_check(cudaDeviceSetLimit(cudaLimitStackSize, CUDA_STACKSIZE));
     size_t limit = 0;
     cudaDeviceGetLimit(&limit, cudaLimitStackSize);
-    printf("New cudaLimitStackSize: %u\n", (unsigned)limit);
 #endif
 }
 

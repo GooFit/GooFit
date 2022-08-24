@@ -16,8 +16,10 @@ class RBW : public ResonancePdf {
         Variable width,
         unsigned int sp,
         unsigned int cyc,
-        bool norm = true,
-        bool sym  = false);
+        bool sym = false,
+        bool bachPframe=false,
+        bool ignoreMom=false,
+        bool ignoreBW=false);
     ~RBW() override = default;
 };
 

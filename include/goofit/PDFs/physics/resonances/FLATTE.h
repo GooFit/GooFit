@@ -15,6 +15,7 @@ class FLATTE : public ResonancePdf {
            Variable mean,
            Variable g1,
            Variable rg2og1,
+           unsigned int particle,
            unsigned int cyc,
            bool symmDP);
     ~FLATTE() override = default;

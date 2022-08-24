@@ -2,50 +2,192 @@
 
 namespace GooFit {
 
-__device__ auto dh_dsFun(double s, double daug2Mass, double daug3Mass) -> fptype {
-    // Yet another helper function
-    const fptype _pi = 3.14159265359;
-    double k_s       = twoBodyCMmom(s, daug2Mass, daug3Mass);
+    __device__ auto h(const fptype &m,const fptype &q)->fptype{
+        auto const mpi = 0.13957018;
+        return (2.*q/(M_PI*m))*log( (m+2.*q)/(2.*mpi) );
+    }
+    
+    __device__ auto h_prime(const fptype &m0,const fptype &q0)->fptype{
+        return (h(m0,q0)*( (1./(8.*q0*q0)) - (1./(2.*m0*m0) ) + (1./(2.*M_PI*m0*m0))));
+    }
+    
+    __device__ auto d(const fptype &m0,const fptype &q0)->fptype{
+        auto const mpi = 0.13957018;
+        return ((3.*POW2(mpi)/(M_PI*POW2(q0)))*log( (m0+2.*q0)/(2.*mpi)) + (m0/(2.*M_PI*q0)) - (POW2(mpi)*m0/(M_PI*POW2(q0)*q0)));
+    }
+    
+    __device__ auto f(const fptype &m, const fptype &m0,const fptype &width , const fptype &q, const fptype &q0)->fptype{
+        return width*(POW2(m0)/(POW2(q0)*q0))*(POW2(q)*(h(m,q)-h(m0,q0)) + (POW2(m0)-POW2(m))*q0*q0*h_prime(m0,q0));
+    }
 
-    return hFun(s, daug2Mass, daug3Mass) * (1.0 / (8.0 * POW2(k_s)) - 1.0 / (2.0 * s)) + 1.0 / (2.0 * _pi * s);
+__device__ auto DaugDecayMomResFrame(fptype rMassSq, fptype d1m, fptype d2m) -> fptype {
+  // Decay momentum of either daughter in the resonance rest frame
+	// when resonance mass = rest-mass value, m_0 (PDG value)
+
+    fptype term1 = rMassSq - (d1m+d2m)*(d1m+d2m);
+    fptype term2 = rMassSq - (d1m-d2m)*(d1m-d2m);
+    fptype term12 = term1*term2;
+    fptype q      = 1.0;
+
+    if(term12> 0.0){
+        q = sqrt(term12)/(2.0*sqrt(rMassSq));
+    }else{
+        q = 0.0;
+    }
+
+    return q;
 }
 
-__device__ auto hFun(double s, double daug2Mass, double daug3Mass) -> fptype {
-    // Last helper function
-    const fptype _pi = 3.14159265359;
-    double sm        = daug2Mass + daug3Mass;
-    double sqrt_s    = sqrt(s);
-    double k_s       = twoBodyCMmom(s, daug2Mass, daug3Mass);
+__device__ auto BachMomResFrame(fptype M, fptype rMassSq, fptype mBach) -> fptype {
+    // Momentum of the bachelor particle in the resonance rest frame
+	// when resonance mass = rest-mass value, m_0 (PDG value)
+  
+      fptype eBach = (M*M - rMassSq - mBach*mBach)/(2.0*sqrt(rMassSq));
+      fptype termBach = eBach*eBach - mBach*mBach;
+      fptype p      = 1.0;
 
-    return ((2 / _pi) * (k_s / sqrt_s) * log((sqrt_s + 2 * k_s) / (sm)));
+        if ( eBach<0.0 || termBach<0.0 ) {
+            p = 0.0;
+            GOOFIT_TRACE("eBach<0.0 || termBach<0.0");
+        } else {
+            p = sqrt( termBach );
+        }
+
+        return p;
+  }
+
+  __device__ auto BachMomParentFrame(fptype M, fptype mBach, fptype rMassSq) -> fptype {
+   	// Momentum of the bachelor particle in the parent rest frame
+	// when resonance mass = rest-mass value, m_0 (PDG value)
+  
+      fptype eStarBach = (M*M + mBach*mBach - rMassSq)/(2.0*M);
+      fptype termStarBach = eStarBach*eStarBach - mBach*mBach;
+      fptype pstar      = 1.0;
+
+        if ( eStarBach<0.0 || termStarBach<0.0 ) {
+            pstar = 0.0;
+            GOOFIT_TRACE("eStarBach<0.0 || termStarBach<0.0");
+        } else {
+            pstar = sqrt( termStarBach );
+        }
+
+        return pstar;
+  }
+
+
+
+  __device__ auto BlattWeisskopfPrime(fptype z, unsigned int spin)-> fptype {
+
+        fptype ret = 1.;
+
+        if(spin==0)
+            return 1.0;
+            
+        switch (spin){
+            case 1:
+                ret = 1.0/sqrt(1.0 + z*z);
+                break;
+            case 2:
+                ret = 1./sqrt(z*z*z*z + 3.0*z*z + 9.0);
+                break;
+
+            case 3:
+                ret = 1./sqrt(z*z*z*z*z*z + 6.0*z*z*z*z + 45.0*z*z + 255.0);
+                break;
+        }
+
+        return ret;
+
+  }
+
+  
+__device__ auto cFromM(
+    fptype motherMass,
+    fptype daug1Mass,
+    fptype daug2Mass,
+    fptype daug3Mass,
+    fptype m12,
+    fptype m13,
+    fptype m23,
+    unsigned int cyclic_index) -> fptype {
+
+        auto const _mA  = (PAIR_12 == cyclic_index ? daug1Mass : (PAIR_13 == cyclic_index ? daug3Mass : daug2Mass));
+        auto const _mC  = (PAIR_12 == cyclic_index ? daug3Mass : (PAIR_13 == cyclic_index ? daug2Mass : daug1Mass));
+        auto const _mAC = (PAIR_12 == cyclic_index ? m13 : (PAIR_13 == cyclic_index ? m23 : m12));
+        auto const _mAB = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
+    
+
+        fptype EACmsAB = (_mAB - _mA*_mA + _mC*_mC)/(2.0*sqrt(_mAB));
+        fptype ECCmsAB = (motherMass*motherMass - _mAB - _mC*_mC)/(2.0*sqrt(_mAB));
+
+        if(EACmsAB<_mA){
+            GOOFIT_TRACE("EACmsAB<_mA");
+            return 0.0;
+        }
+
+
+        if(ECCmsAB<_mC){
+            GOOFIT_TRACE("ECCmsAB<_mC");
+            return 0.0;
+        }
+
+
+        fptype qA_ = sqrt(EACmsAB*EACmsAB - _mA*_mA);
+        fptype qC_ = sqrt(ECCmsAB*ECCmsAB - _mC*_mC);
+
+        fptype cosHel = -(_mAC - _mA*_mA - _mC*_mC - 2.0*EACmsAB*ECCmsAB)/(2.0*qA_*qC_);
+
+        if(cosHel > 1.0){
+            cosHel = 1.0;
+        }else if(cosHel<-1.0){
+            cosHel = -1.0;
+        }
+
+        if(cyclic_index==PAIR_12 || cyclic_index==PAIR_13)
+            cosHel *= -1.0;
+
+        return cosHel;
+
 }
 
-__device__ auto fsFun(double s, double m2, double gam, double daug2Mass, double daug3Mass) -> fptype {
-    // Another G-S helper function
+__device__ auto calcLegendrePoly(fptype cosHel, unsigned int spin) -> fptype{
+    fptype legPol = 1.0;
 
-    double k_s   = twoBodyCMmom(s, daug2Mass, daug3Mass);
-    double k_Am2 = twoBodyCMmom(m2, daug2Mass, daug3Mass);
+    switch(spin){
+        case 1:
+            legPol = -2.0*cosHel;
+            break;
+        case 2:
+            legPol = 4.0*(3.0*cosHel*cosHel - 1.0)/3.0;
+            break;
+        case 3:
+            legPol = -8.0*(5.0*cosHel*cosHel*cosHel - 3.0*cosHel)/5.0;
+            break;
+    }
 
-    double f = gam * m2 / POW3(k_Am2);
-    f *= (POW2(k_s) * (hFun(s, daug2Mass, daug3Mass) - hFun(m2, daug2Mass, daug3Mass))
-          + (m2 - s) * POW2(k_Am2) * dh_dsFun(m2, daug2Mass, daug3Mass));
-
-    return f;
+    return legPol;
 }
 
-__device__ auto dFun(double s, double daug2Mass, double daug3Mass) -> fptype {
-    // Helper function used in Gronau-Sakurai
-    const fptype _pi = 3.14159265359;
-    double sm        = daug2Mass + daug3Mass;
-    double sm24      = sm * sm / 4.0;
-    double m         = sqrt(s);
-    double k_m2      = twoBodyCMmom(s, daug2Mass, daug3Mass);
+__device__ auto calcZemachSpinFactor(fptype pProd, fptype legPol, unsigned int spin) -> fptype{
+ 
 
-    return 3.0 / _pi * sm24 / POW2(k_m2) * log((m + 2 * k_m2) / sm) + m / (2 * _pi * k_m2)
-           - sm24 * m / (_pi * POW3(k_m2));
+    if(spin==0)
+        return 1.0;
+
+    fptype spinFactor(pProd);
+
+    for ( int i(1); i < spin; ++i ) {
+        spinFactor *= pProd;
+    }
+    
+    spinFactor *= legPol;
+    
+    return spinFactor;
 }
 
-__device__ auto twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m) -> fptype {
+
+  
+  __device__ auto twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m) -> fptype {
     // For A -> B + C, calculate momentum of B and C in rest frame of A.
     // PDG 38.16.
 

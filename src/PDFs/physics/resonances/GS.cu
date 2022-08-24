@@ -6,90 +6,94 @@
 
 namespace GooFit {
 
+template <int I>
 __device__ auto gouSak(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
     unsigned int spin         = pc.getConstant(0);
     unsigned int cyclic_index = pc.getConstant(1);
-    bool norm                 = pc.getConstant(2);
-    unsigned int doSwap       = pc.getConstant(3);
+    bool bachPframe = pc.getConstant(2);
+    bool ignoreMom = pc.getConstant(3);
+    bool ignoreBW = pc.getConstant(4);
 
     fptype resmass  = pc.getParameter(0);
     fptype reswidth = pc.getParameter(1);
 
-    fpcomplex result{0.0, 0.0};
     fptype resmass2 = POW2(resmass);
 
-    for(size_t i = 0; i < (1 + doSwap); i++) {
-        fptype rMassSq    = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
-        fptype mass_daug1 = PAIR_23 == cyclic_index ? c_daug2Mass : c_daug1Mass;
-        fptype mass_daug2 = PAIR_12 == cyclic_index ? c_daug2Mass : c_daug3Mass;
-        fptype bachelorMass
-            = (PAIR_12 == cyclic_index ? c_daug3Mass : (PAIR_13 == cyclic_index ? c_daug2Mass : c_daug1Mass));
+    fpcomplex result{0.0, 0.0};
 
-        fptype frFactor       = 1;
-        fptype frFactorMother = 1;
+    if(resmass < 1.e-10) {
+        GOOFIT_TRACE("Resonance Mass zero!");
+        return result;
+    }
 
-        // Calculate momentum of the two daughters in the resonance rest frame
-        // Note symmetry under interchange (dm1 <-> dm2)
+    if(reswidth < 1.e-10) {
+        GOOFIT_TRACE("Resonance Width zero!");
+        return result;
+    }
+    
+#pragma unroll
+    for(size_t i = 0; i < I; i++) {
+        fptype s    = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
+        fptype m    = sqrt(s);
+        fptype m1 = PAIR_23 == cyclic_index ? c_daug2Mass : c_daug1Mass;
+        fptype m2 = PAIR_12 == cyclic_index ? c_daug2Mass : c_daug3Mass;
+        fptype m3 = (PAIR_12 == cyclic_index ? c_daug3Mass : (PAIR_13 == cyclic_index ? c_daug2Mass : c_daug1Mass));
 
-        fptype measureDaughterMoms = twoBodyCMmom(rMassSq, mass_daug1, mass_daug2);
-        fptype nominalDaughterMoms = twoBodyCMmom(resmass2, mass_daug1, mass_daug2);
+        fptype q0_ = DaugDecayMomResFrame(resmass2, m1, m2);
 
-        fptype measureDaughterMomsMother;
-        fptype nominalDaughterMomsMother;
+        fptype p0_ = bachPframe? 
+                    BachMomParentFrame(c_motherMass, m3 ,resmass2) :
+                    BachMomResFrame(c_motherMass , resmass2, m3);
 
-        if(norm) {
-            // Mother momentum for normalized Blatt-Weisskopf form factors calculated in the resonance rest frame
-            measureDaughterMomsMother = twoBodyCMMothermom(rMassSq, c_motherMass, bachelorMass);
-            nominalDaughterMomsMother = twoBodyCMMothermom(resmass2, c_motherMass, bachelorMass);
-        } else {
-            // Mother momentum for unnormalized Blatt-Weisskopf form factors calculated in mother rest frame
-            measureDaughterMomsMother = twoBodyCMmom(c_motherMass * c_motherMass, sqrt(rMassSq), bachelorMass);
-        }
-        if(0 != spin) {
-            // D0 meson has same spin than resonance
-            if(norm) {
-                // normalized form factors
-                frFactor = dampingFactorSquareNorm(nominalDaughterMoms, spin, c_meson_radius)
-                           / dampingFactorSquareNorm(measureDaughterMoms, spin, c_meson_radius);
+        fptype q_  = DaugDecayMomResFrame(s, m1, m2);
 
-                frFactorMother = dampingFactorSquareNorm(nominalDaughterMomsMother, spin, c_mother_meson_radius)
-                                 / dampingFactorSquareNorm(measureDaughterMomsMother, spin, c_mother_meson_radius);
-            }
-            // unnormalized form factors
-            else {
-                frFactor       = dampingFactorSquare(measureDaughterMoms, spin, c_meson_radius);
-                frFactorMother = dampingFactorSquare(measureDaughterMomsMother, spin, c_mother_meson_radius);
-            }
-        }
+        fptype p_  =  bachPframe? 
+                    BachMomParentFrame(c_motherMass, m3 ,s) : //p*
+                    BachMomResFrame(c_motherMass, s , m3); //p
 
-        // Implement Gou-Sak:
+        fptype FR0 = BlattWeisskopfPrime(q0_*c_meson_radius,spin);
+        fptype FP0 = BlattWeisskopfPrime(p0_*c_mother_meson_radius,spin);
 
-        fptype D = (1.0 + dFun(resmass2, c_daug2Mass, c_daug3Mass) * reswidth / sqrt(resmass2));
-        fptype E = resmass2 - rMassSq + fsFun(rMassSq, resmass2, reswidth, c_daug2Mass, c_daug3Mass);
-        fptype F
-            = sqrt(resmass2) * reswidth * pow(measureDaughterMoms / nominalDaughterMoms, 2.0 * spin + 1) * frFactor;
+        fptype FR = BlattWeisskopfPrime(q_*c_meson_radius,spin);
+        fptype FP = BlattWeisskopfPrime(p_*c_mother_meson_radius,spin);
 
-        D /= (E * E + F * F);
-        fpcomplex ret(D * E, D * F); // Dropping F_D=1
-        ret *= sqrt(frFactor);
-        ret *= sqrt(frFactorMother);
-        ret *= spinFactor(spin, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
+        fptype gamma = ignoreMom ? reswidth : reswidth*pow(q_/q0_,2.0*spin + 1.0)*(resmass/m)*POW2(FR/FR0);
+        
+        // Implement Gou-Sak
+        fptype d_ = d(resmass,q0_);
+        fptype f_ = f(m,resmass,reswidth,q_,q0_);
+
+        fptype A = (resmass2-s) + f_;
+        fptype B = resmass*gamma;
+        fptype C = 1./(A*A + B*B);
+        fptype D = 1+(reswidth*d_/resmass);
+
+        fpcomplex ret(A*C,B*C);
+        ret *= D;
+        ret *= ignoreBW ? 1.0 : (FR/FR0);
+        ret *= ignoreBW ? 1.0 : (FP/FP0);
+
+        fptype cosHel = cFromM(c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
+        fptype legPol = calcLegendrePoly(cosHel,spin);
+        fptype ZemachSpinFactor = calcZemachSpinFactor(q_*p_, legPol, spin);
+        ret *= ZemachSpinFactor;
 
         result += ret;
 
-        if(doSwap) {
+        if(I != 0) {
             fptype swpmass = m12;
             m12            = m13;
             m13            = swpmass;
         }
     }
 
-    pc.incrementIndex(1, 2, 4, 0, 1);
+    pc.incrementIndex(1, 2, 5, 0, 1);
 
     return result;
 }
 
-__device__ resonance_function_ptr ptr_to_GOUSAK = gouSak;
+__device__ resonance_function_ptr ptr_to_GOUSAK = gouSak<1>;
+__device__ resonance_function_ptr ptr_to_GOUSAK_Sym = gouSak<2>;
 
 namespace Resonances {
 
@@ -100,18 +104,24 @@ GS::GS(std::string name,
        Variable width,
        unsigned int sp,
        unsigned int cyc,
-       bool norm,
-       bool sym)
+       bool sym,
+       bool bachPframe,
+       bool ignoreMom,
+      bool ignoreBW)
     : ResonancePdf("GS", name, ar, ai) {
     registerParameter(mass);
     registerParameter(width);
 
     registerConstant(sp);
     registerConstant(cyc);
-    registerConstant(norm);
-    registerConstant(sym);
+    registerConstant(bachPframe);
+    registerConstant(ignoreMom);
+    registerConstant(ignoreBW);
 
-    registerFunction("ptr_to_GOUSAK", ptr_to_GOUSAK);
+    if(sym)
+        registerFunction("ptr_to_GOUSAK_Sym", ptr_to_GOUSAK_Sym);
+    else    
+        registerFunction("ptr_to_GOUSAK", ptr_to_GOUSAK);
 }
 
 } // namespace Resonances

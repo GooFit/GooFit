@@ -20,57 +20,100 @@ __device__ auto flatte(fptype m12, fptype m13, fptype m23, ParameterContainer &p
     // indices[1] is unused constant index, for consistency with other function types.
     fptype resmass            = pc.getParameter(0);
     fptype g1                 = pc.getParameter(1);
-    fptype g2                 = pc.getParameter(2) * g1;
-    unsigned int cyclic_index = pc.getConstant(0);
-    unsigned int doSwap       = pc.getConstant(1);
+    fptype g2                 = pc.getParameter(2);
+    unsigned int particle     = pc.getConstant(0);
+    unsigned int cyclic_index = pc.getConstant(1);
+    unsigned int doSwap       = pc.getConstant(2);
 
-    fptype pipmass = 0.13957018;
-    fptype pi0mass = 0.1349766;
-    fptype kpmass  = 0.493677;
-    fptype k0mass  = 0.497614;
 
-    fptype twopimasssq  = 4 * pipmass * pipmass;
-    fptype twopi0masssq = 4 * pi0mass * pi0mass;
-    fptype twokmasssq   = 4 * kpmass * kpmass;
-    fptype twok0masssq  = 4 * k0mass * k0mass;
+    const fptype pipmass = 0.13957018;
+    const fptype pi0mass = 0.1349766;
+    const fptype kpmass  = 0.493677;
+    const fptype k0mass  = 0.497614;
+    const fptype mEta		= 0.547862; 
+
+    fptype mSumSq0_  = 1.;
+    fptype mSumSq1_ = 1.;
+    fptype mSumSq2_   = 1.;
+    fptype mSumSq3_  = 1.;
+
+    //f0(980)
+    if(particle==0){
+        mSumSq0_ = 4*pi0mass*pi0mass;
+        mSumSq1_ = 4*pipmass*pipmass;
+        mSumSq2_ = 4*kpmass*kpmass;
+        mSumSq3_ = 4*k0mass*k0mass;
+    }
+    //a0(980)
+    if(particle==1){
+        mSumSq0_ = (mEta+pi0mass)*(mEta+pi0mass);
+        mSumSq1_ = (mEta+pi0mass)*(mEta+pi0mass);
+        mSumSq2_ = (kpmass+kpmass)*(kpmass+kpmass);
+        mSumSq3_ = (k0mass+k0mass)*(k0mass+k0mass);
+    }
 
     fpcomplex ret(0., 0.);
+    
+    fptype rho1(0.0), rho2(0.0);
+    
     for(int i = 0; i < 1 + doSwap; i++) {
-        fptype rhopipi_real = 0, rhopipi_imag = 0;
-        fptype rhokk_real = 0, rhokk_imag = 0;
-
         fptype s = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
+        fptype resmass2 = POW2(resmass);
+        fptype dMSq = resmass2 - s;
 
-        if(s >= twopimasssq)
-            rhopipi_real += (2. / 3) * sqrt(1 - twopimasssq / s); // Above pi+pi- threshold
-        else
-            rhopipi_imag += (2. / 3) * sqrt(-1 + twopimasssq / s);
-        if(s >= twopi0masssq)
-            rhopipi_real += (1. / 3) * sqrt(1 - twopi0masssq / s); // Above pi0pi0 threshold
-        else
-            rhopipi_imag += (1. / 3) * sqrt(-1 + twopi0masssq / s);
-        if(s >= twokmasssq)
-            rhokk_real += 0.5 * sqrt(1 - twokmasssq / s); // Above K+K- threshold
-        else
-            rhokk_imag += 0.5 * sqrt(-1 + twokmasssq / s);
-        if(s >= twok0masssq)
-            rhokk_real += 0.5 * sqrt(1 - twok0masssq / s); // Above K0K0 threshold
-        else
-            rhokk_imag += 0.5 * sqrt(-1 + twok0masssq / s);
-        fptype A = (resmass * resmass - s) + resmass * (rhopipi_imag * g1 + rhokk_imag * g2);
-        fptype B = resmass * (rhopipi_real * g1 + rhokk_real * g2);
-        fptype C = 1.0 / (A * A + B * B);
-        fpcomplex retur(A * C, B * C);
-        ret += retur;
+        if (s > mSumSq0_) {
+            rho1 = sqrt(1.0 - mSumSq0_/s)/3.0;
+            if (s > mSumSq1_) {
+                rho1 += 2.0*sqrt(1.0 - mSumSq1_/s)/3.0;
+                if (s > mSumSq2_) {
+                    rho2 = 0.5*sqrt(1.0 - mSumSq2_/s);
+                    if (s > mSumSq3_) {
+                        rho2 += 0.5*sqrt(1.0 - mSumSq3_/s);
+                    } else {
+                        // Continue analytically below higher channel thresholds
+                        // This contributes to the real part of the amplitude denominator
+                        dMSq += g2*resmass*0.5*sqrt(mSumSq3_/s - 1.0);
+                    }
+                } else {
+                    // Continue analytically below higher channel thresholds
+                    // This contributes to the real part of the amplitude denominator
+                    rho2 = 0.0;
+                    dMSq += g2*resmass*(0.5*sqrt(mSumSq2_/s - 1.0) + 0.5*sqrt(mSumSq3_/s - 1.0));
+                }
+            } else {
+                // Continue analytically below higher channel thresholds
+                // This contributes to the real part of the amplitude denominator
+                dMSq += g1*resmass*2.0*sqrt(mSumSq1_/s - 1.0)/3.0;
+            }
+        }
+    
+        //the Adler-zero term fA = (m2 − sA)/(m20 − sA) can be used to suppress false 
+        //kinematic singularities when m goes below threshold. For f(0)(980), sA = 0.
+        
+        fptype massFactor = 1.;//resmass;
+        
+        fptype width1 = g1*rho1*massFactor;
+        fptype width2 = g2*rho2*massFactor;
+        fptype widthTerm = width1 + width2;
+    
+        fpcomplex resAmplitude(dMSq, widthTerm);
+    
+        fptype denomFactor = dMSq*dMSq + widthTerm*widthTerm;
+    
+        fptype invDenomFactor = 1.0/denomFactor;
+    
+        resAmplitude *= invDenomFactor;
+
+        ret += resAmplitude;
+       
         if(doSwap) {
             fptype swpmass = m12;
             m12            = m13;
             m13            = swpmass;
         }
     }
-
-    pc.incrementIndex(1, 3, 2, 0, 1);
-    return ret;
+    pc.incrementIndex(1, 3, 3, 0, 1);
+    return ret ;
 }
 
 __device__ resonance_function_ptr ptr_to_FLATTE = flatte;
@@ -83,6 +126,7 @@ FLATTE::FLATTE(std::string name,
                Variable mean,
                Variable g1,
                Variable rg2og1,
+               unsigned int particle,
                unsigned int cyc,
                bool symmDP)
     : ResonancePdf("FLATTE", name, ar, ai) {
@@ -90,6 +134,7 @@ FLATTE::FLATTE(std::string name,
     registerParameter(g1);
     registerParameter(rg2og1);
 
+    registerConstant(particle);
     registerConstant(cyc);
     registerConstant(symmDP);
 

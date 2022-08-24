@@ -21,8 +21,10 @@ class RhoOmegaMix : public ResonancePdf {
                 Variable delta,
                 unsigned int sp,
                 unsigned int cyc,
-                bool norm,
-                bool sym);
+                bool sym,
+                bool bachPframe=false,
+                bool ignoreMom=false,
+                bool ignoreBW=false);
 
     ~RhoOmegaMix() override = default;
 };

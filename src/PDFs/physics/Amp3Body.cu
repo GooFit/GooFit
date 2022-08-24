@@ -51,7 +51,10 @@ constexpr int resonanceOffset_DP = 4; // Offset of the first resonance into the 
 
 // NOTE: This is does not support ten instances (ten threads) of resoncances now, only one set of resonances.
 // this needs to be large enough to hold all samples
-__device__ fpcomplex *cResonances[16 * 20];
+constexpr int NUMRES = 20;
+
+
+__device__ fpcomplex *cResonances[NUMRES * 20];
 
 __device__ inline auto parIndexFromResIndex_DP(int resIndex) -> int {
     return resonanceOffset_DP + resIndex * resonanceSize;
@@ -63,8 +66,8 @@ __device__ auto device_DalitzPlot(fptype *evt, ParameterContainer &pc) -> fptype
     int id_m13  = pc.getObservable(1);
     int id_num  = pc.getObservable(2);
 
-    fptype m12 = RO_CACHE(evt[id_m12]);
-    fptype m13 = RO_CACHE(evt[id_m13]);
+    fptype m12 = evt[id_m12];
+    fptype m13 = evt[id_m13];
 
     unsigned int numResonances = pc.getConstant(0);
     unsigned int cacheToUse    = pc.getConstant(1);
@@ -81,7 +84,7 @@ __device__ auto device_DalitzPlot(fptype *evt, ParameterContainer &pc) -> fptype
         return 0;
     }
 
-    fptype evtIndex = RO_CACHE(evt[id_num]);
+    fptype evtIndex = evt[id_num];
 
     auto evtNum = static_cast<int>(floor(0.5 + evtIndex));
 
@@ -89,21 +92,7 @@ __device__ auto device_DalitzPlot(fptype *evt, ParameterContainer &pc) -> fptype
 
     for(int i = 0; i < numResonances; ++i) {
         fpcomplex amp = fpcomplex(pc.getParameter(i * 2), pc.getParameter(i * 2 + 1));
-
-        // potential performance improvement by
-        // double2 *t = RO_CACHE(reinterpret_cast<double2*> (&(cResonances[i][evtNum])));
-        // fpcomplex me(t->x, t->y);
-        // fpcomplex me = RO_CACHE(cResonances[i][evtNum]);
-
-        // double2 *ptr = reinterpret_cast<double2*> (cResonances[i][evtNum]);
-
-        // double2 v = RO_CACHE(resPtr[evtNum]);
-
-        // fptype me_real = cResonances[i][evtNum].real();
-        // fptype me_imag = cResonances[i][evtNum].imag();
-        // fpcomplex me = cResonances[i][evtNum];
-        // fpcomplex me (me_real, me_imag);
-        fpcomplex me = RO_CACHE(cResonances[i + (16 * 20 * cacheToUse)][evtNum]);
+        fpcomplex me = RO_CACHE(cResonances[i + (NUMRES * cacheToUse)][evtNum]);
 
         totalAmp += amp * me;
     }
@@ -227,7 +216,7 @@ __host__ void Amp3Body::setDataSize(unsigned int dataSize, unsigned int evtSize,
     numEntries  = dataSize;
     eventOffset = offset;
 
-    for(int i = 0; i < 16 * 20; i++) {
+    for(int i = 0; i < NUMRES; i++) {
 #ifdef GOOFIT_MPI
         cachedWaves[i] = new thrust::device_vector<fpcomplex>(m_iEventsPerTask);
 #else
@@ -237,7 +226,7 @@ __host__ void Amp3Body::setDataSize(unsigned int dataSize, unsigned int evtSize,
         MEMCPY_TO_SYMBOL(cResonances,
                          &dummy,
                          sizeof(fpcomplex *),
-                         ((16 * 20 * cacheToUse) + i) * sizeof(fpcomplex *),
+                         ((NUMRES * cacheToUse) + i) * sizeof(fpcomplex *),
                          cudaMemcpyHostToDevice);
     }
 
@@ -321,7 +310,7 @@ __host__ auto Amp3Body::normalize() -> fptype {
         }
 
         // Possibly this can be done more efficiently by exploiting symmetry?
-        for(int j = 0; j <= i; ++j) {
+        for(int j = 0; j < decayInfo.resonances.size(); ++j) {
             if((!redoIntegral[i]) && (!redoIntegral[j]))
                 continue;
 
@@ -348,13 +337,14 @@ __host__ auto Amp3Body::normalize() -> fptype {
         // int param_i = parameters + resonanceOffset_DP + resonanceSize * i;
         fpcomplex amplitude_i(host_parameters[parametersIdx + i * 2 + 1], host_parameters[parametersIdx + i * 2 + 2]);
 
-        for(unsigned int j = 0; j <= i; ++j) {
+        for(unsigned int j = 0; j < decayInfo.resonances.size(); ++j) {
             // int param_j = parameters + resonanceOffset_DP + resonanceSize * j;
             fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 1],
                                   -host_parameters[parametersIdx + j * 2 + 2]);
 
-            sumIntegral += j < i ? 2. * amplitude_i * amplitude_j * (*(integrals[i][j]))
-                                 : (i == j ? amplitude_i * amplitude_j * (*(integrals[i][j])) : fpcomplex(0., 0.));
+            // Notice complex conjugation
+            // amplitude_j.imag(), (*(integrals[i][j])).real(), (*(integrals[i][j])).imag() );
+            sumIntegral += amplitude_i * amplitude_j * (*(integrals[i][j]));
         }
     }
 
@@ -431,7 +421,7 @@ __host__ auto Amp3Body::fit_fractions(bool print) -> std::vector<std::vector<fpt
     thrust::counting_iterator<int> binIndex(0);
 
     for(int i = 0; i < n_res; ++i) {
-        for(int j = 0; j <= i; ++j) {
+        for(int j = 0; j < n_res; ++j) {
             integrators_ff[i][j]->setDalitzIndex(getFunctionIndex());
             integrators_ff[i][j]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
             integrators_ff[i][j]->setEfficiencyIndex(decayInfo.resonances[j]->getFunctionIndex());
@@ -456,12 +446,11 @@ __host__ auto Amp3Body::fit_fractions(bool print) -> std::vector<std::vector<fpt
         fpcomplex amplitude_i(host_parameters[parametersIdx + i * 2 + 1], host_parameters[parametersIdx + i * 2 + 2]);
         fpcomplex buffer(0., 0.);
 
-        for(unsigned int j = 0; j <= i; ++j) {
+        for(unsigned int j = 0; j < n_res; ++j) {
             fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 1],
                                   -host_parameters[parametersIdx + j * 2 + 2]);
 
-            buffer = j < i ? 2. * amplitude_i * amplitude_j * (*(integrals_ff[i][j]))
-                           : (i == j ? amplitude_i * amplitude_j * (*(integrals_ff[i][j])) : fpcomplex(0., 0.));
+            buffer = amplitude_i * amplitude_j * (*(integrals_ff[i][j]));
 
             AmpIntegral[i][j] = buffer.real();
             sumIntegral += buffer;
@@ -471,7 +460,7 @@ __host__ auto Amp3Body::fit_fractions(bool print) -> std::vector<std::vector<fpt
     totalFF_integral = sumIntegral.real();
 
     for(int i = 0; i < n_res; i++) {
-        for(int j = 0; j <= i; j++) {
+        for(int j = 0; j < n_res; j++) {
             AmpIntegral[i][j] /= totalFF_integral;
             AmpIntegral[i][j] *= 100;
         }
@@ -487,8 +476,16 @@ __host__ auto Amp3Body::fit_fractions(bool print) -> std::vector<std::vector<fpt
 
         std::cout << std::fixed << m << std::endl;
         fptype sumdiagffs = 0.;
-        for(int i = 0; i < n_res; i++)
+
+        std::cout << "\n ";
+        std::cout << "Diagonal Fit Fractions (%): \n";
+
+
+        for(int i = 0; i < n_res; i++){
+            auto name = decayInfo.resonances[i]->getName();
+            std::cout  << name << "\t" << std::fixed << m(i, i) << '\n';
             sumdiagffs += m(i, i);
+        }
         std::cout << "Sum of Diag FFs: " << sumdiagffs << "\n";
         std::cout << "\n";
     }

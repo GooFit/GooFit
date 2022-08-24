@@ -10,7 +10,10 @@ template <int I>
 __device__ auto rhoomgamix(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
     unsigned int spin         = pc.getConstant(0);
     unsigned int cyclic_index = pc.getConstant(1);
-    bool norm                 = pc.getConstant(2);
+    bool bachPframe = pc.getConstant(2);
+    bool ignoreMom = pc.getConstant(3);
+    bool ignoreBW = pc.getConstant(4);
+  
 
     fptype omega_mass  = pc.getParameter(0);
     fptype omega_width = pc.getParameter(1);
@@ -30,108 +33,111 @@ __device__ auto rhoomgamix(fptype m12, fptype m13, fptype m23, ParameterContaine
     Bterm *= Delta_;
     fpcomplex unity(1.0, 0.0);
 
+    if(omega_mass < 1.e-10) {
+        GOOFIT_TRACE("Omega Mass zero!");
+        return result;
+    }
+
+    if(omega_width < 1.e-10) {
+        GOOFIT_TRACE("Omega Width zero!");
+        return result;
+    }
+
+    if(rho_mass < 1.e-10) {
+        GOOFIT_TRACE("Rho Mass zero!");
+        return result;
+    }
+
+    if(rho_width < 1.e-10) {
+        GOOFIT_TRACE("Rho Width zero!");
+        return result;
+    }
+
 #pragma unroll
     for(size_t i = 0; i < I; i++) {
-        fptype rMassSq    = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
-        fptype m          = sqrt(rMassSq);
-        fptype mass_daug1 = PAIR_23 == cyclic_index ? c_daug2Mass : c_daug1Mass;
-        fptype mass_daug2 = PAIR_12 == cyclic_index ? c_daug2Mass : c_daug3Mass;
-        fptype bachelorMass
+        fptype s    = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
+        fptype m          = sqrt(s);
+        fptype m1 = PAIR_23 == cyclic_index ? c_daug2Mass : c_daug1Mass;
+        fptype m2 = PAIR_12 == cyclic_index ? c_daug2Mass : c_daug3Mass;
+        fptype m3
             = (PAIR_12 == cyclic_index ? c_daug3Mass : (PAIR_13 == cyclic_index ? c_daug2Mass : c_daug1Mass));
 
-        fptype frFactor       = 1;
-        fptype frFactorMother = 1;
 
-        // Calculate momentum of the two daughters in the resonance rest frame
-        // Note symmetry under interchange (dm1 <-> dm2)
+        // Omega RBW evaluation
+        fptype q0_ = DaugDecayMomResFrame(omega_mass2, m1, m2);
 
-        fptype measureDaughterMoms = twoBodyCMmom(rMassSq, mass_daug1, mass_daug2);
-        fptype nominalDaughterMoms = twoBodyCMmom(omega_mass2, mass_daug1, mass_daug2);
+        fptype p0_ = bachPframe? 
+                        BachMomParentFrame(c_motherMass, m3 ,omega_mass2) :
+                        BachMomResFrame(c_motherMass , omega_mass2, m3);
+    
+        fptype q_  = DaugDecayMomResFrame(s, m1, m2);
+    
+        fptype p_  =  bachPframe? 
+                        BachMomParentFrame(c_motherMass, m3 ,s) : //p*
+                        BachMomResFrame(c_motherMass, s , m3); //p
+    
+        fptype FR0 = BlattWeisskopfPrime(q0_*c_meson_radius,spin);
+        fptype FP0 = BlattWeisskopfPrime(p0_*c_mother_meson_radius,spin);
+    
+        fptype FR = BlattWeisskopfPrime(q_*c_meson_radius,spin);
+        fptype FP = BlattWeisskopfPrime(p_*c_mother_meson_radius,spin);
+            
+        fptype gamma = ignoreMom ? omega_width : omega_width*pow(q_/q0_,2.0*spin + 1.0)*(omega_mass/m)*POW2(FR/FR0);
+                      
+        fptype A = (omega_mass2 - s);
+        fptype B = gamma*omega_mass;
+        fptype C = 1.0 / (A*A + B*B);
+    
+        fpcomplex RBW(A * C, B * C);
+        RBW *= ignoreBW ? 1.0 : (FR/FR0);
+        RBW *= ignoreBW ? 1.0 : (FP/FP0);
 
-        fptype measureDaughterMomsMother;
-        fptype nominalDaughterMomsMother;
-
-        if(norm) {
-            // Mother momentum for normalized Blatt-Weisskopf form factors calculated in the resonance rest frame
-            measureDaughterMomsMother = twoBodyCMMothermom(rMassSq, c_motherMass, bachelorMass);
-            nominalDaughterMomsMother = twoBodyCMMothermom(omega_mass2, c_motherMass, bachelorMass);
-        } else {
-            // Mother momentum for unnormalized Blatt-Weisskopf form factors calculated in mother rest frame
-            measureDaughterMomsMother = twoBodyCMmom(c_motherMass * c_motherMass, sqrt(rMassSq), bachelorMass);
-        }
-
-        if(0 != spin) {
-            // D0 meson has same spin than resonance
-            if(norm) {
-                // normalized form factors
-                frFactor = dampingFactorSquareNorm(nominalDaughterMoms, spin, c_meson_radius)
-                           / dampingFactorSquareNorm(measureDaughterMoms, spin, c_meson_radius);
-
-                frFactorMother = dampingFactorSquareNorm(nominalDaughterMomsMother, spin, c_mother_meson_radius)
-                                 / dampingFactorSquareNorm(measureDaughterMomsMother, spin, c_mother_meson_radius);
-            }
-            // unnormalized form factors
-            else {
-                frFactor       = dampingFactorSquare(measureDaughterMoms, spin, c_meson_radius);
-                frFactorMother = dampingFactorSquare(measureDaughterMomsMother, spin, c_mother_meson_radius);
-            }
-        }
-
-        // RBW evaluation
-        fptype A = (omega_mass2 - rMassSq);
-        fptype B = omega_mass2 * omega_width * pow(measureDaughterMoms / nominalDaughterMoms, 2.0 * spin + 1) * frFactor
-                   / sqrt(rMassSq);
-        fptype C = 1.0 / (POW2(A) + POW2(B));
-
-        fpcomplex omega(A * C, B * C); // Dropping F_D=1
-        omega *= sqrt(frFactor);
-        omega *= sqrt(frFactorMother);
-        omega *= spinFactor(spin, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
-        fptype angular
-            = spinFactor(spin, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
+        // end RBW
 
         // Rho GS evaluation
-        nominalDaughterMoms = twoBodyCMmom(rho_mass2, mass_daug1, mass_daug2);
+       
+        q0_ = DaugDecayMomResFrame(rho_mass2, m1, m2);
 
-        if(norm) {
-            // Mother momentum for normalized Blatt-Weisskopf form factors calculated in the resonance rest frame
-            measureDaughterMomsMother = twoBodyCMMothermom(rMassSq, c_motherMass, bachelorMass);
-            nominalDaughterMomsMother = twoBodyCMMothermom(rho_mass2, c_motherMass, bachelorMass);
-        } else {
-            // Mother momentum for unnormalized Blatt-Weisskopf form factors calculated in mother rest frame
-            measureDaughterMomsMother = twoBodyCMmom(c_motherMass * c_motherMass, sqrt(rMassSq), bachelorMass);
-        }
-        if(0 != spin) {
-            if(norm) {
-                frFactor = dampingFactorSquareNorm(nominalDaughterMoms, spin, c_meson_radius);
-                frFactor /= dampingFactorSquareNorm(measureDaughterMoms, spin, c_meson_radius);
+        p0_ = bachPframe? 
+                    BachMomParentFrame(c_motherMass, m3 ,rho_mass2) :
+                    BachMomResFrame(c_motherMass , rho_mass2, m3);
 
-                frFactorMother = dampingFactorSquareNorm(nominalDaughterMomsMother, spin, c_mother_meson_radius);
-                frFactorMother /= dampingFactorSquareNorm(measureDaughterMomsMother, spin, c_mother_meson_radius);
-            }
-            // unnormalized form factors
-            else {
-                frFactor       = dampingFactorSquare(measureDaughterMoms, spin, c_meson_radius);
-                frFactorMother = dampingFactorSquare(measureDaughterMomsMother, spin, c_mother_meson_radius);
-            }
-        }
-        // Implement Gou-Sak:
+        q_  = DaugDecayMomResFrame(s, m1, m2);
 
-        fptype D = (1.0 + dFun(rho_mass2, c_daug2Mass, c_daug3Mass) * rho_width / sqrt(rho_mass2));
-        fptype E = rho_mass2 - rMassSq + fsFun(rMassSq, rho_mass2, rho_width, c_daug2Mass, c_daug3Mass);
-        fptype F
-            = sqrt(rho_mass2) * rho_width * pow(measureDaughterMoms / nominalDaughterMoms, 2.0 * spin + 1) * frFactor;
+        p_  =  bachPframe? 
+                    BachMomParentFrame(c_motherMass, m3 ,s) : //p*
+                    BachMomResFrame(c_motherMass, s , m3); //p
 
-        D /= (E * E + F * F);
-        fpcomplex rho(D * E, D * F); // Dropping F_D=1
-        rho *= sqrt(frFactor);
-        rho *= sqrt(frFactorMother);
-        rho *= spinFactor(spin, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
+        FR0 = BlattWeisskopfPrime(q0_*c_meson_radius,spin);
+        FP0 = BlattWeisskopfPrime(p0_*c_mother_meson_radius,spin);
+
+        FR = BlattWeisskopfPrime(q_*c_meson_radius,spin);
+        FP = BlattWeisskopfPrime(p_*c_mother_meson_radius,spin);
+
+        gamma = ignoreMom ? rho_width : rho_width*pow(q_/q0_,2.0*spin + 1.0)*(rho_mass/m)*POW2(FR/FR0);
+        
+        fptype d_ = d(rho_mass,q0_);
+        fptype f_ = f(m,rho_mass,rho_width,q_,q0_);
+
+        A = (rho_mass2-s) + f_;
+        B = rho_mass*gamma;
+        C = 1./(A*A + B*B);
+        fptype D = 1+(rho_width*d_/rho_mass);
+
+        fpcomplex GS(A*C,B*C);
+        GS *= D;
+        GS *= ignoreBW ? 1.0 : (FR/FR0);
+        GS *= ignoreBW ? 1.0 : (FP/FP0);
         // end of Gousak
 
         // rho-omega mix
-        fpcomplex mixingTerm = Bterm * omega + unity;
-        result += rho * mixingTerm;
+        fpcomplex mixingTerm = Bterm * RBW + unity;
+
+        fptype cosHel = cFromM(c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
+        fptype legPol = calcLegendrePoly(cosHel,spin);
+        fptype ZemachSpinFactor = calcZemachSpinFactor(q_*p_, legPol, spin);
+
+        result += GS * mixingTerm * ZemachSpinFactor;
 
         if(I > 1) {
             fptype swpmass = m12;
@@ -139,7 +145,7 @@ __device__ auto rhoomgamix(fptype m12, fptype m13, fptype m23, ParameterContaine
             m13            = swpmass;
         }
     }
-    pc.incrementIndex(1, 7, 3, 0, 1);
+    pc.incrementIndex(1, 7, 5, 0, 1);
     return result;
 
 } // RhoOmegaMix
@@ -161,8 +167,10 @@ RhoOmegaMix::RhoOmegaMix(std::string name,
                          Variable delta,
                          unsigned int sp,
                          unsigned int cyc,
-                         bool norm,
-                         bool sym)
+                         bool sym,
+                         bool bachPframe,
+                         bool ignoreMom,
+                         bool ignoreBW)
     : ResonancePdf("RHOOMEGAMIX", name, ar, ai) {
     registerParameter(omega_mass);
     registerParameter(omega_width);
@@ -174,8 +182,9 @@ RhoOmegaMix::RhoOmegaMix(std::string name,
 
     registerConstant(sp);
     registerConstant(cyc);
-
-    registerConstant(norm);
+    registerConstant(bachPframe);
+    registerConstant(ignoreMom);
+    registerConstant(ignoreBW);
 
     if(sym)
         registerFunction("ptr_to_RHOOMEGAMIX", ptr_to_RHOOMEGAMIX_SYM);

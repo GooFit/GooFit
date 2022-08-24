@@ -14,9 +14,10 @@ __device__ auto cubicspline(fptype m12, fptype m13, fptype m23, ParameterContain
     unsigned int cyclic_index        = pc.getConstant(0);
     unsigned int doSwap              = pc.getConstant(1);
     const unsigned int nKnobs        = pc.getConstant(2);
-    unsigned int idx                 = 3; // Next index
+    const unsigned int linear        = pc.getConstant(3);
+    unsigned int swave_const_idx     = 4; // num consts before swave constants
+    unsigned int idx                 = 4; // Next index
     unsigned int i                   = 0;
-    const unsigned int pwa_coefs_idx = idx;
     idx += 2 * nKnobs;
     fptype mAB = m12, mAC = m13;
     switch(cyclic_index) {
@@ -38,7 +39,7 @@ __device__ auto cubicspline(fptype m12, fptype m13, fptype m23, ParameterContain
     for(i = 0; i < timestorun; i++) {
         // Find the knots we are between
         while(khiAB < nKnobs) {
-            if(mAB < pc.getConstant(3 + khiAB))
+            if(mAB < pc.getConstant(swave_const_idx + khiAB))
                 break;
             khiAB++;
         }
@@ -58,17 +59,23 @@ __device__ auto cubicspline(fptype m12, fptype m13, fptype m23, ParameterContain
             fptype pwa_coefs_prime_imag_kloAB = cDeriatives[twokloAB + 1];
             fptype pwa_coefs_prime_imag_khiAB = cDeriatives[twokhiAB + 1];
 
-            dmKK = pc.getConstant(3 + khiAB) - pc.getConstant(3 + kloAB);
-            aa   = (pc.getConstant(3 + khiAB) - mAB) / dmKK;
+            dmKK = pc.getConstant(swave_const_idx + khiAB) - pc.getConstant(swave_const_idx + kloAB);
+            aa   = (pc.getConstant(swave_const_idx+khiAB) - mAB) / dmKK;
             bb   = 1 - aa;
             aa3  = aa * aa * aa;
             bb3  = bb * bb * bb;
-            ret.real(ret.real() + aa * pwa_coefs_real_kloAB + bb * pwa_coefs_real_khiAB
+            
+            if(linear){
+                ret.real(ret.real() + aa * pwa_coefs_real_kloAB + bb * pwa_coefs_real_khiAB);
+                ret.imag(ret.imag() + aa * pwa_coefs_imag_kloAB + bb * pwa_coefs_imag_khiAB);
+            }else{
+                 ret.real(ret.real() + aa * pwa_coefs_real_kloAB + bb * pwa_coefs_real_khiAB
                      + ((aa3 - aa) * pwa_coefs_prime_real_kloAB + (bb3 - bb) * pwa_coefs_prime_real_khiAB)
                            * (dmKK * dmKK) / 6.0);
-            ret.imag(ret.imag() + aa * pwa_coefs_imag_kloAB + bb * pwa_coefs_imag_khiAB
+                 ret.imag(ret.imag() + aa * pwa_coefs_imag_kloAB + bb * pwa_coefs_imag_khiAB
                      + ((aa3 - aa) * pwa_coefs_prime_imag_kloAB + (bb3 - bb) * pwa_coefs_prime_imag_khiAB)
                            * (dmKK * dmKK) / 6.0);
+            }
         }
 
         khiAB = khiAC;
@@ -88,13 +95,15 @@ Spline::Spline(std::string name,
                std::vector<Variable> &pwa_coefs_reals,
                std::vector<Variable> &pwa_coefs_imags,
                unsigned int cyc,
-               bool symmDP)
+               bool symmDP,
+                bool linear)
     : ResonancePdf("Spline", name, ar, ai) {
     const unsigned int nKnobs = HH_bin_limits.size();
 
     registerConstant(cyc);
     registerConstant(symmDP);
     registerConstant(nKnobs);
+    registerConstant(linear);
 
     for(int i = 0; i < pwa_coefs_reals.size(); i++) {
         registerConstant(HH_bin_limits[i]);
@@ -108,6 +117,7 @@ Spline::Spline(std::string name,
 }
 
 __host__ void Spline::recalculateCache() const {
+    unsigned int swave_const_idx     = 4; // num consts before swave constants
     auto params           = getParameters();
     const unsigned nKnobs = constantsList[2];
     std::vector<fptype> x(nKnobs);
@@ -117,7 +127,7 @@ __host__ void Spline::recalculateCache() const {
         unsigned int idx = i / 2;
         fptype value     = parametersList[i];
         if(i % 2 == 0) {
-            x[idx] = constantsList[3 + idx];
+            x[idx] = constantsList[swave_const_idx + idx];
             y[idx].real(value);
         } else
             y[idx].imag(value);

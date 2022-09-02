@@ -109,8 +109,8 @@ __host__ Amp4Body::Amp4Body(
 
     MEMCPY_TO_SYMBOL(c_meson_radius, &decayInfo.meson_radius, sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
-    static int cacheCount = 0;
-    cacheToUse            = cacheCount++;
+    //static int cacheCount = 0;
+    cacheToUse            = gCacheCount++;
 
     registerConstant(cacheToUse);
 
@@ -221,10 +221,10 @@ __host__ Amp4Body::Amp4Body(
 
     // copy over amp information
     MEMCPY_TO_SYMBOL(
-        AmpIndices, &(amp_idx_start[0]), amp_idx_start.size() * sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
+        AmpIndices[cacheToUse], &(amp_idx_start[0]), amp_idx_start.size() * sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
 
     // copy over indexes?
-    MEMCPY_TO_SYMBOL(AmpIndices,
+    MEMCPY_TO_SYMBOL(AmpIndices[cacheToUse],
                      &(amp_idx[0]),
                      amp_idx.size() * sizeof(unsigned int),
                      amp_idx_start.size() * sizeof(unsigned int),
@@ -331,7 +331,7 @@ __host__ void Amp4Body::populateArrays() {
         }
     }
 
-    MEMCPY_TO_SYMBOL(AmpIndices,
+    MEMCPY_TO_SYMBOL(AmpIndices[cacheToUse],
                      &(amp_idx[0]),
                      amp_idx.size() * sizeof(unsigned int),
                      amp_idx_start.size() * sizeof(unsigned int),

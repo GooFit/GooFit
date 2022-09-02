@@ -168,8 +168,8 @@ __device__ auto device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) -> fptyp
     int k = 0;
 
     for(int i = 0; i < numAmps; ++i) {
-        unsigned int start = AmpIndices[i];
-        unsigned int flag  = AmpIndices[start + 3 + numAmps];
+        unsigned int start = AmpIndices[cacheToUse][i];
+        unsigned int flag  = AmpIndices[cacheToUse][start + 3 + numAmps];
         fpcomplex temp;
 
         // printf("flag:%i\n",flag);
@@ -319,8 +319,10 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
         registerConstant(particle_masse);
     }
 
-    static int cacheCount = 0;
-    cacheToUse            = cacheCount++;
+    //static int cacheCount = 0;
+
+    cacheToUse            = gCacheCount++; //increment global cache count
+    printf("Assigned cacheToUse value of %i",cacheToUse);
     registerParameter(_DECAY_INFO._tau);
     registerParameter(_DECAY_INFO._xmixing);
     registerParameter(_DECAY_INFO._ymixing);
@@ -516,19 +518,27 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     }
 
     MEMCPY_TO_SYMBOL(
-        AmpIndices, &(amp_idx_start[0]), amp_idx_start.size() * sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(AmpIndices,
+        AmpIndices[cacheToUse], &(amp_idx_start[0]), amp_idx_start.size() * sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(AmpIndices[cacheToUse],
                      &(amp_idx[0]),
                      amp_idx.size() * sizeof(unsigned int),
                      amp_idx_start.size() * sizeof(unsigned int),
                      cudaMemcpyHostToDevice);
+    //printf("amp_idx_start size: %i, amp_idx size: %i\n", amp_idx_start.size(),amp_idx.size());
 
+    //print contents of ampindicies to prove that things are being overwritten each time another amp4body_td is constructed
+    printf("Contents of AmpIndices");
+    for(auto elem: AmpIndices[cacheToUse]){
+        printf("%i ",elem);
+    }
+    printf("\n");
+    
     for(int i = 0; i < _SpinFactors.size(); ++i) {
         _sfcalculators.push_back(new SFCalculator_TD());
     }
 
     for(int i = 0; i < _NUM_AMPLITUDES; ++i) {
-        _AmpCalcs.push_back(new AmpCalc_TD(nPermVec[i], amp_idx_start[i]));
+        _AmpCalcs.push_back(new AmpCalc_TD(nPermVec[i], amp_idx_start[i], cacheToUse));
     }
 
     // fprintf(stderr,"#Amp's %i, #LS %i, #SF %i \n", AmpMap.size(), components.size()-1, _SpinFactors.size() );
@@ -758,7 +768,8 @@ __host__ auto Amp4Body_TD::normalize() -> fptype {
                                                             _SpinsCalculated,
                                                             lineshapeChanged,
                                                             getSFFunctionIndices(),
-                                                            getLSFunctionIndices());
+                                                            getLSFunctionIndices(),
+                                                            cacheToUse);
         }
         fptype normResultsSum = MathUtils::doNeumaierSummation(normResults);
         ret                   = normResultsSum / getNumAccNormEvents();

@@ -36,7 +36,8 @@ class NormEvents_4Body_DeviceCached final : public NormEvents_4Body_Base {
                                            bool spinsCalculated,
                                            const std::vector<bool> &lineshapeChanged,
                                            const std::vector<unsigned int> &sfFunctionIndices,
-                                           const std::vector<unsigned int> &lsFunctionIndices) override;
+                                           const std::vector<unsigned int> &lsFunctionIndices,
+                                           unsigned int CacheIdx) override;
 
   protected:
   private:

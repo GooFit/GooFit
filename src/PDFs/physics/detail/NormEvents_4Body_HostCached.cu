@@ -66,7 +66,8 @@ __host__ fptype NormEvents_4Body_HostCached::computeNorm_TD(bool noCachedNormVal
                                                             bool spinsCalculated,
                                                             const std::vector<bool> &lineshapeChanged,
                                                             const std::vector<unsigned int> &sfFunctionIndices,
-                                                            const std::vector<unsigned int> &lsFunctionIndices) {
+                                                            const std::vector<unsigned int> &lsFunctionIndices,
+                                                            unsigned int CacheIdx) {
     unsigned int numSFCacheEntries = _totNumAccNormEvents * sfFunctionIndices.size();
     unsigned int numLSCacheEntries = _totNumAccNormEvents * lsFunctionIndices.size();
 
@@ -137,7 +138,7 @@ __host__ fptype NormEvents_4Body_HostCached::computeNorm_TD(bool noCachedNormVal
 
     // do norm integral
     return NormEvents_4Body_Base::doNormIntegral_TD(
-        resolution, tau, xmixing, ymixing, dalitzId, _totNumAccNormEvents, sf_batchResult_d, ls_batchResult_d);
+        resolution, tau, xmixing, ymixing, dalitzId, _totNumAccNormEvents, sf_batchResult_d, ls_batchResult_d,CacheIdx);
 }
 
 } // end namespace GooFit

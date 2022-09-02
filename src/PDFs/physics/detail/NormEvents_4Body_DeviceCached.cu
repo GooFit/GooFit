@@ -48,7 +48,8 @@ __host__ fptype NormEvents_4Body_DeviceCached::computeNorm_TD(bool noCachedNormV
                                                               bool spinsCalculated,
                                                               const std::vector<bool> &lineshapeChanged,
                                                               const std::vector<unsigned int> &sfFunctionIndices,
-                                                              const std::vector<unsigned int> &lsFunctionIndices) {
+                                                              const std::vector<unsigned int> &lsFunctionIndices,
+                                                              unsigned int CacheIdx) {
     if(!noCachedNormValuesToCompute) {
         unsigned int numSFCacheEntries = _totNumAccNormEvents * sfFunctionIndices.size();
         if(_norm_SF_d.size() != numSFCacheEntries) {
@@ -89,7 +90,7 @@ __host__ fptype NormEvents_4Body_DeviceCached::computeNorm_TD(bool noCachedNormV
 
     // do norm integral
     fptype normResult = NormEvents_4Body_Base::doNormIntegral_TD(
-        resolution, tau, xmixing, ymixing, dalitzId, _totNumAccNormEvents, _norm_SF_d, _norm_LS_d);
+        resolution, tau, xmixing, ymixing, dalitzId, _totNumAccNormEvents, _norm_SF_d, _norm_LS_d, CacheIdx);
 
     return normResult;
 }

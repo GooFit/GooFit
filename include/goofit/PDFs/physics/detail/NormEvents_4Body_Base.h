@@ -20,7 +20,7 @@ class NormEvents_4Body_Base {
     NormEvents_4Body_Base &operator=(NormEvents_4Body_Base &&moveMe)      = default;
 
     int getNumAccNormEvents() const { return _totNumAccNormEvents; }
-
+    
     __host__ virtual fptype computeNorm_TD(bool noCachedNormValuesToCompute,
                                            const MixingTimeResolution *const resolution,
                                            fptype tau,
@@ -30,7 +30,8 @@ class NormEvents_4Body_Base {
                                            bool spinsCalculated,
                                            const std::vector<bool> &lineshapeChanged,
                                            const std::vector<unsigned int> &sfFunctionIndices,
-                                           const std::vector<unsigned int> &lsFunctionIndices)
+                                           const std::vector<unsigned int> &lsFunctionIndices,
+                                           unsigned int CacheIdx)
         = 0;
 
   protected:
@@ -74,10 +75,10 @@ class NormEvents_4Body_Base {
                                              unsigned int dalitzId,
                                              unsigned int numAccThisBatch,
                                              mcbooster::RealVector_d &batchSF_d,
-                                             mcbooster::mc_device_vector<fpcomplex> &batchLS_d);
+                                             mcbooster::mc_device_vector<fpcomplex> &batchLS_d,
+                                             unsigned int CacheIdx);
 
     unsigned int _totNumAccNormEvents;
-
   private:
 };
 

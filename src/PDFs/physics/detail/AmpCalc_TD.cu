@@ -9,9 +9,10 @@
 
 namespace GooFit {
 
-AmpCalc_TD::AmpCalc_TD(unsigned int nPerm, unsigned int ampIdx)
+AmpCalc_TD::AmpCalc_TD(unsigned int nPerm, unsigned int ampIdx, unsigned int CacheIdx)
     : _nPerm(nPerm)
-    , _AmpIdx(ampIdx) {}
+    , _AmpIdx(ampIdx)
+    , _CacheIdx(CacheIdx) {}
 
 __device__ auto AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex {
     ParameterContainer pc;
@@ -24,8 +25,8 @@ __device__ auto AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t) cons
     unsigned int totalSF    = pc.getConstant(7);
     unsigned int totalAMP   = pc.getConstant(8);
     unsigned int offset     = totalLS + totalSF;
-    unsigned int numLS      = AmpIndices[totalAMP + _AmpIdx];
-    unsigned int numSF      = AmpIndices[totalAMP + _AmpIdx + 1];
+    unsigned int numLS      = AmpIndices[_CacheIdx][totalAMP + _AmpIdx];
+    unsigned int numSF      = AmpIndices[_CacheIdx][totalAMP + _AmpIdx + 1];
     unsigned int evtNum     = thrust::get<0>(t);
 
     fpcomplex returnVal(0, 0);
@@ -54,8 +55,8 @@ __device__ auto AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t) cons
         }
 
         for(int j = i * LS_step; j < (i + 1) * LS_step; ++j) {
-            int idx = AmpIndices[totalAMP + _AmpIdx + 4 + j];
-            ret *= (cResSF_TD[cacheToUse][evtNum * offset + idx]);
+            int idx = AmpIndices[_CacheIdx][totalAMP + _AmpIdx + 4 + j];
+            ret *= (cResSF_TD[_CacheIdx][evtNum * offset + idx]);
             // printf("Lineshape %i = (%.7g, %.7g)\n", j, (cResSF_TD[cacheToUse][evtNum*offset + AmpIndices[totalAMP +
             // _AmpIdx + 4 + j]]).real, (cResSF_TD[cacheToUse][evtNum*offset + AmpIndices[totalAMP + _AmpIdx + 4 +
             // j]]).imag);
@@ -66,8 +67,8 @@ __device__ auto AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t) cons
 
         // printf("Lineshape Product = (%.7g, %.7g)\n", ret.real, ret.imag);
         for(int j = i * SF_step; j < (i + 1) * SF_step; ++j) {
-            int idx = AmpIndices[totalAMP + _AmpIdx + 4 + numLS + j];
-            ret *= (cResSF_TD[cacheToUse][evtNum * offset + totalLS + idx].real());
+            int idx = AmpIndices[_CacheIdx][totalAMP + _AmpIdx + 4 + numLS + j];
+            ret *= (cResSF_TD[_CacheIdx][evtNum * offset + totalLS + idx].real());
             // printf(" SF = %.7g\n", (cResSF_TD[cacheToUse][evtNum*offset + totalLS + AmpIndices[totalAMP + _AmpIdx + 4
             // + numLS + j]].real));
             if(printStatus) {
@@ -94,7 +95,7 @@ __host__ std::vector<unsigned int> AmpCalc_TD::getLineshapeIndices(int totalAMP)
 
     std::vector<unsigned int> hostAmpIndices = DebugTools::copyAmpIndicesToHost();
 
-    unsigned int numLS   = hostAmpIndices[totalAMP + _AmpIdx];
+    unsigned int numLS   = hostAmpIndices[_CacheIdx * 500 + totalAMP + _AmpIdx]; //offset the indices by the correct number of Amp4Body_TD PDFs there
     unsigned int LS_step = numLS / _nPerm;
 
     std::vector<unsigned int> ret;
@@ -114,7 +115,7 @@ __host__ std::vector<unsigned int> AmpCalc_TD::getLineshapeIndices(int totalAMP)
         }
 
         for(int j = i * LS_step; j < (i + 1) * LS_step; ++j) {
-            unsigned int idx = hostAmpIndices[totalAMP + _AmpIdx + 4 + j];
+            unsigned int idx = hostAmpIndices[_CacheIdx * 500 + totalAMP + _AmpIdx + 4 + j];
             ret.push_back(idx);
 
             if(printStatus) {
@@ -135,8 +136,8 @@ __host__ std::vector<unsigned int> AmpCalc_TD::getSpinFactorIndices(int totalAMP
 
     std::vector<unsigned int> hostAmpIndices = DebugTools::copyAmpIndicesToHost();
 
-    unsigned int numLS   = hostAmpIndices[totalAMP + _AmpIdx];
-    unsigned int numSF   = hostAmpIndices[totalAMP + _AmpIdx + 1];
+    unsigned int numLS   = hostAmpIndices[_CacheIdx * 500 + totalAMP + _AmpIdx];
+    unsigned int numSF   = hostAmpIndices[_CacheIdx * 500 + totalAMP + _AmpIdx + 1];
     unsigned int SF_step = numSF / _nPerm;
 
     std::vector<unsigned int> ret;
@@ -157,7 +158,7 @@ __host__ std::vector<unsigned int> AmpCalc_TD::getSpinFactorIndices(int totalAMP
         }
 
         for(int j = i * SF_step; j < (i + 1) * SF_step; ++j) {
-            unsigned int idx = hostAmpIndices[totalAMP + _AmpIdx + 4 + numLS + j];
+            unsigned int idx = hostAmpIndices[_CacheIdx * 500 + totalAMP + _AmpIdx + 4 + numLS + j];
             ret.push_back(idx);
 
             if(printStatus) {

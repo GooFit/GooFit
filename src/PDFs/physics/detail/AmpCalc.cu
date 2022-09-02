@@ -22,8 +22,8 @@ __device__ auto AmpCalc::operator()(thrust::tuple<int, fptype *, int> t) const -
     unsigned int totalSF    = pc.getConstant(7);
     unsigned int totalAMP   = pc.getConstant(8);
     unsigned int offset     = totalLS + totalSF;
-    unsigned int numLS      = AmpIndices[totalAMP + _AmpIdx];
-    unsigned int numSF      = AmpIndices[totalAMP + _AmpIdx + 1];
+    unsigned int numLS      = AmpIndices[cacheToUse][totalAMP + _AmpIdx];
+    unsigned int numSF      = AmpIndices[cacheToUse][totalAMP + _AmpIdx + 1];
     unsigned int evtNum     = thrust::get<0>(t);
 
     fpcomplex returnVal(0, 0);
@@ -35,7 +35,7 @@ __device__ auto AmpCalc::operator()(thrust::tuple<int, fptype *, int> t) const -
         fpcomplex tmp(1, 0);
 
         for(int j = i * LS_step; j < (i + 1) * LS_step; ++j) {
-            int idx = AmpIndices[totalAMP + _AmpIdx + 3 + j];
+            int idx = AmpIndices[cacheToUse][totalAMP + _AmpIdx + 3 + j];
             tmp     = (cResSF[cacheToUse][evtNum * offset + idx]);
             ret *= tmp;
             // printf("Lineshape = (%.7g, %.7g)\n", tmp.real, tmp.imag);
@@ -43,7 +43,7 @@ __device__ auto AmpCalc::operator()(thrust::tuple<int, fptype *, int> t) const -
 
         // printf("Lineshape Product = (%.7g, %.7g)\n", ret.real, ret.imag);
         for(int j = i * SF_step; j < (i + 1) * SF_step; ++j) {
-            int idx = AmpIndices[totalAMP + _AmpIdx + 3 + numLS + j];
+            int idx = AmpIndices[cacheToUse][totalAMP + _AmpIdx + 3 + numLS + j];
             tmp     = (cResSF[cacheToUse][evtNum * offset + totalLS + idx].real());
             ret *= tmp;
             // printf("SF = (%.7g, %.7g)\n", tmp.real, tmp.imag);

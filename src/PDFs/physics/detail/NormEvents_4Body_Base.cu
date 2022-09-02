@@ -172,7 +172,8 @@ __host__ fptype NormEvents_4Body_Base::doNormIntegral_TD(
     mcbooster::RealVector_d
         &batchSF_d, // not modified, can't seem to make const type work with thrust::transform_reduce
     mcbooster::mc_device_vector<fpcomplex>
-        &batchLS_d) // not modified, can't seem to make const type work with thrust::transform_reduce
+        &batchLS_d, // not modified, can't seem to make const type work with thrust::transform_reduce
+        unsigned int CacheIdx) 
 {
     thrust::constant_iterator<fptype *> normSFaddress(thrust::raw_pointer_cast(batchSF_d.data()));
     thrust::constant_iterator<fpcomplex *> normLSaddress(thrust::raw_pointer_cast(batchLS_d.data()));
@@ -183,7 +184,7 @@ __host__ fptype NormEvents_4Body_Base::doNormIntegral_TD(
     FourDblTupleAdd MyFourDoubleTupleAdditionFunctor;
     thrust::tuple<fptype, fptype, fptype, fptype> sumIntegral;
 
-    NormIntegrator_TD integrator;
+    NormIntegrator_TD integrator(CacheIdx);
     integrator.setDalitzId(dalitzId);
 
     sumIntegral = thrust::transform_reduce(

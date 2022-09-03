@@ -55,8 +55,8 @@ __device__ auto AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t) cons
         }
 
         for(int j = i * LS_step; j < (i + 1) * LS_step; ++j) {
-            int idx = AmpIndices[_CacheIdx][totalAMP + _AmpIdx + 4 + j];
-            ret *= (cResSF_TD[_CacheIdx][evtNum * offset + idx]);
+            int idx = AmpIndices[cacheToUse][totalAMP + _AmpIdx + 4 + j];
+            ret *= (cResSF_TD[cacheToUse][evtNum * offset + idx]);
             // printf("Lineshape %i = (%.7g, %.7g)\n", j, (cResSF_TD[cacheToUse][evtNum*offset + AmpIndices[totalAMP +
             // _AmpIdx + 4 + j]]).real, (cResSF_TD[cacheToUse][evtNum*offset + AmpIndices[totalAMP + _AmpIdx + 4 +
             // j]]).imag);
@@ -67,8 +67,8 @@ __device__ auto AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t) cons
 
         // printf("Lineshape Product = (%.7g, %.7g)\n", ret.real, ret.imag);
         for(int j = i * SF_step; j < (i + 1) * SF_step; ++j) {
-            int idx = AmpIndices[_CacheIdx][totalAMP + _AmpIdx + 4 + numLS + j];
-            ret *= (cResSF_TD[_CacheIdx][evtNum * offset + totalLS + idx].real());
+            int idx = AmpIndices[cacheToUse][totalAMP + _AmpIdx + 4 + numLS + j];
+            ret *= (cResSF_TD[cacheToUse][evtNum * offset + totalLS + idx].real());
             // printf(" SF = %.7g\n", (cResSF_TD[cacheToUse][evtNum*offset + totalLS + AmpIndices[totalAMP + _AmpIdx + 4
             // + numLS + j]].real));
             if(printStatus) {
@@ -94,8 +94,13 @@ __host__ std::vector<unsigned int> AmpCalc_TD::getLineshapeIndices(int totalAMP)
     bool printStatus = false;
 
     std::vector<unsigned int> hostAmpIndices = DebugTools::copyAmpIndicesToHost();
-
-    unsigned int numLS   = hostAmpIndices[_CacheIdx * 500 + totalAMP + _AmpIdx]; //offset the indices by the correct number of Amp4Body_TD PDFs there
+    //printf("_CacheIdx: %i\n");
+    //printf("hostAmpIndices\n");
+    //for(auto idx:hostAmpIndices){
+    //    printf("%i ",idx);
+    //}
+    //printf("\n");
+    unsigned int numLS   = hostAmpIndices[(_CacheIdx * 500) + totalAMP + _AmpIdx]; //offset the indices by the correct number of Amp4Body_TD PDFs there
     unsigned int LS_step = numLS / _nPerm;
 
     std::vector<unsigned int> ret;

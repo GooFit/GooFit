@@ -322,7 +322,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     //static int cacheCount = 0;
 
     cacheToUse            = gCacheCount++; //increment global cache count
-    printf("Assigned cacheToUse value of %i",cacheToUse);
+    printf("Assigned cacheToUse value of %i\n",cacheToUse);
     registerParameter(_DECAY_INFO._tau);
     registerParameter(_DECAY_INFO._xmixing);
     registerParameter(_DECAY_INFO._ymixing);
@@ -527,7 +527,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     //printf("amp_idx_start size: %i, amp_idx size: %i\n", amp_idx_start.size(),amp_idx.size());
 
     //print contents of ampindicies to prove that things are being overwritten each time another amp4body_td is constructed
-    printf("Contents of AmpIndices");
+    printf("Contents of AmpIndices\n");
     for(auto elem: AmpIndices[cacheToUse]){
         printf("%i ",elem);
     }
@@ -538,6 +538,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     }
 
     for(int i = 0; i < _NUM_AMPLITUDES; ++i) {
+        printf("Creating ampcalc_TD with cacheId of %i\n",cacheToUse);
         _AmpCalcs.push_back(new AmpCalc_TD(nPermVec[i], amp_idx_start[i], cacheToUse));
     }
 

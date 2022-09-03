@@ -22,7 +22,7 @@ __device__ auto NormIntegrator_TD::operator()(thrust::tuple<int, int, fptype *, 
 
     ParameterContainer pc;
     unsigned int cacheToUse = pc.getConstant(5);
-
+    cacheToUse = NormIntegrator_TD::_CacheIdx;
     while(pc.funcIdx < dalitzFuncId)
         pc.incrementIndex();
 

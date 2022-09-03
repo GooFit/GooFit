@@ -518,11 +518,11 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     }
 
     MEMCPY_TO_SYMBOL(
-        AmpIndices[cacheToUse], &(amp_idx_start[0]), amp_idx_start.size() * sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(AmpIndices[cacheToUse],
+        AmpIndices, &(amp_idx_start[0]), amp_idx_start.size() * sizeof(unsigned int), cacheToUse * 500 * sizeof(unsigned int), cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(AmpIndices,
                      &(amp_idx[0]),
                      amp_idx.size() * sizeof(unsigned int),
-                     amp_idx_start.size() * sizeof(unsigned int),
+                     (amp_idx_start.size()+ cacheToUse * 500) * sizeof(unsigned int),
                      cudaMemcpyHostToDevice);
     //printf("amp_idx_start size: %i, amp_idx size: %i\n", amp_idx_start.size(),amp_idx.size());
 

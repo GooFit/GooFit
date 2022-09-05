@@ -40,6 +40,6 @@
 [submodule "extern/catch2"]
 	path = extern/catch2
 	url = ../../catchorg/catch2.git
-[submodule "extern/hydra"]
-	path = extern/hydra
-	url = ../../MultithreadCorner/Hydra.git
+[submodule "extern/Hydra"]
+	path = extern/Hydra
+	url = https://github.com/MultithreadCorner/Hydra.git

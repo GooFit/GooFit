@@ -78,6 +78,7 @@ if(NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/cmake_utils/FindThrust.cmake"
    OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/Eigen/CMakeLists.txt"
    OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/FeatureDetector/CMakeLists.txt"
    OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/MCBooster/CMakeLists.txt"
+   OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/Hydra/CMakeLists.txt"
    OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/thrust/README.md")
   message(
     FATAL_ERROR

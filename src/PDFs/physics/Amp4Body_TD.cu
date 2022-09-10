@@ -56,13 +56,15 @@ namespace GooFit {
 struct genExp {
     fptype gamma;
     unsigned int offset;
+    unsigned int seed;
 
-    __host__ __device__ genExp(unsigned int c, fptype d)
+    __host__ __device__ genExp(unsigned int c, fptype d, unsigned int _seed)
         : gamma(d)
-        , offset(c){};
+        , offset(c)
+        , seed(_seed){};
 
     __host__ __device__ auto operator()(unsigned int x) const -> fptype {
-        thrust::random::default_random_engine rand(1431655765);
+        thrust::random::default_random_engine rand(seed);
         thrust::uniform_real_distribution<fptype> dist(0, 1);
 
         rand.discard(x + offset);
@@ -80,7 +82,7 @@ struct exp_functor {
         , gammamin(gammamin)
         , wmax(wmax) {}
 
-    __device__ auto operator()(thrust::tuple<unsigned int, fptype, fptype *, unsigned int> t) -> fptype {
+    __device__ auto operator()(thrust::tuple<unsigned int, fptype, fptype *, unsigned int> t) -> bool {
         int evtNum  = thrust::get<0>(t);
         fptype *evt = thrust::get<2>(t) + (evtNum * thrust::get<3>(t));
         // unsigned int *indices = paramIndices + tmpparam;
@@ -95,7 +97,19 @@ struct exp_functor {
         thrust::uniform_real_distribution<fptype> dist(0, 1);
         rand.discard(tmpoff + evtNum);
 
-        return (dist(rand) * exp(-time * gammamin) * wmax) < thrust::get<1>(t);
+        //NOTE: wmax essentially PDF with decay time all = 0
+        // < thrust::get<1>(t) is PDF with expoential decay time
+        // this is accept-reject method
+        auto proposal =  exp(-time * gammamin) * wmax;
+        auto uniProposal = dist(rand) * proposal;
+        if(proposal< thrust::get<1>(t)) {
+
+            printf("ERROR: Amp4Body_TD::exp_functor: proposal function value smaller than pdf to generate in accept-reject method! Proposal: %f pdf: %f \n", proposal, thrust::get<1>(t));
+
+        }
+        //if(uniProposal < thrust::get<1>(t)) printf("event %d %f %f\n", evtNum, 1000.*uniProposal,1000.*thrust::get<1>(t) );
+        return uniProposal < thrust::get<1>(t);
+        //return true; -> problem same batches -> same events in each sample
         // Should be something like: return thrust::get<1>(t) / exp(-time * gammamin);
     }
 };
@@ -852,7 +866,7 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
     fptype gammamin = 1.0 / tau - fabs(ymixing) / tau;
 
     thrust::transform(
-        index_sequence_begin, index_sequence_begin + nAcc, dtime_d.begin(), genExp(generation_offset, gammamin));
+        index_sequence_begin, index_sequence_begin + nAcc, dtime_d.begin(), genExp(generation_offset+seed, gammamin, seed));
 
     mcbooster::VariableSet_d VarSet_d(5);
     VarSet_d[0] = &SigGen_M12_d;
@@ -902,9 +916,13 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
         thrust::copy(VarSet_d[i]->begin(), VarSet_d[i]->end(), sr.begin());
     }
 
+    //NOTE: _model_m12, _model_m34,         _model_cos12, _model_cos34,
+    //  _model_phi, _model_eventNumber, _model_dtime, _model_sigmat
+
     mcbooster::strided_range<mcbooster::RealVector_d::iterator> sr(DS->begin() + 5, DS->end(), 8);
     thrust::copy(eventNumber, eventNumber + nAcc, sr.begin());
 
+    //NOTE/QUESTION: first setting decay time to 0?
     mcbooster::strided_range<mcbooster::RealVector_d::iterator> sr2(DS->begin() + 6, DS->end(), 8);
     thrust::fill_n(sr2.begin(), nAcc, 0);
 
@@ -932,6 +950,9 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
 
     fptype wmax = 1.1 * (fptype)*thrust::max_element(weights.begin(), weights.end());
 
+    printf("maxweight %.10f %.10f \n", wmax ,maxWeight);
+
+    /*
     if(wmax > maxWeight && maxWeight != 0) {
         throw GooFit::GeneralError(
             "WARNING: you just encountered a higher maximum weight than observed in previous iterations.\n"
@@ -940,11 +961,14 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
             maxWeight,
             wmax);
     }
+    */
 
     maxWeight = wmax > maxWeight ? wmax : maxWeight;
+    printf("maxweight2 %f %f \n", wmax ,maxWeight);
 
+    //QUESTION: why are we doing this? -> copying decay tiems, where we evaluate function for accept-reject
     thrust::copy(dtime_d.begin(), dtime_d.end(), sr2.begin());
-
+    auto mydtime_h             =mcbooster::RealVector_h(dtime_d);
     dtime_d = mcbooster::RealVector_d();
     thrust::device_vector<fptype> results(nAcc);
 
@@ -954,16 +978,18 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
                       *logger);
 
     setFitControl(fc);
-
+    fptype wmax_sample =(fptype)*thrust::max_element(results.begin(), results.end());
+    printf("maxweight sample %f %f \n", wmax_sample, wmax);
     cudaDeviceSynchronize();
 
-    thrust::device_vector<fptype> flag2(nAcc); // Should be weight2
+    thrust::device_vector<bool> flag2(nAcc); // Should be weight2
     thrust::counting_iterator<mcbooster::GLong_t> first(0);
     // thrust::counting_iterator<mcbooster::GLong_t> last = first + nAcc;
 
     // we do not want to copy the whole class to the GPU so capturing *this is not a great option
     // therefore perpare local copies to capture the variables we need
     unsigned int tmpoff   = generation_offset;
+    //QUESTION: why is tmpparam 6, decay time should be 5? -> no, 6 is correct
     unsigned int tmpparam = 6;
     wmax                  = maxWeight;
 
@@ -982,6 +1008,13 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
     gooFree(dev_event_array);
 
     auto weights_h = mcbooster::RealVector_h(weights);
+    
+     for(auto i : mydtime_h) {
+        //printf("dtime: %.10f \n", i);
+    }
+    for(auto i : weights_h) {
+        //printf("weight: %.10f \n", 1.1*i);
+    }
     auto results_h = mcbooster::RealVector_h(results);
     auto flags_h   = mcbooster::BoolVector_h(flag2);
     cudaDeviceSynchronize();

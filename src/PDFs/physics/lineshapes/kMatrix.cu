@@ -110,22 +110,22 @@ __device__ auto kMatrixFunctionNew(fptype Mpair, fptype m1, fptype m2, Parameter
 __device__ resonance_function_ptr ptr_to_kMatrixNew = kMatrixFunctionNew;
 
 Lineshapes::kMatrixNew::kMatrixNew(std::string name,
-                             Variable a_r,
-                             Variable a_i,
-                             Variable sA0,
-                             Variable sA,
-                             Variable s0_prod,
-                             Variable s0_scatt,
-                             std::vector<Variable> beta_r,
-                             std::vector<Variable> beta_i,
-                             std::vector<Variable> f_prod_r,
-                             std::vector<Variable> f_prod_i,
-                             std::vector<Variable> fscat,
-                             std::vector<Variable> poles,
-                             unsigned int L,
-                             unsigned int Mpair,
-                             FF FormFac,
-                             fptype radius)
+                                   Variable a_r,
+                                   Variable a_i,
+                                   Variable sA0,
+                                   Variable sA,
+                                   Variable s0_prod,
+                                   Variable s0_scatt,
+                                   std::vector<Variable> beta_r,
+                                   std::vector<Variable> beta_i,
+                                   std::vector<Variable> f_prod_r,
+                                   std::vector<Variable> f_prod_i,
+                                   std::vector<Variable> fscat,
+                                   std::vector<Variable> poles,
+                                   unsigned int L,
+                                   unsigned int Mpair,
+                                   FF FormFac,
+                                   fptype radius)
     : Lineshape("kMatrixNew", name, L, Mpair, FormFac, radius) {
     if(fscat.size() != NCHANNELS)
         throw GooFit::GeneralError("You must have {} channels in fscat, not {}", NCHANNELS, fscat.size());

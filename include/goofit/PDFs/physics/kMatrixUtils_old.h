@@ -11,7 +11,7 @@ __device__ fptype phsp_fourPi_old(fptype s);
 
 __device__ Eigen::Array<fpcomplex, NCHANNELS, NCHANNELS>
 getPropagator_old(const Eigen::Array<fptype, NCHANNELS, NCHANNELS> &kMatrix,
-              const Eigen::Matrix<fptype, 5, 1> &phaseSpace,
-              fptype adlerTerm);
+                  const Eigen::Matrix<fptype, 5, 1> &phaseSpace,
+                  fptype adlerTerm);
 
 } // namespace GooFit

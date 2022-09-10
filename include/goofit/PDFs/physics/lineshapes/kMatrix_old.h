@@ -10,27 +10,25 @@
 namespace GooFit {
 namespace Lineshapes {
 
-class kMatrixNew : public Lineshape {
+class kMatrix : public Lineshape {
   public:
-    kMatrixNew(std::string name,
-            Variable a_r,
-            Variable a_i,
+    kMatrix(std::string name,
+            unsigned int pterm, //< 0 or 1
+            bool is_pole,       //< False for prod
             Variable sA0,
             Variable sA,
             Variable s0_prod,
             Variable s0_scatt,
-            std::vector<Variable> beta_r,
-            std::vector<Variable> beta_i,
-            std::vector<Variable> f_prod_r,
-            std::vector<Variable> f_prod_i,
             std::vector<Variable> fscat,
             std::vector<Variable> poles,
+            Variable mass,
+            Variable width,
             unsigned int L,
             unsigned int Mpair,
-            FF FormFac,
-            fptype radius);
+            FF FormFac    = FF::BL_Prime,
+            fptype radius = 1.5);
 
-    ~kMatrixNew() override = default;
+    ~kMatrix() override = default;
 };
 
 } // namespace Lineshapes

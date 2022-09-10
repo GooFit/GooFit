@@ -15,7 +15,7 @@
 
 namespace GooFit {
 
-__device__ auto kMatrixFunction(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -> fpcomplex {
+__device__ auto kMatrixFunctionNew(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -> fpcomplex {
     // kMatrix amplitude as described in https://arxiv.org/pdf/0804.2089.pdf, compared with AmpGen implementation
 
     // parameter index
@@ -107,9 +107,9 @@ __device__ auto kMatrixFunction(fptype Mpair, fptype m1, fptype m2, ParameterCon
     return ret;
 } // kMatrixFunction
 
-__device__ resonance_function_ptr ptr_to_kMatrix = kMatrixFunction;
+__device__ resonance_function_ptr ptr_to_kMatrixNew = kMatrixFunctionNew;
 
-Lineshapes::kMatrix::kMatrix(std::string name,
+Lineshapes::kMatrixNew::kMatrixNew(std::string name,
                              Variable a_r,
                              Variable a_i,
                              Variable sA0,
@@ -126,7 +126,7 @@ Lineshapes::kMatrix::kMatrix(std::string name,
                              unsigned int Mpair,
                              FF FormFac,
                              fptype radius)
-    : Lineshape("kMatrix", name, L, Mpair, FormFac, radius) {
+    : Lineshape("kMatrixNew", name, L, Mpair, FormFac, radius) {
     if(fscat.size() != NCHANNELS)
         throw GooFit::GeneralError("You must have {} channels in fscat, not {}", NCHANNELS, fscat.size());
 
@@ -158,7 +158,7 @@ Lineshapes::kMatrix::kMatrix(std::string name,
         registerParameter(poles.at(i));
     }
 
-    registerFunction("ptr_to_kMatrix", ptr_to_kMatrix);
+    registerFunction("ptr_to_kMatrixNew", ptr_to_kMatrixNew);
 
     initialize();
 }

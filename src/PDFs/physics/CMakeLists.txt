@@ -2,7 +2,7 @@
 file(GLOB_RECURSE GOOFIT_PHYSICS_HEADERS "${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/*.h")
 
 if(GOOFIT_KMATRIX)
-  set(GOOFIT_KMATRIX_SOURCE lineshapes/kMatrix.cu resonances/kMatrix.cu kMatrixUtils.cu)
+  set(GOOFIT_KMATRIX_SOURCE lineshapes/kMatrix.cu lineshapes/kMatrix_old.cu resonances/kMatrix.cu kMatrixUtils.cu kMatrixUtils_old.cu)
 else()
   set(GOOFIT_KMATRIX_SOURCE)
 endif()

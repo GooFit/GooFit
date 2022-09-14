@@ -122,6 +122,55 @@ AddPdf::AddPdf(std::string n, std::vector<Variable> weights, std::vector<PdfBase
 
     initialize();
 }
+//constructor for fits with Gaussian constraints
+AddPdf::AddPdf(std::string n, std::vector<Variable> weights, std::vector<PdfBase *> comps, double sig_mean, double sig_unc, double bkg_mean, double bkg_unc,double ratio_mean, double ratio_unc)
+    : CombinePdf("AddPdf", n)
+    , extended(true) {
+    if(weights.size() != comps.size() && (weights.size() + 1) != comps.size())
+        throw GooFit::GeneralError("Size of weights {} (+1) != comps {}", weights.size(), comps.size());
+
+    // Indices stores (function index)(function parameter index)(weight index) triplet for each component.
+    // Last component has no weight index unless function is extended.
+    for(PdfBase *p : comps) {
+        components.push_back(p);
+        if(components.back() == nullptr)
+            throw GooFit::GeneralError("Invalid component");
+    }
+
+    observablesList = getObservables();
+
+    for(unsigned int w = 0; w < weights.size(); ++w) {
+        if(components[w] == nullptr)
+            throw GooFit::GeneralError("Invalid component");
+        registerParameter(weights[w]);
+    }
+
+    if(components.back() == nullptr)
+        throw GooFit::GeneralError("Invalid component");
+
+    if(weights.size() < components.size()) {
+        extended = false;
+    }
+
+    if(extended) {
+        registerFunction("ptr_to_AddPdfsExt", ptr_to_AddPdfsExt);
+        host_fcn_ptr                       = get_device_symbol_address(ptr_to_AddPdfsExt);
+        functionPtrToNameMap[host_fcn_ptr] = "AddPdfsExt";
+    } else {
+        registerFunction("ptr_to_AddPdfs", ptr_to_AddPdfs);
+        host_fcn_ptr                       = get_device_symbol_address(ptr_to_AddPdfs);
+        functionPtrToNameMap[host_fcn_ptr] = "AddPdfs";
+    }
+    //add mean and uncertainties for Gaussian constraints
+    registerConstant(sig_mean);
+    registerConstant(sig_unc);
+    registerConstant(bkg_mean);
+    registerConstant(bkg_unc);
+    registerConstant(ratio_mean);
+    registerConstant(ratio_unc);
+    initialize();
+}
+
 
 AddPdf::AddPdf(std::string n, Variable frac1, PdfBase *func1, PdfBase *func2)
     : CombinePdf("AddPdf", n, frac1)
@@ -199,6 +248,18 @@ __host__ auto AddPdf::calculateNLL() -> double {
         ret += (expEvents - numEvents * log(expEvents));
     }
 
+    //printf("Applying Gaussian constraints with sig_mean:%.7g, sig_unc:%.7g, bkg_mean:%.7g, bkg_unc:%.7g, ratio_mean:%.7g, ratio_unc:%.7g",sig_mean,sig_unc,bkg_mean,bkg_unc,ratio_mean,ratio_unc);
+
+    ret += 0.5 * (parametersList[0].getValue()- constantsList[0]) * (parametersList[0].getValue()-constantsList[0]) / (constantsList[1] * constantsList[1]); //signal yield constraint
+    ret += 0.5 * (parametersList[1].getValue()- constantsList[2]) * (parametersList[1].getValue()- constantsList[2]) / (constantsList[3] * constantsList[3]); //bkg yield constraint
+    //get ratio information
+    std::vector<Variable> sig_pdf_params = components[0]->getParameters(); //assume signal PDF is the first component
+    double ratio_value = sig_pdf_params[3].getValue(); //in Amp4Body_PDFs the fourth parameter is the ratio. Must check that this is always the case!!!
+    ret += 0.5 * (ratio_value - constantsList[4]) * (ratio_value - constantsList[4]) / (constantsList[5] * constantsList[5]); //ratio constraint
+    //for(auto sig_param: sig_pdf_params){
+    //    printf("sig_param: %.7g",sig_param.getValue());
+    //}
+    //printf("\n");
     return ret * 2.0;
 }
 } // namespace GooFit

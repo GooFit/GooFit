@@ -63,7 +63,7 @@ The difference is subtle but sometimes important.
 class AddPdf : public CombinePdf {
   public:
     AddPdf(std::string n, std::vector<Variable> weights, std::vector<PdfBase *> comps);
-    AddPdf::AddPdf(std::string n, std::vector<Variable> weights, std::vector<PdfBase *> comps, double sig_mean, double sig_unc, double bkg_mean, double bkg_unc,double ratio_mean, double ratio_unc);
+    AddPdf::AddPdf(std::string n, std::vector<Variable> weights, std::vector<PdfBase *> comps, double sig_mean, double sig_unc, double bkg_mean, double bkg_unc,double ratio_mean, double ratio_unc, bool gauss_constraints=false);
     AddPdf(std::string n, Variable frac1, PdfBase *func1, PdfBase *func2);
     __host__ auto normalize() -> fptype override;
     __host__ auto hasAnalyticIntegral() const -> bool override { return false; }
@@ -73,6 +73,7 @@ class AddPdf : public CombinePdf {
 
   private:
     bool extended;
+    bool _gauss_constraints;
 };
 
 } // namespace GooFit

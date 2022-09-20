@@ -345,7 +345,7 @@ __host__ fptype GooPdf::normalize() {
         return 1.0;
     }
 
-    fptype ret = 1;
+    fptype ret = 1.0;
 
     if(hasAnalyticIntegral()) {
         // Loop goes only over observables of this PDF.

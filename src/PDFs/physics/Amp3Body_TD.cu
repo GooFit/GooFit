@@ -35,6 +35,7 @@ __device__ inline auto parIndexFromResIndex(int resIndex) -> int { return resona
 
 __device__ auto getResonanceAmplitude(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
     auto func = reinterpret_cast<resonance_function_ptr>(d_function_table[pc.funcIdx]);
+    //printf("%f \t %f \t %f \t %d \n",m12,m13,m23,pc.funcIdx);
     return (*func)(m12, m13, m23, pc);
 }
 

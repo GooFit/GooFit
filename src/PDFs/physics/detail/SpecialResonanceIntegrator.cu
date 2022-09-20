@@ -20,9 +20,9 @@ __device__ auto device_DalitzPlot_calcIntegrals(fptype m12, fptype m13, int res_
 
     fpcomplex ret;
 
-    if(!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass))
-        return ret;
-
+    if(!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass)){
+        return fpcomplex(0.0,0.0);
+    }
     fptype m23
         = motherMass * motherMass + daug1Mass * daug1Mass + daug2Mass * daug2Mass + daug3Mass * daug3Mass - m12 - m13;
 
@@ -56,12 +56,14 @@ __device__ auto SpecialResonanceIntegrator::operator()(thrust::tuple<int, fptype
     int globalBinNumber  = thrust::get<0>(t);
     fptype lowerBoundM12 = thrust::get<1>(t)[0];
     fptype upperBoundM12 = thrust::get<1>(t)[1];
-    auto numBinsM12      = static_cast<int>(floor(thrust::get<1>(t)[2] + 0.5));
-    int binNumberM12     = globalBinNumber % numBinsM12;
+    int numBinsM12      = static_cast<int>(floor(thrust::get<1>(t)[2] + 0.5));
+    auto binNumberM12     = globalBinNumber % numBinsM12;
     fptype binCenterM12  = upperBoundM12 - lowerBoundM12;
     binCenterM12 /= numBinsM12;
     binCenterM12 *= (binNumberM12 + 0.5);
     binCenterM12 += lowerBoundM12;
+
+    //printf("%d %f %f %d %d %f\n",globalBinNumber,lowerBoundM12,upperBoundM12,numBinsM12,binNumberM12,binCenterM12);
 
     globalBinNumber /= numBinsM12;
     fptype lowerBoundM13 = thrust::get<1>(t)[3];
@@ -74,7 +76,7 @@ __device__ auto SpecialResonanceIntegrator::operator()(thrust::tuple<int, fptype
 
     ParameterContainer pc;
 
-    fptype events[10];
+    fptype events[3];
 
     while(pc.funcIdx < dalitz_i)
         pc.incrementIndex();

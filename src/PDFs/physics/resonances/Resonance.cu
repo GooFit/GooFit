@@ -29,14 +29,19 @@ __device__ auto DaugDecayMomResFrame(fptype rMassSq, fptype d1m, fptype d2m) -> 
     fptype term12 = term1*term2;
     fptype q      = 1.0;
 
+    //printf("%f \t %f  \t %f  \t %f  \t %f \n ",term1,term2,rMassSq,d1m,d2m); 
     if(term12> 0.0){
         q = sqrt(term12)/(2.0*sqrt(rMassSq));
     }else{
-        q = 0.0;
+        GOOFIT_TRACE("term12 < zero!");
+        q = 1.0;
     }
+
 
     return q;
 }
+
+
 
 __device__ auto BachMomResFrame(fptype M, fptype rMassSq, fptype mBach) -> fptype {
     // Momentum of the bachelor particle in the resonance rest frame
@@ -47,7 +52,7 @@ __device__ auto BachMomResFrame(fptype M, fptype rMassSq, fptype mBach) -> fptyp
       fptype p      = 1.0;
 
         if ( eBach<0.0 || termBach<0.0 ) {
-            p = 0.0;
+            p = 1.0;
             GOOFIT_TRACE("eBach<0.0 || termBach<0.0");
         } else {
             p = sqrt( termBach );
@@ -65,7 +70,7 @@ __device__ auto BachMomResFrame(fptype M, fptype rMassSq, fptype mBach) -> fptyp
       fptype pstar      = 1.0;
 
         if ( eStarBach<0.0 || termStarBach<0.0 ) {
-            pstar = 0.0;
+            pstar = 1.0;
             GOOFIT_TRACE("eStarBach<0.0 || termStarBach<0.0");
         } else {
             pstar = sqrt( termStarBach );
@@ -152,6 +157,9 @@ __device__ auto cFromM(
 
 __device__ auto calcLegendrePoly(fptype cosHel, unsigned int spin) -> fptype{
     fptype legPol = 1.0;
+
+    if(spin==0)
+        return 1.0;
 
     switch(spin){
         case 1:

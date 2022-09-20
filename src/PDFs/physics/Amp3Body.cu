@@ -284,14 +284,14 @@ __host__ auto Amp3Body::normalize() -> fptype {
     thrust::counting_iterator<int> eventIndex(eventOffset);
 
     for(int i = 0; i < decayInfo.resonances.size(); ++i) {
-        // grab the index for this resonance.
+        // evaluate pdfs (RBWs)
         calculators[i]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
         calculators[i]->setDalitzIndex(getFunctionIndex());
         if(redoIntegral[i]) {
 #ifdef GOOFIT_MPI
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
-                thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, dataArray, eventSize)),
+                thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
                 strided_range<thrust::device_vector<fpcomplex>::iterator>(
                     cachedWaves[i]->begin(), cachedWaves[i]->end(), 1)
                     .begin(),
@@ -514,6 +514,8 @@ __host__ auto Amp3Body::GenerateSig(unsigned int numEvents, int seed) -> std::
     // Generating numEvents events. Events are all generated inside the phase space with uniform distribution in
     // momentum space. Events must be weighted to have phase space distribution
     phsp.Generate(mcbooster::Vector4R(decayInfo.motherMass, 0.0, 0.0, 0.0));
+
+    phsp.Unweight();
 
     auto d1 = phsp.GetDaughters(0);
     auto d2 = phsp.GetDaughters(1);

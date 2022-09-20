@@ -49,7 +49,7 @@ auto FitManagerMinuit2::fit() -> Minuit2::FunctionMinimum {
     CLI::Timer timer{"The minimization took"};
 
     Minuit2::MnMigrad migrad{fcn_, upar_, strategy};
-
+   
     // Do the minimization
     if(verbosity > 0)
         std::cout << GooFit::gray << GooFit::bold;
@@ -261,7 +261,7 @@ void FitManagerMinuit2::setRandMinuitValues(size_t nSamples) {
 
     for(int ii = 0; ii < nSamples; ii++) {
         for(int i = 0; i < nFPars; i++) {
-            std::normal_distribution<> d{floatVarVal[i], 1};
+            std::uniform_real_distribution<> d(-1.0, 1.0);
             vy(i) = d(gen);
         }
 

@@ -1041,7 +1041,7 @@ __device__ fptype calculateNLL (fptype rawPdf,
                                 fptype* evtVal,
                                 fptype norm) {
   rawPdf *= norm;
-  return rawPdf > 0 ? -log(rawPdf) : 0;
+  return rawPdf > 0. ? -0.25*log(rawPdf) : 0.;
 }
 
 __device__ fptype calculateProb (fptype rawPdf,

@@ -55,7 +55,7 @@ __device__ auto SpecialWaveCalculator::operator()(thrust::tuple<int, fptype *, i
     tmp                    = pc;
     fpcomplex bi           = getResonanceAmplitude(m13, m12, m23, tmp);
 
-    // printf("Amplitudes %f, %f => (%f %f) (%f %f)\n", m12, m13, ai.real, ai.imag, bi.real, bi.imag);
+   // printf("Amplitudes %f, %f => (%f %f) (%f %f)\n", m12, m13, ai.real, ai.imag, bi.real, bi.imag);
 
     ret.ai_real = ai.real();
     ret.ai_imag = ai.imag();

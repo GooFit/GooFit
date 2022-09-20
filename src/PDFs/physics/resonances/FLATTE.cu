@@ -16,6 +16,8 @@ getAmplitudeCoefficients(fpcomplex a1, fpcomplex a2, fptype &a1sq, fptype &a2sq,
     a1a2imag = a1.imag();
 }
 
+
+template <int I>
 __device__ auto flatte(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
     // indices[1] is unused constant index, for consistency with other function types.
     fptype resmass            = pc.getParameter(0);
@@ -23,7 +25,6 @@ __device__ auto flatte(fptype m12, fptype m13, fptype m23, ParameterContainer &p
     fptype g2                 = pc.getParameter(2);
     unsigned int particle     = pc.getConstant(0);
     unsigned int cyclic_index = pc.getConstant(1);
-    unsigned int doSwap       = pc.getConstant(2);
 
 
     const fptype pipmass = 0.13957018;
@@ -55,8 +56,9 @@ __device__ auto flatte(fptype m12, fptype m13, fptype m23, ParameterContainer &p
     fpcomplex ret(0., 0.);
     
     fptype rho1(0.0), rho2(0.0);
-    
-    for(int i = 0; i < 1 + doSwap; i++) {
+
+#pragma unroll    
+    for(int i = 0; i < I; i++) {
         fptype s = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
         fptype resmass2 = POW2(resmass);
         fptype dMSq = resmass2 - s;
@@ -106,17 +108,18 @@ __device__ auto flatte(fptype m12, fptype m13, fptype m23, ParameterContainer &p
 
         ret += resAmplitude;
        
-        if(doSwap) {
+        if(I!=0) {
             fptype swpmass = m12;
             m12            = m13;
             m13            = swpmass;
         }
     }
-    pc.incrementIndex(1, 3, 3, 0, 1);
+    pc.incrementIndex(1, 3, 2, 0, 1);
     return ret ;
 }
 
-__device__ resonance_function_ptr ptr_to_FLATTE = flatte;
+__device__ resonance_function_ptr ptr_to_FLATTE = flatte<1>;
+__device__ resonance_function_ptr ptr_to_FLATTE_SYM = flatte<2>;
 
 namespace Resonances {
 
@@ -136,9 +139,11 @@ FLATTE::FLATTE(std::string name,
 
     registerConstant(particle);
     registerConstant(cyc);
-    registerConstant(symmDP);
-
-    registerFunction("ptr_to_FLATTE", ptr_to_FLATTE);
+   
+    if(symmDP)
+        registerFunction("ptr_to_FLATTE_SYM", ptr_to_FLATTE_SYM);
+    else
+        registerFunction("ptr_to_FLATTE", ptr_to_FLATTE);
 }
 
 } // namespace Resonances

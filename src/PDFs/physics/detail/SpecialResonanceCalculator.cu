@@ -23,11 +23,11 @@ __device__ auto SpecialResonanceCalculator::operator()(thrust::tuple<int, fptype
     int id_m12 = pc.getObservable(0);
     int id_m13 = pc.getObservable(1);
 
-    fptype m12 = RO_CACHE(evt[id_m12]);
-    fptype m13 = RO_CACHE(evt[id_m13]);
+    fptype m12 = evt[id_m12];
+    fptype m13 = evt[id_m13];
 
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass))
-        return ret;
+        return fpcomplex(0.0,0.0);
 
     // m12, m23 and m13 stand for the squared invariant masses.
     // Now fixed.
@@ -38,6 +38,8 @@ __device__ auto SpecialResonanceCalculator::operator()(thrust::tuple<int, fptype
         pc.incrementIndex();
 
     ret = getResonanceAmplitude(m12, m13, m23, pc);
+
+  //  printf("Resonance norm = %f \n",sqrt(ret.real()*ret.real() + ret.imag()*ret.imag()));
 
     return ret;
 }

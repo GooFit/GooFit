@@ -24,7 +24,7 @@ __device__ auto device_Tddp_calcIntegrals(fptype m12, fptype m13, int res_i, int
     ThreeComplex ret;
 
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass))
-        return ret;
+        return ThreeComplex(0.,0.,0.,0.,0.,0.);
 
     fptype m23 = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass
                  + c_daug3Mass * c_daug3Mass - m12 - m13;

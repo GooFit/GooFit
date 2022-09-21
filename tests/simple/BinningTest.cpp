@@ -54,7 +54,8 @@ TEST_CASE("Variations on a exp fit", "[simple][fit][exp]") {
     fitter.fit();
     CHECK(fitter);
 
-    CHECK(alpha.getError() < 1 / sqrt(N) * fabs(alpha.getValue()));
+    double err = 1 / sqrt(N) * fabs(alpha.getValue());
+    CHECK(alpha.getError() < 3 * err);
     CHECK(alpha.getValue() == Approx(-1.5).epsilon(3 / sqrt(N)));
 }
 
@@ -108,8 +109,10 @@ TEST_CASE("Variations on a dual fit", "[simple][fit][exp]") {
     fitter.fit();
 
     CHECK(fitter);
-    CHECK(xalpha.getError() < 1 / sqrt(N) * fabs(xalpha.getValue()));
-    CHECK(yalpha.getError() < 1 / sqrt(N) * fabs(yalpha.getValue()));
+    double xerr = 1 / sqrt(N) * fabs(xalpha.getValue());
+    double yerr = 1 / sqrt(N) * fabs(yalpha.getValue());
+    CHECK(xalpha.getError() < 3. * xerr);
+    CHECK(yalpha.getError() < 3. * yerr);
     CHECK(xalpha.getValue() == Approx(-1.5).epsilon(3 / sqrt(N)));
     CHECK(yalpha.getValue() == Approx(-.75).epsilon(3 / sqrt(N)));
 }
@@ -167,10 +170,14 @@ TEST_CASE("Dual fit with different fitter variable", "[simple][fit][gauss]") {
     fitter.fit();
 
     CHECK(fitter);
-    CHECK(xalpha.getError() < 1 / sqrt(N) * fabs(xalpha.getValue()));
-    CHECK(yalpha.getError() < 1 / sqrt(N) * fabs(yalpha.getValue()));
-    CHECK(xsigma.getError() < 1 / sqrt(N) * fabs(xsigma.getValue()));
-    CHECK(ysigma.getError() < 1 / sqrt(N) * fabs(ysigma.getValue()));
+    double xaerr = 1 / sqrt(N) * fabs(xalpha.getValue());
+    double yaerr = 1 / sqrt(N) * fabs(yalpha.getValue());
+    double xserr = 1 / sqrt(N) * fabs(xsigma.getValue());
+    double yserr = 1 / sqrt(N) * fabs(ysigma.getValue());
+    CHECK(xalpha.getError() < 3. * xaerr);
+    CHECK(yalpha.getError() < 3. * yaerr);
+    CHECK(xsigma.getError() < 3. * xserr);
+    CHECK(ysigma.getError() < 3. * yserr);
 
     CAPTURE(1 / sqrt(N));
     CAPTURE(binned);

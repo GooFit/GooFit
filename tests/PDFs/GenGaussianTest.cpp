@@ -33,9 +33,12 @@ TEST_CASE_METHOD(PdfTest1D, "Gaussian", "[fit][gaussian]") {
     INFO(fit());
     REQUIRE(result());
 
-    CHECK(mean.getError() < .01);
-    CHECK(mean.getValue() == Approx(mean_ans).epsilon(.01));
+    int n       = 10000;
+    double merr = mean.getValue() / sqrt(n);
+    double serr = sigma.getValue() / sqrt(n);
+    CHECK(mean.getError() < 3. * merr);
+    CHECK(mean.getValue() == Approx(mean_ans).epsilon(3. / sqrt(n)));
 
-    CHECK(sigma.getError() < .01);
-    CHECK(sigma.getValue() == Approx(sigma_ans).epsilon(.01));
+    CHECK(sigma.getError() < 3. * serr);
+    CHECK(sigma.getValue() == Approx(sigma_ans).epsilon(3. / sqrt(n)));
 }

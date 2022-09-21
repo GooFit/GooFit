@@ -184,7 +184,7 @@ __host__ auto AddPdf::normalize() -> fptype {
 }
 
 __host__ auto AddPdf::calculateNLL() -> double {
-    double ret = GooPdf::calculateNLL() / 2.0;
+    double ret = GooPdf::calculateNLL();
 
     if(extended) {
         fptype expEvents = 0;
@@ -199,6 +199,6 @@ __host__ auto AddPdf::calculateNLL() -> double {
         ret += (expEvents - numEvents * log(expEvents));
     }
 
-    return ret * 2.0;
+    return ret;
 }
 } // namespace GooFit

@@ -177,7 +177,7 @@ TEST_CASE("Dual fit with different fitter variable", "[simple][fit][gauss]") {
     CHECK(xalpha.getError() == Approx(xaerr).epsilon(0.1));
     CHECK(yalpha.getError() == Approx(yaerr).epsilon(0.1));
     CHECK(xsigma.getError() == Approx(xserr).epsilon(0.1));
-    CHECK(ysigma.getError() == Approx(xserr).epsilon(0.1));
+    CHECK(ysigma.getError() == Approx(yserr).epsilon(0.1));
 
     CAPTURE(1 / sqrt(N));
     CAPTURE(binned);

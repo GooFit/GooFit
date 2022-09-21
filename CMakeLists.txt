@@ -90,6 +90,8 @@ set(CMAKE_MODULE_PATH "${GOOFIT_SOURCE_DIR}/extern/cmake_utils" ${CMAKE_MODULE_P
 include("${GOOFIT_SOURCE_DIR}/extern/modern_cmake/ModernCMakeUtils.cmake")
 include("${GOOFIT_SOURCE_DIR}/extern/modern_cmake/ModernCUDA.cmake")
 
+#set(HYDRA_INCLUDE_DIR "${GOOFIT_SOURCE_DIR}/extern/Hydra")
+
 # Add clang-tidy if available
 option(GOOFIT_TIDY "Add clang-tidy")
 option(GOOFIT_TIDY_FIX "Perform fixes for Clang-Tidy - changes source inplace")
@@ -132,7 +134,7 @@ configure_file("${GOOFIT_SOURCE_DIR}/include/goofit/detail/ThrustOverrideConfig.
                "${GOOFIT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h")
 
 set(CMAKE_CXX_STANDARD
-    "11"
+    "14"
     CACHE STRING
           "Set a version of C++ standerd (11,14,...) to use. Must match ROOT if using ROOT.")
 set(CMAKE_CUDA_STANDARD
@@ -463,6 +465,15 @@ set_target_properties(fmt PROPERTIES FOLDER extern)
 mark_as_advanced(FMT_CPPFORMAT FMT_DOC FMT_INSTALL FMT_PEDANTIC FMT_TEST FMT_USE_CPP11)
 target_link_libraries(GooFit_Common INTERFACE fmt)
 
+#Hydra
+#add_subdirectory("extern/Hydra")
+#set_target_properties(Hydra PROPERTIES FOLDER extern)
+#target_link_libraries(GooFit_Common INTERFACE Hydra)
+#target_compile_options(Hydra PRIVATE $<BUILD_INTERFACE:${GOOFIT_OPTI}>)
+add_library(Hydra INTERFACE)
+target_include_directories(Hydra SYSTEM INTERFACE "${GOOFIT_SOURCE_DIR}/extern/Hydra/hydra/")
+target_link_libraries(GooFit_Common INTERFACE Hydra)
+
 add_library(rang INTERFACE)
 target_include_directories(rang SYSTEM INTERFACE "${GOOFIT_SOURCE_DIR}/extern/rang/include")
 target_link_libraries(GooFit_Common INTERFACE rang)
@@ -760,6 +771,7 @@ set(CPACK_SOURCE_IGNORE_FILES
     /extern/fmt/doc
     /extern/pybind11/docs
     /extern/Eigen/doc
+    /extern/Hydra/examples
     .swp
     /.all-contributorsrc
     /.appveyor.yml

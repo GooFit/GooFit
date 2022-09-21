@@ -16,6 +16,12 @@
 #include <sys/time.h>
 #include <sys/times.h>
 
+#include <hydra/Function.h>
+#include <hydra/GaussKronrodAdaptiveQuadrature.h>
+#include <hydra/Lambda.h>
+#include <hydra/host/System.h>
+#include <hydra/device/System.h>
+
 using namespace GooFit;
 
 int main(int argc, char **argv) {

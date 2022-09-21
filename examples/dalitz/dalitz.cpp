@@ -28,6 +28,8 @@
 #include <goofit/Variable.h>
 #include <goofit/utilities/Style.h>
 
+#include <Hydra/Function.h>
+
 using namespace GooFit;
 
 Variable fixedRhoMass("rho_mass", 0.7758, 0.01, 0.7, 0.8);

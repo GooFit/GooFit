@@ -26,6 +26,6 @@ TEST_CASE_METHOD(PdfTest1D, "Argus generate and fit", "[gen][fit][argus]") {
     int n      = 10000;
     double err = xi.getValue() / sqrt(n);
     // TODO: Is this reasonable?
-    CHECK(xi.getError() < 3. * err);
+    CHECK(xi.getError() < 5. * err);
     CHECK(xi.getValue() == Approx(answer).epsilon(3. / sqrt(n)));
 }

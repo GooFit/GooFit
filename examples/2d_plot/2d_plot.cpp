@@ -22,6 +22,7 @@
 #include <hydra/host/System.h>
 #include <hydra/device/System.h>
 
+
 using namespace GooFit;
 
 int main(int argc, char **argv) {

@@ -78,7 +78,7 @@ if(NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/cmake_utils/FindThrust.cmake"
    OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/Eigen/CMakeLists.txt"
    OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/FeatureDetector/CMakeLists.txt"
    OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/MCBooster/CMakeLists.txt"
-   OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/Hydra/CMakeLists.txt"
+   #OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/Hydra/CMakeLists.txt"
    OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/thrust/README.md")
   message(
     FATAL_ERROR
@@ -470,9 +470,11 @@ target_link_libraries(GooFit_Common INTERFACE fmt)
 #set_target_properties(Hydra PROPERTIES FOLDER extern)
 #target_link_libraries(GooFit_Common INTERFACE Hydra)
 #target_compile_options(Hydra PRIVATE $<BUILD_INTERFACE:${GOOFIT_OPTI}>)
-add_library(Hydra INTERFACE)
-target_include_directories(Hydra SYSTEM INTERFACE "${GOOFIT_SOURCE_DIR}/extern/Hydra/hydra/")
-target_link_libraries(GooFit_Common INTERFACE Hydra)
+#set(HYDRA_INCLUDE_DIR "${GOOFIT_SOURCE_DIR}/extern/Hydra")
+#add_subdirectory("extern/Hydra")
+add_library(hydra INTERFACE)
+target_include_directories(hydra INTERFACE "${GOOFIT_SOURCE_DIR}/extern/Hydra")
+target_link_libraries(GooFit_Common INTERFACE hydra)
 
 add_library(rang INTERFACE)
 target_include_directories(rang SYSTEM INTERFACE "${GOOFIT_SOURCE_DIR}/extern/rang/include")

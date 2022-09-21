@@ -54,7 +54,7 @@ TEST_CASE("Variations on a exp fit", "[simple][fit][exp]") {
     fitter.fit();
     CHECK(fitter);
 
-    double err = 1 / sqrt(N) * fabs(alpha.getValue())
+    double err = 1 / sqrt(N) * fabs(alpha.getValue());
     CHECK(alpha.getError() == Approx(err).epsilon(0.1));
     CHECK(alpha.getValue() == Approx(-1.5).epsilon(3 / sqrt(N)));
 }

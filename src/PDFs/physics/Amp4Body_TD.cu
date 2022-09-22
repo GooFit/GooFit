@@ -910,6 +910,9 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
 
     phsp.FreeResources();
     // QUESTION: why 8 variables per event? Is 8th variable filled?
+    // ANSWER: _model_m12, _model_m34,         _model_cos12, _model_cos34,
+    //   _model_phi, _model_eventNumber, _model_dtime, _model_sigmat
+    // -> 8th parameter is decay-time resolution -> not important when generating with truth resolution
     auto DS = new mcbooster::RealVector_d(8 * nAcc);
     thrust::counting_iterator<int> eventNumber(0);
 
@@ -920,13 +923,13 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
         thrust::copy(VarSet_d[i]->begin(), VarSet_d[i]->end(), sr.begin());
     }
 
-    // NOTE: _model_m12, _model_m34,         _model_cos12, _model_cos34,
-    //   _model_phi, _model_eventNumber, _model_dtime, _model_sigmat
+   
 
     mcbooster::strided_range<mcbooster::RealVector_d::iterator> sr(DS->begin() + 5, DS->end(), 8);
     thrust::copy(eventNumber, eventNumber + nAcc, sr.begin());
 
     // NOTE/QUESTION: first setting decay time to 0?
+    // ANSWER: evaluate envelope function at decay time equal zero
     mcbooster::strided_range<mcbooster::RealVector_d::iterator> sr2(DS->begin() + 6, DS->end(), 8);
     thrust::fill_n(sr2.begin(), nAcc, 0);
 
@@ -954,7 +957,7 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
 
     fptype wmax = 1.1 * (fptype)*thrust::max_element(weights.begin(), weights.end());
 
-    /*
+
     if(wmax > maxWeight && maxWeight != 0) {
         throw GooFit::GeneralError(
             "WARNING: you just encountered a higher maximum weight than observed in previous iterations.\n"
@@ -963,7 +966,7 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
             maxWeight,
             wmax);
     }
-    */
+
 
     maxWeight = wmax > maxWeight ? wmax : maxWeight;
 
@@ -1007,13 +1010,6 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
     gooFree(dev_event_array);
 
     auto weights_h = mcbooster::RealVector_h(weights);
-
-    for(auto i : mydtime_h) {
-        // printf("dtime: %.10f \n", i);
-    }
-    for(auto i : weights_h) {
-        // printf("weight: %.10f \n", 1.1*i);
-    }
     auto results_h = mcbooster::RealVector_h(results);
     auto flags_h   = mcbooster::BoolVector_h(flag2);
     cudaDeviceSynchronize();

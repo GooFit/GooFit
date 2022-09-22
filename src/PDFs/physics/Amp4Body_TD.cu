@@ -74,8 +74,10 @@ struct genExp {
 };
 
 struct exp_functor {
-    size_t tmpparam, tmpoff;
-    fptype gammamin, wmax;
+    size_t tmpparam; // index to access decay time in event array
+    size_t tmpoff;  // offset for discard() -> should correspond to the number of already generated events/batch size
+    fptype gammamin; // effective Gamma
+    fptype wmax; // maximum value for envelope function
     exp_functor(size_t tmpparam, size_t tmpoff, fptype gammamin, fptype wmax)
         : tmpparam(tmpparam)
         , tmpoff(tmpoff)
@@ -84,33 +86,30 @@ struct exp_functor {
 
     __device__ auto operator()(thrust::tuple<unsigned int, fptype, fptype *, unsigned int> t) -> bool {
         int evtNum  = thrust::get<0>(t);
+        auto val_pdf_to_gen = thrust::get<1>(t);
         fptype *evt = thrust::get<2>(t) + (evtNum * thrust::get<3>(t));
-        // unsigned int *indices = paramIndices + tmpparam;
+        /*
+        t0: event number
+        t1: values of pdf to generate (full model with decay-time dependence)
+        t2: pointer to event array
+        t3: event size
+        */
 
-        // while
-        //    fptype time = evt[indices[8 + indices[0]]];
-
-        // we are grabbing the time out
         fptype time = evt[tmpparam];
 
         thrust::random::minstd_rand0 rand(1431655765);
         thrust::uniform_real_distribution<fptype> dist(0, 1);
         rand.discard(tmpoff + evtNum);
 
-        //NOTE: wmax essentially PDF with decay time all = 0
-        // < thrust::get<1>(t) is PDF with expoential decay time
-        // this is accept-reject method
-        auto proposal =  exp(-time * gammamin) * wmax;
-        auto uniProposal = dist(rand) * proposal;
-        if(proposal< thrust::get<1>(t)) {
-
-            printf("ERROR: Amp4Body_TD::exp_functor: proposal function value smaller than pdf to generate in accept-reject method! Proposal: %f pdf: %f \n", proposal, thrust::get<1>(t));
+        // accept-reject method
+        auto val_pdf_envelope =  exp(-time * gammamin) * wmax;
+        auto rand_uniform = dist(rand) ;
+        if(val_pdf_envelope < thrust::get<1>(t)) {
+            printf("ERROR: Amp4Body_TD::exp_functor: value of envelope function smaller than pdf to generate in accept-reject method! envelope: %f pdf: %f decay time: %f expo: %f\n", val_pdf_envelope, val_pdf_to_gen, time, exp(-time * gammamin));
 
         }
-        //if(uniProposal < thrust::get<1>(t)) printf("event %d %f %f\n", evtNum, 1000.*uniProposal,1000.*thrust::get<1>(t) );
-        return uniProposal < thrust::get<1>(t);
-        //return true; -> problem same batches -> same events in each sample
-        // Should be something like: return thrust::get<1>(t) / exp(-time * gammamin);
+        return rand_uniform * val_pdf_envelope < val_pdf_to_gen;
+
     }
 };
 
@@ -905,7 +904,7 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
     VarSet[5] = dtime_h;
 
     phsp.FreeResources();
-
+    //QUESTION: why 8 variables per event? Is 8th variable filled?
     auto DS = new mcbooster::RealVector_d(8 * nAcc);
     thrust::counting_iterator<int> eventNumber(0);
 
@@ -950,7 +949,6 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
 
     fptype wmax = 1.1 * (fptype)*thrust::max_element(weights.begin(), weights.end());
 
-    printf("maxweight %.10f %.10f \n", wmax ,maxWeight);
 
     /*
     if(wmax > maxWeight && maxWeight != 0) {
@@ -964,7 +962,6 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
     */
 
     maxWeight = wmax > maxWeight ? wmax : maxWeight;
-    printf("maxweight2 %f %f \n", wmax ,maxWeight);
 
     //QUESTION: why are we doing this? -> copying decay tiems, where we evaluate function for accept-reject
     thrust::copy(dtime_d.begin(), dtime_d.end(), sr2.begin());
@@ -978,8 +975,6 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
                       *logger);
 
     setFitControl(fc);
-    fptype wmax_sample =(fptype)*thrust::max_element(results.begin(), results.end());
-    printf("maxweight sample %f %f \n", wmax_sample, wmax);
     cudaDeviceSynchronize();
 
     thrust::device_vector<bool> flag2(nAcc); // Should be weight2

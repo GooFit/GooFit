@@ -923,8 +923,6 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
         thrust::copy(VarSet_d[i]->begin(), VarSet_d[i]->end(), sr.begin());
     }
 
-   
-
     mcbooster::strided_range<mcbooster::RealVector_d::iterator> sr(DS->begin() + 5, DS->end(), 8);
     thrust::copy(eventNumber, eventNumber + nAcc, sr.begin());
 
@@ -957,7 +955,6 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
 
     fptype wmax = 1.1 * (fptype)*thrust::max_element(weights.begin(), weights.end());
 
-
     if(wmax > maxWeight && maxWeight != 0) {
         throw GooFit::GeneralError(
             "WARNING: you just encountered a higher maximum weight than observed in previous iterations.\n"
@@ -966,7 +963,6 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
             maxWeight,
             wmax);
     }
-
 
     maxWeight = wmax > maxWeight ? wmax : maxWeight;
 

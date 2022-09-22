@@ -10,9 +10,9 @@
 namespace GooFit {
 namespace Lineshapes {
 
-class kMatrixNew : public Lineshape {
+class kMatrix : public Lineshape {
   public:
-    kMatrixNew(std::string name,
+    kMatrix(std::string name,
             Variable a_r,
             Variable a_i,
             Variable sA0,
@@ -30,7 +30,7 @@ class kMatrixNew : public Lineshape {
             FF FormFac,
             fptype radius);
 
-    ~kMatrixNew() override = default;
+    ~kMatrix() override = default;
 };
 
 } // namespace Lineshapes

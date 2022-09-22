@@ -968,7 +968,7 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
 
     // QUESTION: why are we doing this? -> copying decay tiems, where we evaluate function for accept-reject
     thrust::copy(dtime_d.begin(), dtime_d.end(), sr2.begin());
-    dtime_d        = mcbooster::RealVector_d();
+    dtime_d = mcbooster::RealVector_d();
     thrust::device_vector<fptype> results(nAcc);
 
     thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
@@ -985,7 +985,7 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
 
     // we do not want to copy the whole class to the GPU so capturing *this is not a great option
     // therefore perpare local copies to capture the variables we need
-    unsigned int tmpoff = generation_offset;
+    unsigned int tmpoff   = generation_offset;
     unsigned int tmpparam = 6;
     wmax                  = maxWeight;
 

@@ -257,7 +257,8 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
                                   GooPdf *efficiency,
                                   Observable *mistag,
                                   const std::vector<long> &normSeeds,
-                                  unsigned int numNormEventsToGenPerBatch)
+                                  unsigned int numNormEventsToGenPerBatch,
+                                  bool with_acceptance)
     : Amp4Body_TD(
         n,
         observables,
@@ -265,7 +266,8 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
         Tres,
         efficiency,
         mistag,
-        NormEvents_4Body_HostCached::buildBatches(normSeeds, numNormEventsToGenPerBatch, decay.particle_masses)) {
+        NormEvents_4Body_HostCached::buildBatches(normSeeds, numNormEventsToGenPerBatch, decay.particle_masses),
+        with_acceptance) {
     GOOFIT_INFO("Built Amp4Body_TD model where the MC events used for normalization are stored on the host side.");
     GOOFIT_INFO("This may result in much longer computation times!");
     GOOFIT_INFO("Use the alternate Amp4Body_TD constructor for maximum speed!");
@@ -281,14 +283,16 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
                                   GooPdf *efficiency,
                                   Observable *mistag,
                                   long normSeed,
-                                  unsigned int numNormEventsToGen)
+                                  unsigned int numNormEventsToGen,
+                                  bool with_acceptance)
     : Amp4Body_TD(n,
                   observables,
                   decay,
                   Tres,
                   efficiency,
                   mistag,
-                  NormEvents_4Body_DeviceCached::buildBatches({normSeed}, numNormEventsToGen, decay.particle_masses)) {}
+                  NormEvents_4Body_DeviceCached::buildBatches({normSeed}, numNormEventsToGen, decay.particle_masses),
+                  with_acceptance) {}
 
 // Does common initialization
 __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
@@ -297,11 +301,12 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
                                   MixingTimeResolution *Tres,
                                   GooPdf *efficiency,
                                   Observable *mistag,
-                                  const std::vector<NormEvents_4Body_Base *> &normEvents)
+                                  const std::vector<NormEvents_4Body_Base *> &normEvents,
+                                  bool with_acceptance)
     : Amp4BodyBase("Amp4Body_TD", n)
     , _DECAY_INFO(decay)
     , _resolution(Tres)
-    , _totalEventSize(observables.size() + 2) // number of observables plus eventnumber
+    , _totalEventSize(observables.size()) // number of observables plus eventnumber
 {
     _normEvents.resize(normEvents.size());
     for(int n = 0; n < normEvents.size(); n++) {
@@ -499,12 +504,13 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     components.push_back(_resolution);
     components.push_back(efficiency);
 
-    if(mistag) {
-        registerObservable(*mistag);
-        _totalEventSize = 9;
-        // TODO: This needs to be registered later!
-        // registerConstant(1); // Flags existence of mistag
-    }
+    //shouldn't be needed since event size is determined by size of observables vector which includes mistag
+    //if(mistag) {
+    //    registerObservable(*mistag);
+    //    _totalEventSize = 9;
+    //    // TODO: This needs to be registered later!
+    //    // registerConstant(1); // Flags existence of mistag
+    //}
 
     // In case the resolution function needs parameters, this registers them.
     // resolution->createParameters(pindices, this);

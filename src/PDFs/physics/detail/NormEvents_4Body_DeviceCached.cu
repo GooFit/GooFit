@@ -1,16 +1,42 @@
 #include <goofit/PDFs/physics/detail/NormEvents_4Body_Base.h>
 #include <goofit/PDFs/physics/detail/NormEvents_4Body_DeviceCached.h>
+#include<iostream>
+#include <cstdlib>
+
 
 namespace GooFit {
 
 std::vector<NormEvents_4Body_Base *>
 NormEvents_4Body_DeviceCached::buildBatches(const std::vector<long> &normSeeds,
                                             unsigned int numNormEventsToGenPerBatch,
-                                            const std::vector<mcbooster::GReal_t> &motherAndDaughterMasses) {
+                                            const std::vector<mcbooster::GReal_t> &motherAndDaughterMasses,
+                                            bool with_acceptance) {
     std::vector<NormEvents_4Body_Base *> ret(normSeeds.size());
 
     for(int n = 0; n < normSeeds.size(); n++) {
-        ret[n] = new NormEvents_4Body_DeviceCached(motherAndDaughterMasses, normSeeds[n], numNormEventsToGenPerBatch);
+        NormEvents_4Body_DeviceCached* device_batch = new NormEvents_4Body_DeviceCached(motherAndDaughterMasses, normSeeds[n], numNormEventsToGenPerBatch);
+        if(true){
+            //std::vector<mcbooster::RealVector_h> norm_phsp = device_batch->get_norm_phsp();
+            //mcbooster::RealVector_h test_norm, test_dtime, test_dtime_weights;
+            //device_batch->set_norm_info(test_dtime, test_dtime_weights, test_norm );
+
+            device_batch->write_norm_phsp("test_norm_events.txt");
+            //execute python script here
+            std::system("python assign_acceptance_weights.py");
+            //check that python script created weights file and it is not empty!
+            device_batch->read_norm_info("norm_weights.txt");
+            std::vector<mcbooster::RealVector_h> norm_info = device_batch->get_norm_info();
+            for(int i = 0; i < 10;i++){
+                printf("dtime: %.7g, dtime_weight: %.7g, eff_weight: %.7g\n",norm_info[0][i], norm_info[1][i], norm_info[2][i]);
+            }
+        }
+        
+        //for(int i = 0; i < 10;i++){
+        //    printf("m12: %.7g ",norm_phsp[0][i]);
+        //}
+        //printf("\n");
+
+        ret[n] = device_batch;
     }
 
     return ret;

@@ -51,7 +51,8 @@ class Amp4Body_TD final : public Amp4BodyBase {
                          GooPdf *efficiency,
                          Observable *mistag,
                          const std::vector<long> &normSeeds,
-                         unsigned int numNormEventsToGenPerBatch);
+                         unsigned int numNormEventsToGenPerBatch,
+                         bool with_acceptance=false);
 
     // Build Amp4Body_TD where the MC events used for normalization are stored on the device side.
     // This is much faster than the other case (where the events used for normalization are stored on the host side)
@@ -63,7 +64,8 @@ class Amp4Body_TD final : public Amp4BodyBase {
                          GooPdf *efficiency,
                          Observable *mistag,
                          long normSeed,
-                         unsigned int numNormEventsToGen);
+                         unsigned int numNormEventsToGen,
+                         bool with_acceptance=false);
 
     __host__ auto normalize() -> fptype override;
 
@@ -97,7 +99,8 @@ class Amp4Body_TD final : public Amp4BodyBase {
                          MixingTimeResolution *Tres,
                          GooPdf *efficiency,
                          Observable *mistag,
-                         const std::vector<NormEvents_4Body_Base *> &normEvents);
+                         const std::vector<NormEvents_4Body_Base *> &normEvents,
+                         bool with_acceptance=false);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalization will get *really* confused and give wrong answers.
@@ -129,6 +132,7 @@ class Amp4Body_TD final : public Amp4BodyBase {
     mutable bool _generation_no_norm{false};
     mutable bool _SpinsCalculated{false};
     mutable bool _forceRedoIntegrals{true};
+    mutable bool _with_acceptance{false};
     int _totalEventSize;
     int cacheToUse{0};
     unsigned int generation_offset{0};

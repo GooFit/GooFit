@@ -16,6 +16,7 @@
 #include <goofit/PDFs/physics/detail/NormSpinCalculator_TD.h>
 #include <goofit/PDFs/physics/detail/FourDblTupleAdd.h>
 #include <goofit/PDFs/physics/detail/NormIntegrator_TD.h>
+#include <goofit/PDFs/physics/detail/NormIntegrator_TD_BDT.h>
 
 namespace GooFit {
 
@@ -207,5 +208,56 @@ __host__ fptype NormEvents_4Body_Base::doNormIntegral_TD(
                                      xmixing,
                                      ymixing);
 }
+
+//norm integral with acceptance/BDT weight
+__host__ fptype NormEvents_4Body_Base::doNormIntegral_TD(
+    const MixingTimeResolution *const resolution,
+    fptype tau,
+    fptype xmixing,
+    fptype ymixing,
+    unsigned int dalitzId,
+    unsigned int numAccThisBatch,
+    mcbooster::RealVector_d
+        &batchSF_d, // not modified, can't seem to make const type work with thrust::transform_reduce
+    mcbooster::mc_device_vector<fpcomplex>
+        &batchLS_d, // not modified, can't seem to make const type work with thrust::transform_reduce
+    mcbooster::RealVector_d &norm_dtime, //decay time of normalisation events
+    mcbooster::RealVector_d &norm_eff, // BDT weight/ other weight representing correction due to acceptance for a normalisation event
+    mcbooster::RealVector_d &norm_weight, // Importance sampling weight for the decay time distribution of the normalisation event
+        unsigned int CacheIdx) 
+{
+    thrust::constant_iterator<fptype *> normSFaddress(thrust::raw_pointer_cast(batchSF_d.data()));
+    thrust::constant_iterator<fpcomplex *> normLSaddress(thrust::raw_pointer_cast(batchLS_d.data()));
+    thrust::constant_iterator<int> NumNormEvents(numAccThisBatch);
+    thrust::counting_iterator<int> eventIndex(0);
+
+    thrust::tuple<fptype, fptype, fptype, fptype> dummy(0, 0, 0, 0);
+    FourDblTupleAdd MyFourDoubleTupleAdditionFunctor;
+    thrust::tuple<fptype, fptype, fptype, fptype> sumIntegral;
+
+    NormIntegrator_TD_BDT integrator(CacheIdx);
+    integrator.setDalitzId(dalitzId);
+
+    sumIntegral = thrust::transform_reduce(
+        thrust::make_zip_iterator(thrust::make_tuple(eventIndex, NumNormEvents, normSFaddress, normLSaddress, norm_dtime.begin(), norm_eff.begin(), norm_weight.begin())),
+        thrust::make_zip_iterator(
+            thrust::make_tuple(eventIndex + numAccThisBatch, NumNormEvents, normSFaddress, normLSaddress,  norm_dtime.end(), norm_eff.end(), norm_weight.end())),
+        integrator,
+        dummy,
+        MyFourDoubleTupleAdditionFunctor);
+
+    // GOOFIT_TRACE("sumIntegral={}", sumIntegral);
+
+    // printf("normalize A2/#evts , B2/#evts: %.5g, %.5g\n",thrust::get<0>(sumIntegral)/_nAcc_Norm_Events,
+
+    return resolution->normalization(thrust::get<0>(sumIntegral),
+                                     thrust::get<1>(sumIntegral),
+                                     thrust::get<2>(sumIntegral),
+                                     thrust::get<3>(sumIntegral),
+                                     tau,
+                                     xmixing,
+                                     ymixing);
+}
+
 
 } // end namespace GooFit

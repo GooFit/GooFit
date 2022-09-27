@@ -5,6 +5,7 @@
 #include <goofit/PDFs/physics/SpinFactors.h>
 #include <goofit/PDFs/physics/detail/Dim5.h>
 #include <goofit/detail/Complex.h>
+#include <goofit/PDFs/physics/MixingTimeResolution.h>
 
 #include <thrust/functional.h>
 
@@ -15,6 +16,7 @@ namespace GooFit {
 NormIntegrator_TD::NormIntegrator_TD(unsigned int CacheIdx)
     :_CacheIdx(CacheIdx){}
 
+//ordinary operator
 __device__ auto NormIntegrator_TD::operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const
     -> thrust::tuple<fptype, fptype, fptype, fptype> {
     // unsigned int *indices = paramIndices + _parameters;
@@ -102,5 +104,8 @@ __device__ auto NormIntegrator_TD::operator()(thrust::tuple<int, int, fptype *, 
     auto AmpAB = AmpA * conj(AmpB);
     return {thrust::norm(AmpA), thrust::norm(AmpB), AmpAB.real(), AmpAB.imag()};
 }
+
+
+
 
 } // namespace GooFit

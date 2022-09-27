@@ -31,7 +31,8 @@ class NormEvents_4Body_Base {
                                            const std::vector<bool> &lineshapeChanged,
                                            const std::vector<unsigned int> &sfFunctionIndices,
                                            const std::vector<unsigned int> &lsFunctionIndices,
-                                           unsigned int CacheIdx)
+                                           unsigned int CacheIdx,
+                                           bool with_acceptance=false)
         = 0;
 
   protected:

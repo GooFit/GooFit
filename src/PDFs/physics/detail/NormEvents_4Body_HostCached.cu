@@ -67,7 +67,8 @@ __host__ fptype NormEvents_4Body_HostCached::computeNorm_TD(bool noCachedNormVal
                                                             const std::vector<bool> &lineshapeChanged,
                                                             const std::vector<unsigned int> &sfFunctionIndices,
                                                             const std::vector<unsigned int> &lsFunctionIndices,
-                                                            unsigned int CacheIdx) {
+                                                            unsigned int CacheIdx,
+                                                            bool with_acceptance) {
     unsigned int numSFCacheEntries = _totNumAccNormEvents * sfFunctionIndices.size();
     unsigned int numLSCacheEntries = _totNumAccNormEvents * lsFunctionIndices.size();
 

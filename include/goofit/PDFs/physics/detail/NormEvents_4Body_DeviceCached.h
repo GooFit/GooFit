@@ -40,7 +40,8 @@ class NormEvents_4Body_DeviceCached final : public NormEvents_4Body_Base {
                                            const std::vector<bool> &lineshapeChanged,
                                            const std::vector<unsigned int> &sfFunctionIndices,
                                            const std::vector<unsigned int> &lsFunctionIndices,
-                                           unsigned int CacheIdx) override;
+                                           unsigned int CacheIdx,
+                                           bool with_acceptance=false) override;
     
     __host__ void copy_norm_phsp_to_host(){
          _norm_M12_h = _norm_M12_d;

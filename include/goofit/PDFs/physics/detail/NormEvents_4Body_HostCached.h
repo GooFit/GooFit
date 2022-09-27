@@ -38,7 +38,8 @@ class NormEvents_4Body_HostCached final : public NormEvents_4Body_Base {
                                            const std::vector<bool> &lineshapeChanged,
                                            const std::vector<unsigned int> &sfFunctionIndices,
                                            const std::vector<unsigned int> &lsFunctionIndices,
-                                           unsigned int CacheIdx) override;
+                                           unsigned int CacheIdx,
+                                           bool with_acceptance=false) override;
 
   protected:
   private:

@@ -870,7 +870,7 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
     thrust::transform(index_sequence_begin,
                       index_sequence_begin + nAcc,
                       dtime_d.begin(),
-                      genExp(generation_offset + seed, gammamin, seed));
+                      genExp(generation_offset, gammamin, seed));
 
     mcbooster::VariableSet_d VarSet_d(5);
     VarSet_d[0] = &SigGen_M12_d;
@@ -966,7 +966,7 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
 
     maxWeight = wmax > maxWeight ? wmax : maxWeight;
 
-    // QUESTION: why are we doing this? -> copying decay tiems, where we evaluate function for accept-reject
+    // QUESTION: why are we doing this? -> copying decay times, where we evaluate function for accept-reject
     thrust::copy(dtime_d.begin(), dtime_d.end(), sr2.begin());
     dtime_d = mcbooster::RealVector_d();
     thrust::device_vector<fptype> results(nAcc);

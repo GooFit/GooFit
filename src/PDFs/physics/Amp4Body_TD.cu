@@ -867,10 +867,8 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
     fptype ymixing  = parametersList[2].getValue();
     fptype gammamin = 1.0 / tau - fabs(ymixing) / tau;
 
-    thrust::transform(index_sequence_begin,
-                      index_sequence_begin + nAcc,
-                      dtime_d.begin(),
-                      genExp(generation_offset, gammamin, seed));
+    thrust::transform(
+        index_sequence_begin, index_sequence_begin + nAcc, dtime_d.begin(), genExp(generation_offset, gammamin, seed));
 
     mcbooster::VariableSet_d VarSet_d(5);
     VarSet_d[0] = &SigGen_M12_d;

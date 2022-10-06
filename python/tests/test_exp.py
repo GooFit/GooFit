@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Only needed if run from plain CMake build
 # If installed with pip, this is not needed
 import sys

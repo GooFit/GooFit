@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 try:
     from skbuild import setup
 except ImportError:
@@ -19,7 +18,7 @@ ITEMS = [
 # Add GOOFIT_* from env.
 for item in os.environ:
     if item.startswith("GOOFIT_"):
-        ITEMS.append("-D{}={}".format(item, os.environ[item]))
+        ITEMS.append(f"-D{item}={os.environ[item]}")
 
 
 setup(

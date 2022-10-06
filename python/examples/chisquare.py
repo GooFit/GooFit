@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
-from __future__ import division, print_function
 
 # Standard library stuff
 import re
@@ -163,7 +161,7 @@ def plot_ratio(xvals, ratio, error, p, plotname, cov=None):
         fig, ax = plt.subplots()
         ax.errorbar(xvals, ratio, yerr=error, fmt="k.")
         ax.plot(xvals, np.polyval(p, xvals))
-        ax.text(0.1, 0.85, "${}$".format(result), transform=ax.transAxes, fontsize=16)
+        ax.text(0.1, 0.85, f"${result}$", transform=ax.transAxes, fontsize=16)
 
         if cov is not None and unc is not None:
 

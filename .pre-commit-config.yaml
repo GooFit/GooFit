@@ -21,7 +21,6 @@ repos:
   - id: mixed-line-ending
   - id: requirements-txt-fixer
   - id: trailing-whitespace
-  - id: fix-encoding-pragma
 
 - repo: https://github.com/PyCQA/isort
   rev: 5.10.1
@@ -32,6 +31,7 @@ repos:
   rev: v2.38.2
   hooks:
   - id: pyupgrade
+    args: ["--py36-plus"]
 
 - repo: https://github.com/PyCQA/flake8
   rev: 5.0.4

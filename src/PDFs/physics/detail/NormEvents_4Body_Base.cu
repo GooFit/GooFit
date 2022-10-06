@@ -249,14 +249,12 @@ __host__ fptype NormEvents_4Body_Base::doNormIntegral_TD(
     // GOOFIT_TRACE("sumIntegral={}", sumIntegral);
 
     // printf("normalize A2/#evts , B2/#evts: %.5g, %.5g\n",thrust::get<0>(sumIntegral)/_nAcc_Norm_Events,
-
-    return resolution->normalization(thrust::get<0>(sumIntegral),
-                                     thrust::get<1>(sumIntegral),
-                                     thrust::get<2>(sumIntegral),
-                                     thrust::get<3>(sumIntegral),
-                                     tau,
-                                     xmixing,
-                                     ymixing);
+    const double uniformNorm = 1.;
+    fptype ret = 1.0;
+    //ret = thrust::get<0>(sumIntegral) * uniformNorm ; //this is the normalisation integral value
+    ret = thrust::get<0>(sumIntegral);
+    //printf("Normalisation integral value from compute function: %.7g\n",ret);
+    return ret;
 }
 
 

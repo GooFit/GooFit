@@ -291,7 +291,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
                   Tres,
                   efficiency,
                   mistag,
-                  NormEvents_4Body_DeviceCached::buildBatches({normSeed}, numNormEventsToGen, decay.particle_masses),
+                  NormEvents_4Body_DeviceCached::buildBatches({normSeed}, numNormEventsToGen, decay.particle_masses,with_acceptance),
                   with_acceptance) {}
 
 // Does common initialization
@@ -306,6 +306,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     : Amp4BodyBase("Amp4Body_TD", n)
     , _DECAY_INFO(decay)
     , _resolution(Tres)
+    , _with_acceptance(with_acceptance)
     , _totalEventSize(observables.size()) // number of observables plus eventnumber
 {
     _normEvents.resize(normEvents.size());
@@ -776,7 +777,8 @@ __host__ auto Amp4Body_TD::normalize() -> fptype {
                                                             lineshapeChanged,
                                                             getSFFunctionIndices(),
                                                             getLSFunctionIndices(),
-                                                            cacheToUse);
+                                                            cacheToUse,
+                                                            _with_acceptance);
         }
         fptype normResultsSum = MathUtils::doNeumaierSummation(normResults);
         ret                   = normResultsSum / getNumAccNormEvents();

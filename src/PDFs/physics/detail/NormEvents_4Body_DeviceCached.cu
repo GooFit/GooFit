@@ -15,7 +15,7 @@ NormEvents_4Body_DeviceCached::buildBatches(const std::vector<long> &normSeeds,
 
     for(int n = 0; n < normSeeds.size(); n++) {
         NormEvents_4Body_DeviceCached* device_batch = new NormEvents_4Body_DeviceCached(motherAndDaughterMasses, normSeeds[n], numNormEventsToGenPerBatch);
-        if(true){
+        if(with_acceptance){
             //std::vector<mcbooster::RealVector_h> norm_phsp = device_batch->get_norm_phsp();
             //mcbooster::RealVector_h test_norm, test_dtime, test_dtime_weights;
             //device_batch->set_norm_info(test_dtime, test_dtime_weights, test_norm );
@@ -116,8 +116,18 @@ __host__ fptype NormEvents_4Body_DeviceCached::computeNorm_TD(bool noCachedNormV
     } // end if computing cached values
 
     // do norm integral
-    fptype normResult = NormEvents_4Body_Base::doNormIntegral_TD(
-        resolution, tau, xmixing, ymixing, dalitzId, _totNumAccNormEvents, _norm_SF_d, _norm_LS_d, CacheIdx);
+    fptype normResult;
+    if(with_acceptance){
+      //printf("Normalising with acceptance\n");
+        normResult = NormEvents_4Body_Base::doNormIntegral_TD(
+            resolution, tau, xmixing, ymixing, dalitzId, _totNumAccNormEvents, _norm_SF_d, _norm_LS_d, _norm_dtime_d, _norm_eff_d, _norm_dtime_weights_d, CacheIdx);
+    }
+    else{
+        printf("Normalising without BDT weights\n");
+        normResult = NormEvents_4Body_Base::doNormIntegral_TD(
+            resolution, tau, xmixing, ymixing, dalitzId, _totNumAccNormEvents, _norm_SF_d, _norm_LS_d, CacheIdx);
+    }
+
 
     return normResult;
 }

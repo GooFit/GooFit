@@ -1,0 +1,30 @@
+#pragma once
+
+#include <goofit/GlobalCudaDefines.h>
+#include <goofit/detail/Complex.h>
+
+#include <thrust/functional.h>
+#include <thrust/tuple.h>
+
+#include <mcbooster/Generate.h>
+#include <mcbooster/GContainers.h>
+#include <mcbooster/Vector4R.h>
+#include <mcbooster/EvaluateArray.h>
+
+
+namespace GooFit {
+
+class NormIntegrator_TD_BDT : public thrust::unary_function<thrust::tuple<int, int, fptype *, fpcomplex *, mcbooster::GReal_t,  mcbooster::GReal_t, mcbooster::GReal_t>, fptype> {
+  public:
+    NormIntegrator_TD_BDT(unsigned int CacheIdx);
+    void setDalitzId(int idx) { dalitzFuncId = idx; }
+    //operator with acceptance
+    __device__ auto operator()(thrust::tuple<int, int, fptype *, fpcomplex *, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t) const
+        -> thrust::tuple<fptype, fptype, fptype, fptype>;
+
+  private:
+    unsigned int dalitzFuncId;
+    unsigned int _CacheIdx;
+};
+
+} // namespace GooFit

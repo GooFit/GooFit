@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
-from __future__ import division, print_function
 
 import sys
 
@@ -36,7 +34,7 @@ def cpuGetM23(massPZ, massPM):
 
 
 def getToyData(toyFileName):
-    print("Reading {} ...".format(toyFileName))
+    print(f"Reading {toyFileName} ...")
     out = pd.read_csv(
         toyFileName,
         delim_whitespace=True,

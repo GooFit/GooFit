@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # modified from December 30, 2021
 # the goal is to produce a ConvolutionPdf from a model with two components and a resolution function that is "basic".
 # the existing version of GooFit should fail to calculate probabilities at data points; with luck

@@ -23,12 +23,12 @@ __device__ auto NormIntegrator_TD_BDT::operator()(thrust::tuple<int, int, fptype
     // unsigned int totalAMP = indices[5];
 
     ParameterContainer pc;
-    unsigned int cacheToUse = pc.getConstant(5);
+    unsigned int cacheToUse = pc.getConstant(6);
     cacheToUse = NormIntegrator_TD_BDT::_CacheIdx;
     while(pc.funcIdx < dalitzFuncId)
         pc.incrementIndex();
 
-    unsigned int totalAMP = pc.getConstant(8);
+    unsigned int totalAMP = pc.getConstant(9);
     //printf("Inside NormIntegrator with %i amps\n",totalAMP);
     unsigned int evtNum   = thrust::get<0>(t);
     unsigned int MCevents = thrust::get<1>(t);
@@ -121,7 +121,7 @@ __device__ auto NormIntegrator_TD_BDT::operator()(thrust::tuple<int, int, fptype
     thrust::complex<fptype> term3 = AmpA * thrust::conj(AmpB);
 
     //increment pc to get correct index for resolution function
-    unsigned int totalSF_LS = pc.getConstant(10);
+    unsigned int totalSF_LS = pc.getConstant(11);
     pc.incrementIndex();
     for(int i = 0; i < totalSF_LS; i++)
         pc.incrementIndex();
@@ -133,7 +133,7 @@ __device__ auto NormIntegrator_TD_BDT::operator()(thrust::tuple<int, int, fptype
     ret /= _weight;
     if(std::isnan(ret)){
       //printf("return value from normintegrator_TD: %.7g\n",ret);    
-        ret = 0; //This shouldn't be done but this is a temporary workaround!!!!!!
+      ret = 0; //This shouldn't be done but this is a temporary workaround!!!!!!
     }
     
     return thrust::tuple<fptype, fptype, fptype, fptype>(ret, thrust::norm(tmpA)/_weight, thrust::norm(AmpB)/_weight, 1);

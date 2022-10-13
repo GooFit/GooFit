@@ -1,6 +1,6 @@
 #include <goofit/PDFs/physics/detail/NormEvents_4Body_Base.h>
 #include <goofit/PDFs/physics/detail/NormEvents_4Body_DeviceCached.h>
-#include<iostream>
+#include <iostream>
 #include <cstdlib>
 
 
@@ -16,6 +16,17 @@ NormEvents_4Body_DeviceCached::buildBatches(const std::vector<long> &normSeeds,
     for(int n = 0; n < normSeeds.size(); n++) {
         NormEvents_4Body_DeviceCached* device_batch = new NormEvents_4Body_DeviceCached(motherAndDaughterMasses, normSeeds[n], numNormEventsToGenPerBatch);
         if(with_acceptance){
+	  std::system("python assign_acceptance_weights.py");
+	  device_batch->set_norm_info("norm_weights.txt");
+	  std::vector<mcbooster::RealVector_h> norm_info = device_batch->get_norm_info();
+	  for(int i = 0; i < 10;i++){
+	    printf("dtime: %.7g, dtime_weight: %.7g, eff_weight: %.7g\n",norm_info[0][i], norm_info[1][i], norm_info[2][i]);
+	  }
+	  unsigned int nAcc = device_batch->_norm_dtime_d.size();
+	  device_batch->set_num_acc_events(nAcc);
+	  //NormEvents_4Body_DeviceCached::_totNumAccNormEvents = _norm_dtime_d.size();
+	  printf("Set number of norm events to %i\n",device_batch->getNumAccNormEvents());
+	  /*
             //std::vector<mcbooster::RealVector_h> norm_phsp = device_batch->get_norm_phsp();
             //mcbooster::RealVector_h test_norm, test_dtime, test_dtime_weights;
             //device_batch->set_norm_info(test_dtime, test_dtime_weights, test_norm );
@@ -29,6 +40,13 @@ NormEvents_4Body_DeviceCached::buildBatches(const std::vector<long> &normSeeds,
             for(int i = 0; i < 10;i++){
                 printf("dtime: %.7g, dtime_weight: %.7g, eff_weight: %.7g\n",norm_info[0][i], norm_info[1][i], norm_info[2][i]);
             }
+
+	    //set the number of norm events based on number of events read in from file
+	    unsigned int nAcc = device_batch->_norm_dtime_d.size();
+	    device_batch->set_num_acc_events(nAcc);
+	    //NormEvents_4Body_DeviceCached::_totNumAccNormEvents = _norm_dtime_d.size();
+	    printf("Set number of norm events to %i\n",device_batch->getNumAccNormEvents());
+	  */
         }
         
         //for(int i = 0; i < 10;i++){

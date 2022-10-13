@@ -20,10 +20,10 @@ __device__ auto AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t) cons
     while(pc.funcIdx < dalitzFuncId)
         pc.incrementIndex();
 
-    unsigned int cacheToUse = pc.getConstant(5);
-    unsigned int totalLS    = pc.getConstant(6);
-    unsigned int totalSF    = pc.getConstant(7);
-    unsigned int totalAMP   = pc.getConstant(8);
+    unsigned int cacheToUse = pc.getConstant(6);
+    unsigned int totalLS    = pc.getConstant(7);
+    unsigned int totalSF    = pc.getConstant(8);
+    unsigned int totalAMP   = pc.getConstant(9);
     unsigned int offset     = totalLS + totalSF;
     unsigned int numLS      = AmpIndices[_CacheIdx][totalAMP + _AmpIdx];
     unsigned int numSF      = AmpIndices[_CacheIdx][totalAMP + _AmpIdx + 1];

@@ -102,8 +102,51 @@ class NormEvents_4Body_DeviceCached final : public NormEvents_4Body_Base {
       _norm_dtime_weights_d = norm_dtime_weights_h;
     return 0;
   }
+  //function that sets the normalisation events by reading in a new set of normalisation events from a file. For example using RS MC/Data as the integration sample
+  __host__ int set_norm_info(std::string fname){
+    std::ifstream file(fname);
+    std::string line;
+    double m12, m34, c12, c34, phi, dtime;
+    double imp_weight, eff_weight;
+    mcbooster::RealVector_h norm_dtime_h;
+    mcbooster::RealVector_h norm_dtime_weights_h;
+    mcbooster::RealVector_h norm_eff_weights_h;
+    _norm_M12_h.clear();
+    _norm_M34_h.clear();
+    _norm_CosTheta12_h.clear();
+    _norm_CosTheta34_h.clear();
+    _norm_phi_h.clear();
+    while (std::getline(file,line)) {
+      std::stringstream ss(line);
+      if(file >> m12 >> m34 >> c12 >> c34 >> phi >> dtime >> imp_weight >> eff_weight){
+	_norm_M12_h.push_back(m12);
+	_norm_M34_h.push_back(m34);
+	_norm_CosTheta12_h.push_back(c12);
+	_norm_CosTheta34_h.push_back(c34);
+	_norm_phi_h.push_back(phi);
+	norm_dtime_h.push_back(dtime);
+	norm_dtime_weights_h.push_back(imp_weight);
+	norm_eff_weights_h.push_back(eff_weight);
+      }
+    }
+    file.close();
+    //copy host vectors to device
+    _norm_M12_d = _norm_M12_h;
+    _norm_M34_d = _norm_M34_h;
+    _norm_CosTheta12_d = _norm_CosTheta12_h;
+    _norm_CosTheta34_d = _norm_CosTheta34_h;
+    _norm_phi_d = _norm_phi_h;
+    _norm_dtime_d = norm_dtime_h;
+    _norm_eff_d = norm_eff_weights_h;
+    _norm_dtime_weights_d = norm_dtime_weights_h;
+    return 0;
+  }
   protected:
   private:
+
+  __host__ void set_num_acc_events(unsigned int nAcc){
+    _totNumAccNormEvents = nAcc;    
+  }
     // store normalization events
     mcbooster::RealVector_d _norm_M12_d;
     mcbooster::RealVector_d _norm_M34_d;

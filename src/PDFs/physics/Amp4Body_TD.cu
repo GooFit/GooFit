@@ -157,9 +157,10 @@ __device__ auto device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) -> fptyp
     auto evtNum = static_cast<int>(floor(0.5 + RO_CACHE(evt[id_evt])));
     // GOOFIT_TRACE("Amp4Body_TD: Number of events: {}", evtNum);
 
-    unsigned int cacheToUse = pc.getConstant(5);
-    unsigned int numAmps    = pc.getConstant(8);
-    unsigned int totalSF_LS = pc.getConstant(10);
+    unsigned int with_acceptance = pc.getConstant(5);
+    unsigned int cacheToUse = pc.getConstant(6);
+    unsigned int numAmps    = pc.getConstant(9);
+    unsigned int totalSF_LS = pc.getConstant(11);
 
     fpcomplex AmpA(0, 0);
     fpcomplex AmpB(0, 0);
@@ -238,7 +239,12 @@ __device__ auto device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) -> fptyp
     // efficiency function?
     fptype eff = callFunction(evt, pc);
     /*printf("%i result %.7g, eff %.7g\n",evtNum, ret, eff);*/
-
+    //get the efficiency if the acceptance flag is true
+    if(with_acceptance){
+      //printf("Retrieving efficiency\n");
+      //get normalisation weight. It is assumed this is the last variable to be added
+      eff = pc.getObservable(9);
+    }
     ret *= eff;
     /*printf("in prob: %f\n", ret);*/
     return ret;
@@ -338,6 +344,9 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
         throw GooFit::GeneralError("The resolution device function index {} must be more than 0",
                                    _resolution->getDeviceFunction());
 
+    //register if we are using acceptance
+    registerConstant(_with_acceptance);
+    
     registerConstant(cacheToUse);
 
     // This is the start of reading in the amplitudes and adding the lineshapes and Spinfactors to this PDF
@@ -781,7 +790,9 @@ __host__ auto Amp4Body_TD::normalize() -> fptype {
                                                             _with_acceptance);
         }
         fptype normResultsSum = MathUtils::doNeumaierSummation(normResults);
-        ret                   = normResultsSum / getNumAccNormEvents();
+	auto MCevents = getNumAccNormEvents();
+        ret                   = normResultsSum / MCevents;
+	printf("Normalising with %i normalisation events. ret value: %.7g\n",MCevents, ret);
     }
 
     _SpinsCalculated = true;

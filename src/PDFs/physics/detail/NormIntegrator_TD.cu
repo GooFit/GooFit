@@ -23,12 +23,12 @@ __device__ auto NormIntegrator_TD::operator()(thrust::tuple<int, int, fptype *, 
     // unsigned int totalAMP = indices[5];
 
     ParameterContainer pc;
-    unsigned int cacheToUse = pc.getConstant(5);
+    unsigned int cacheToUse = pc.getConstant(6);
     cacheToUse = NormIntegrator_TD::_CacheIdx;
     while(pc.funcIdx < dalitzFuncId)
         pc.incrementIndex();
 
-    unsigned int totalAMP = pc.getConstant(8);
+    unsigned int totalAMP = pc.getConstant(9);
     //printf("Inside NormIntegrator with %i amps\n",totalAMP);
     unsigned int evtNum   = thrust::get<0>(t);
     unsigned int MCevents = thrust::get<1>(t);

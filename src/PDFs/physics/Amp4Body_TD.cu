@@ -161,6 +161,7 @@ __device__ auto device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) -> fptyp
     unsigned int cacheToUse = pc.getConstant(6);
     unsigned int numAmps    = pc.getConstant(9);
     unsigned int totalSF_LS = pc.getConstant(11);
+    //printf("Calculating with acceptance?: %i\n",with_acceptance);
 
     fpcomplex AmpA(0, 0);
     fpcomplex AmpB(0, 0);
@@ -209,6 +210,7 @@ __device__ auto device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) -> fptyp
     fptype _SqWStoRSrate = pc.getParameter(3);
     fptype _time         = RO_CACHE(evt[id_time]);
     fptype _sigma        = RO_CACHE(evt[id_sigma]);
+    
 
     AmpA *= _SqWStoRSrate;
     /*printf("%i read time: %.5g x: %.5g y: %.5g \n",evtNum, _time, _xmixing, _ymixing);*/
@@ -238,17 +240,20 @@ __device__ auto device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) -> fptyp
 
     // efficiency function?
     fptype eff = callFunction(evt, pc);
+    //printf("eff val from efficiency function call:%.7g\n",eff);
     /*printf("%i result %.7g, eff %.7g\n",evtNum, ret, eff);*/
     //get the efficiency if the acceptance flag is true
     if(with_acceptance){
       //printf("Retrieving efficiency\n");
       //get normalisation weight. It is assumed this is the last variable to be added
-      eff = pc.getObservable(9);
-      printf("eff val:%.7g\n",eff);
+      int id_eff = pc.getObservable(9);
+      eff = RO_CACHE(evt[id_eff]);
+      //printf("_xmixing:%.7g, _ymixing:%.7g, eff: %.7g\n",_xmixing, _ymixing, eff);
+      //printf("eff val:%.7g\n",eff);
     }
     ret *= eff;
     /*printf("in prob: %f\n", ret);*/
-    printf("_xmixing:%.7g, _ymixing:%.7g, ret: %.7g\n",_xmixing, _ymixing, ret);
+    //printf("_xmixing:%.7g, _ymixing:%.7g, ret: %.7g\n",_xmixing, _ymixing, ret);
     return ret;
 }
 

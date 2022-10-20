@@ -111,11 +111,11 @@ __device__ auto NormIntegrator_TD_BDT::operator()(thrust::tuple<int, int, fptype
     fptype _xmixing      = pc.getParameter(1);
     fptype _ymixing      = pc.getParameter(2);
     fptype _time         = thrust::get<4>(t);
-    fptype _eff          = thrust::get<5>(t);
-    fptype _weight       = thrust::get<6>(t);
+    fptype _eff          = thrust::get<5>(t); //efficiency weight from BDT (normalised between 0 - 1)
+    fptype _weight       = thrust::get<6>(t); //decay time weight from the importance sampling function.
 
     //printf("_tau: %.7g, _xmixing: %.7g, _ymixing: %.7g\n",_tau,_xmixing,_ymixing);
-
+    //printf("_tau: %.7g, _xmixing: %.7g, _ymixing: %.7g, _time: %.7g, _eff: %.7g, _weight: %.7g\n",_tau,_xmixing,_ymixing,_time, _eff, _weight);
     fptype term1                  = thrust::norm(AmpA) + thrust::norm(AmpB);
     fptype term2                  = thrust::norm(AmpA) - thrust::norm(AmpB);
     thrust::complex<fptype> term3 = AmpA * thrust::conj(AmpB);
@@ -129,8 +129,12 @@ __device__ auto NormIntegrator_TD_BDT::operator()(thrust::tuple<int, int, fptype
     fptype ret = (*(reinterpret_cast<device_resfunction_ptr>(d_function_table[pc.funcIdx])))(
         term1, term2, term3.real(), term3.imag(), _tau, _time, _xmixing, _ymixing, 0., pc); //assume no resolution (= 0), for now.
     //printf("Correcting return value");
+    //printf("integral value before weights:%.7g\n",ret);
     ret *= _eff;
+    //printf("integral value after efficiency:%.7g\n",ret);
     ret /= _weight;
+    //printf(" _xmixing: %.7g, _ymixing: %.7g, ret value:%.7g\n",_xmixing, _ymixing,ret);
+
     if(std::isnan(ret)){
       //printf("return value from normintegrator_TD: %.7g\n",ret);    
       ret = 0; //This shouldn't be done but this is a temporary workaround!!!!!!

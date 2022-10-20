@@ -16,8 +16,11 @@ NormEvents_4Body_DeviceCached::buildBatches(const std::vector<long> &normSeeds,
     for(int n = 0; n < normSeeds.size(); n++) {
         NormEvents_4Body_DeviceCached* device_batch = new NormEvents_4Body_DeviceCached(motherAndDaughterMasses, normSeeds[n], numNormEventsToGenPerBatch);
         if(with_acceptance){
-	  std::system("python assign_acceptance_weights.py");
-	  device_batch->set_norm_info("norm_weights.txt");
+      //if using BDT trained on AmpGen MC
+	  //std::system("python assign_acceptance_weights.py");
+	  //If using BDT trained on GooFit RS MC
+      std::system("python assign_acceptance_weights_goofit.py");
+      device_batch->set_norm_info("norm_weights.txt");
 	  std::vector<mcbooster::RealVector_h> norm_info = device_batch->get_norm_info();
 	  for(int i = 0; i < 10;i++){
 	    printf("dtime: %.7g, dtime_weight: %.7g, eff_weight: %.7g\n",norm_info[0][i], norm_info[1][i], norm_info[2][i]);
@@ -139,9 +142,14 @@ __host__ fptype NormEvents_4Body_DeviceCached::computeNorm_TD(bool noCachedNormV
       //printf("Normalising with acceptance\n");
         normResult = NormEvents_4Body_Base::doNormIntegral_TD(
             resolution, tau, xmixing, ymixing, dalitzId, _totNumAccNormEvents, _norm_SF_d, _norm_LS_d, _norm_dtime_d, _norm_eff_d, _norm_dtime_weights_d, CacheIdx);
+        //double normResult_no_bdt = NormEvents_4Body_Base::doNormIntegral_TD(
+        //    resolution, tau, xmixing, ymixing, dalitzId, _totNumAccNormEvents, _norm_SF_d, _norm_LS_d, CacheIdx);
+        //printf("Norm result with BDT weights: %.7g\n",normResult);
+        //printf("Norm result without BDT weights:%.7g\n",normResult_no_bdt);
+
     }
     else{
-        printf("Normalising without BDT weights\n");
+        //printf("Normalising without BDT weights\n");
         normResult = NormEvents_4Body_Base::doNormIntegral_TD(
             resolution, tau, xmixing, ymixing, dalitzId, _totNumAccNormEvents, _norm_SF_d, _norm_LS_d, CacheIdx);
     }

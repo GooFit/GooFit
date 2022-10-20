@@ -244,9 +244,11 @@ __device__ auto device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) -> fptyp
       //printf("Retrieving efficiency\n");
       //get normalisation weight. It is assumed this is the last variable to be added
       eff = pc.getObservable(9);
+      printf("eff val:%.7g\n",eff);
     }
     ret *= eff;
     /*printf("in prob: %f\n", ret);*/
+    printf("_xmixing:%.7g, _ymixing:%.7g, ret: %.7g\n",_xmixing, _ymixing, ret);
     return ret;
 }
 
@@ -315,6 +317,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     , _with_acceptance(with_acceptance)
     , _totalEventSize(observables.size()) // number of observables plus eventnumber
 {
+    printf("Created Amp4Body_TD PDF: %s, with event size of :%i\n",n,_totalEventSize);
     _normEvents.resize(normEvents.size());
     for(int n = 0; n < normEvents.size(); n++) {
         _normEvents[n] = std::unique_ptr<NormEvents_4Body_Base>(normEvents[n]);
@@ -792,7 +795,7 @@ __host__ auto Amp4Body_TD::normalize() -> fptype {
         fptype normResultsSum = MathUtils::doNeumaierSummation(normResults);
 	auto MCevents = getNumAccNormEvents();
         ret                   = normResultsSum / MCevents;
-	printf("Normalising with %i normalisation events. ret value: %.7g\n",MCevents, ret);
+	//printf("Normalising with %i normalisation events. ret value: %.7g\n",MCevents, ret);
     }
 
     _SpinsCalculated = true;

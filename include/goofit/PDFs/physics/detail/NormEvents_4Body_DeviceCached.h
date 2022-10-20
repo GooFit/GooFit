@@ -119,14 +119,14 @@ class NormEvents_4Body_DeviceCached final : public NormEvents_4Body_Base {
     while (std::getline(file,line)) {
       std::stringstream ss(line);
       if(file >> m12 >> m34 >> c12 >> c34 >> phi >> dtime >> imp_weight >> eff_weight){
-	_norm_M12_h.push_back(m12);
-	_norm_M34_h.push_back(m34);
-	_norm_CosTheta12_h.push_back(c12);
-	_norm_CosTheta34_h.push_back(c34);
-	_norm_phi_h.push_back(phi);
-	norm_dtime_h.push_back(dtime);
-	norm_dtime_weights_h.push_back(imp_weight);
-	norm_eff_weights_h.push_back(eff_weight);
+        _norm_M12_h.push_back(m12);
+        _norm_M34_h.push_back(m34);
+        _norm_CosTheta12_h.push_back(c12);
+        _norm_CosTheta34_h.push_back(c34);
+        _norm_phi_h.push_back(phi);
+        norm_dtime_h.push_back(dtime);
+        norm_dtime_weights_h.push_back(imp_weight);
+        norm_eff_weights_h.push_back(eff_weight);
       }
     }
     file.close();

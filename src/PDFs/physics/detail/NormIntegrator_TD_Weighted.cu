@@ -13,6 +13,8 @@ namespace GooFit {
 
     NormIntegrator_TD_Weighted::NormIntegrator_TD_Weighted() = default;
 
+    // TODO: This entire function essentially just evaluates Amp4Body_TD. We
+    // should really be able to avoid this.
     __device__ fptype NormIntegrator_TD_Weighted::operator()(
         thrust::tuple<int, int, fptype*, fptype*, fptype*, fptype*, fpcomplex*> t) const
     {

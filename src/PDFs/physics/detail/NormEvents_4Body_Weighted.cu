@@ -8,12 +8,12 @@
 #include <mcbooster/GTypes.h>
 
 #include <goofit/PDFs/physics/detail/NormEvents_4Body_Base.h>
-#include <goofit/PDFs/physics/detail/NormEvents_4Body_External.h>
+#include <goofit/PDFs/physics/detail/NormEvents_4Body_Weighted.h>
 #include <goofit/MathUtils.h>
 
 namespace GooFit {
   
-  __host__ NormEvents_4Body_External::NormEvents_4Body_External(
+  __host__ NormEvents_4Body_Weighted::NormEvents_4Body_Weighted(
     mcbooster::RealVector_h m12,
     mcbooster::RealVector_h m34,
     mcbooster::RealVector_h cos12,
@@ -36,7 +36,7 @@ namespace GooFit {
     _norm_LS_h = mcbooster::mc_host_vector<fpcomplex>(0);
   }
 
-  __host__ fptype NormEvents_4Body_External::computeNorm_TD(
+  __host__ fptype NormEvents_4Body_Weighted::computeNorm_TD(
     bool noCachedNormValuesToCompute,
     const MixingTimeResolution *const resolution,
     fptype tau,

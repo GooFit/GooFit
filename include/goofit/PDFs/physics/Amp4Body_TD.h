@@ -65,6 +65,18 @@ class Amp4Body_TD final : public Amp4BodyBase {
                          long normSeed,
                          unsigned int numNormEventsToGen);
 
+    // Does common initialization
+    __host__ Amp4Body_TD(std::string n,
+                         std::vector<Observable> observables,
+                         DecayInfo4t decay,
+                         MixingTimeResolution *Tres,
+                         GooPdf *efficiency,
+                         Observable *mistag,
+                         const std::vector<NormEvents_4Body_Base *> &normEvents);
+    // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
+    // coherent sum. The caching method requires that it be done this way or the ProdPdf
+    // normalization will get *really* confused and give wrong answers.
+
     __host__ auto normalize() -> fptype override;
 
     __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 8);
@@ -90,18 +102,6 @@ class Amp4Body_TD final : public Amp4BodyBase {
 
   protected:
   private:
-    // Does common initialization
-    __host__ Amp4Body_TD(std::string n,
-                         std::vector<Observable> observables,
-                         DecayInfo4t decay,
-                         MixingTimeResolution *Tres,
-                         GooPdf *efficiency,
-                         Observable *mistag,
-                         const std::vector<NormEvents_4Body_Base *> &normEvents);
-    // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
-    // coherent sum. The caching method requires that it be done this way or the ProdPdf
-    // normalization will get *really* confused and give wrong answers.
-
     __host__ void computeCachedValues(const std::vector<bool> &lineshapeChanged,
                                       const std::vector<bool> &amplitudeComponentChanged);
 

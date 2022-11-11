@@ -10,10 +10,10 @@
 
 namespace GooFit {
   
-  class NormEvents_4Body_External final : public NormEvents_4Body_Base {
+  class NormEvents_4Body_Weighted final : public NormEvents_4Body_Base {
 
     public:
-      NormEvents_4Body_External(
+      NormEvents_4Body_Weighted(
         mcbooster::RealVector_h m12,
         mcbooster::RealVector_h m34,
         mcbooster::RealVector_h cos12,

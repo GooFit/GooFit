@@ -33,6 +33,7 @@ goofit_add_pdf_library(
   detail/LSCalculator_TD.cu
   detail/NormIntegrator.cu
   detail/NormIntegrator_TD.cu
+  detail/NormIntegrator_TD_Weighted.cu
   detail/NormLSCalculator.cu
   detail/NormLSCalculator_TD.cu
   detail/NormSpinCalculator.cu

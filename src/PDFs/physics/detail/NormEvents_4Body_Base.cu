@@ -16,6 +16,7 @@
 #include <goofit/PDFs/physics/detail/NormSpinCalculator_TD.h>
 #include <goofit/PDFs/physics/detail/FourDblTupleAdd.h>
 #include <goofit/PDFs/physics/detail/NormIntegrator_TD.h>
+#include <goofit/PDFs/physics/detail/NormIntegrator_TD_Weighted.h>
 
 namespace GooFit {
 
@@ -162,6 +163,7 @@ NormEvents_4Body_Base::computeCachedSFValuesForBatch_TD(bool spinsCalculated,
     return sfValuesUpdated;
 }
 
+// Calculate the normalization integral for unweighted events.
 __host__ fptype NormEvents_4Body_Base::doNormIntegral_TD(
     const MixingTimeResolution *const resolution,
     fptype tau,
@@ -206,5 +208,63 @@ __host__ fptype NormEvents_4Body_Base::doNormIntegral_TD(
                                      xmixing,
                                      ymixing);
 }
+
+// Calculate the normalization integral for weighted events.
+__host__ fptype NormEvents_4Body_Base::doNormIntegral_TD(
+    const MixingTimeResolution *const resolution,
+    fptype tau,
+    fptype xmixing,
+    fptype ymixing,
+    unsigned int dalitzId,
+    unsigned int numAccThisBatch,
+    mcbooster::RealVector_d &batchSF_d,
+    mcbooster::mc_device_vector<fpcomplex> &batchLS_d,
+    mcbooster::RealVector_d &batchTime_d,
+    mcbooster::RealVector_d &batchSigma_d,
+    mcbooster::RealVector_d &batchWeights_d)
+{
+    thrust::constant_iterator<fptype*> normSFaddress(thrust::raw_pointer_cast(batchSF_d.data()));
+    thrust::constant_iterator<fpcomplex *> normLSaddress(thrust::raw_pointer_cast(batchLS_d.data()));
+    thrust::constant_iterator<fptype*> normTime(thrust::raw_pointer_cast(batchTime_d.data()));
+    thrust::constant_iterator<fptype*> normSigma(thrust::raw_pointer_cast(batchSigma_d.data()));
+    thrust::constant_iterator<fptype*> normWeight(thrust::raw_pointer_cast(batchWeights_d.data()));
+
+
+    thrust::constant_iterator<int> NumNormEvents(numAccThisBatch);
+    thrust::counting_iterator<int> eventIndex(0);
+
+    // thrust::tuple<fptype, fptype, fptype, fptype> sumIntegral;
+    fptype init = 0;
+    fptype sumIntegral = 0;
+
+    NormIntegrator_TD_Weighted integrator;
+    integrator.setDalitzId(dalitzId);
+
+    sumIntegral = thrust::transform_reduce(
+        thrust::make_zip_iterator(
+            thrust::make_tuple(
+                eventIndex, 
+                NumNormEvents, 
+                normTime,
+                normSigma,
+                normWeight,
+                normSFaddress, 
+                normLSaddress)),
+        thrust::make_zip_iterator(
+            thrust::make_tuple(
+                eventIndex + numAccThisBatch,
+                NumNormEvents,
+                normTime,
+                normSigma,
+                normWeight,
+                normSFaddress,
+                normLSaddress)),
+        integrator,
+        init,
+        thrust::plus<fptype>());
+    
+    return sumIntegral;
+}
+
 
 } // end namespace GooFit

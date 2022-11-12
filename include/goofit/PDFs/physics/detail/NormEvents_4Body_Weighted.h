@@ -5,7 +5,7 @@
 #include <mcbooster/GContainers.h>
 
 #include <goofit/detail/Complex.h>
-#include <goofit/detail/GlobalCudaDefines.h>
+#include <goofit/GlobalCudaDefines.h>
 #include <goofit/PDFs/physics/detail/NormEvents_4Body_Base.h>
 
 namespace GooFit {
@@ -13,6 +13,14 @@ namespace GooFit {
   class NormEvents_4Body_Weighted final : public NormEvents_4Body_Base {
 
     public:
+      NormEvents_4Body_Weighted() = delete;
+      NormEvents_4Body_Weighted(const NormEvents_4Body_Weighted &copyMe)            = default;
+      NormEvents_4Body_Weighted(NormEvents_4Body_Weighted &&moveMe)                 = default;
+      virtual ~NormEvents_4Body_Weighted() override                                 = default;
+      NormEvents_4Body_Weighted &operator=(const NormEvents_4Body_Weighted &copyMe) = default;
+      NormEvents_4Body_Weighted &operator=(NormEvents_4Body_Weighted &&moveMe)      = default;
+      
+
       NormEvents_4Body_Weighted(
         mcbooster::RealVector_h m12,
         mcbooster::RealVector_h m34,
@@ -22,6 +30,8 @@ namespace GooFit {
         mcbooster::RealVector_h dtime,
         mcbooster::RealVector_h sigma,
         mcbooster::RealVector_h weights);
+
+
 
       __host__ virtual fptype computeNorm_TD(
         bool noCachedNormValuesToCompute,

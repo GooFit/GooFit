@@ -31,6 +31,7 @@ namespace GooFit {
     _norm_dtime_h = dtime;
     _norm_sigma_h = sigma;
     _norm_weight_h = weights;
+    _totNumAccNormEvents = weights.size();
 
     _norm_SF_h = mcbooster::RealVector_h(0);
     _norm_LS_h = mcbooster::mc_host_vector<fpcomplex>(0);

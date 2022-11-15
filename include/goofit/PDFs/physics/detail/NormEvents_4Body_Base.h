@@ -77,18 +77,17 @@ class NormEvents_4Body_Base {
                                              mcbooster::RealVector_d &batchSF_d,
                                              mcbooster::mc_device_vector<fpcomplex> &batchLS_d);
 
-    __host__ static fptype doNormIntegral_TD(
-      const MixingTimeResolution *const resolution,
-      fptype tau,
-      fptype xmixing,
-      fptype ymixing,
-      unsigned int dalitzId,
-      unsigned int numAccThisBatch,
-      mcbooster::RealVector_d &batchSF_d,
-      mcbooster::mc_device_vector<fpcomplex> &batchLS_d,
-      mcbooster::RealVector_d &batchTime_d,
-      mcbooster::RealVector_d &batchSigma_d,
-      mcbooster::RealVector_d &batchWeights_d);
+    __host__ static fptype doNormIntegral_TD(const MixingTimeResolution *const resolution,
+                                             fptype tau,
+                                             fptype xmixing,
+                                             fptype ymixing,
+                                             unsigned int dalitzId,
+                                             unsigned int numAccThisBatch,
+                                             mcbooster::RealVector_d &batchSF_d,
+                                             mcbooster::mc_device_vector<fpcomplex> &batchLS_d,
+                                             mcbooster::RealVector_d &batchTime_d,
+                                             mcbooster::RealVector_d &batchSigma_d,
+                                             mcbooster::RealVector_d &batchWeights_d);
 
     unsigned int _totNumAccNormEvents;
     fptype _sumInitWeights;

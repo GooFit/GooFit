@@ -36,6 +36,7 @@ goofit_add_pdf_library(
   detail/NormIntegrator_TD_Weighted.cu
   detail/NormEvents_4Body_Base.cu
   detail/NormEvents_4Body_Weighted.cu
+  detail/NormEvents_4Body_WeightedDevice.cu
   detail/NormLSCalculator.cu
   detail/NormLSCalculator_TD.cu
   detail/NormSpinCalculator.cu

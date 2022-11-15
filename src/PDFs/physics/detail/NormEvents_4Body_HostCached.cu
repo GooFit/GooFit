@@ -44,7 +44,7 @@ __host__ NormEvents_4Body_HostCached::NormEvents_4Body_HostCached(
                                                                           temp_norm_CosTheta12_d,
                                                                           temp_norm_CosTheta34_d,
                                                                           temp_norm_phi_d);
-    // Events are unweighted.                                                                          
+    // Events are unweighted.
     _sumInitWeights = _totNumAccNormEvents;
 
     _norm_M12_h        = temp_norm_M12_d;

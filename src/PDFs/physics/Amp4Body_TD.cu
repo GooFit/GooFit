@@ -734,7 +734,7 @@ __host__ int Amp4Body_TD::getNumAccNormEvents() const {
 
 __host__ fptype Amp4Body_TD::getSumInitNormEventWeights() const {
     fptype sumWeights = 0;
-    for (auto const &n : _normEvents) {
+    for(auto const &n : _normEvents) {
         sumWeights += n->getSumInitWeights();
     }
     return sumWeights;

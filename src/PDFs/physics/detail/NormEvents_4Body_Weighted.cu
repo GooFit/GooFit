@@ -11,6 +11,9 @@
 #include <goofit/PDFs/physics/detail/NormEvents_4Body_Weighted.h>
 #include <goofit/MathUtils.h>
 
+#include <thrust/reduce.h>
+#include <thrust/execution_policy.h>
+
 namespace GooFit {
   
   __host__ NormEvents_4Body_Weighted::NormEvents_4Body_Weighted(
@@ -32,6 +35,7 @@ namespace GooFit {
     _norm_sigma_h = sigma;
     _norm_weight_h = weights;
     _totNumAccNormEvents = weights.size();
+    _sumInitWeights = thrust::reduce(thrust::host, weights.begin(), weights.end(), 0);
 
     _norm_SF_h = mcbooster::RealVector_h(0);
     _norm_LS_h = mcbooster::mc_host_vector<fpcomplex>(0);

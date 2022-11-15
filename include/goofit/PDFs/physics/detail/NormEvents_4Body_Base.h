@@ -20,6 +20,7 @@ class NormEvents_4Body_Base {
     NormEvents_4Body_Base &operator=(NormEvents_4Body_Base &&moveMe)      = default;
 
     int getNumAccNormEvents() const { return _totNumAccNormEvents; }
+    fptype getSumInitWeights() const { return _sumInitWeights; }
 
     __host__ virtual fptype computeNorm_TD(bool noCachedNormValuesToCompute,
                                            const MixingTimeResolution *const resolution,
@@ -90,6 +91,7 @@ class NormEvents_4Body_Base {
       mcbooster::RealVector_d &batchWeights_d);
 
     unsigned int _totNumAccNormEvents;
+    fptype _sumInitWeights;
 
   private:
 };

@@ -70,7 +70,7 @@ __device__ auto Spline_TDP(fptype Mpair, fptype m1, fptype m2, ParameterContaine
     const fptype width     = pc.getParameter(1);
     const fptype radius    = pc.getConstant(1);
     const int numConstants = pc.getNumConstants();
-    const int numParams = pc.getNumParameters();
+    const int numParams    = pc.getNumParameters();
 
     fptype s  = POW2(Mpair);
     fptype s1 = POW2(m1);

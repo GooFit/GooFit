@@ -21,7 +21,7 @@ __device__ auto FOCUSFunction(fptype Mpair, fptype m1, fptype m2, ParameterConta
     unsigned int mod = pc.getConstant(1);
 
     fpcomplex imag_i(0, 1); // imaginary i
-    fptype s = POW2(Mpair);
+    fptype s               = POW2(Mpair);
     constexpr fptype sNorm = mKPlus * mKPlus + mPiPlus * mPiPlus;
     constexpr fptype s12   = 0.23;
     constexpr fptype s32   = 0.27;
@@ -31,7 +31,7 @@ __device__ auto FOCUSFunction(fptype Mpair, fptype m1, fptype m2, ParameterConta
 
     fpcomplex rho1 = phsp_FOCUS(s, mKPlus, mPiPlus);
     fpcomplex rho2 = phsp_FOCUS(s, mKPlus, mEtap);
-    fptype pmass = 1.7919;
+    fptype pmass   = 1.7919;
     Eigen::Array<fptype, 2, 1> coupling;
     coupling << 0.31072, -0.02323;
     fptype X = s / sNorm - 1;

@@ -55,9 +55,6 @@ __device__ auto getSpline(fptype x, bool continued, ParameterContainer &pc) -> f
     fptype m_xf_0 = pc.getConstant(start_index + bin + nBins);
     fptype m_xf_1 = pc.getConstant(start_index + bin + nBins + 1);
 
-    // TODO: try to calculate this.
-    pc.incrementIndex(1, 0, numConstants, 0, 1);
-
     return m_x_0 + dx * ((m_x_1 - m_x_0) / spacing - (m_xf_1 + 2 * m_xf_0) * spacing / 6) + dx * dx * m_xf_0
            + dx * dx * dx * (m_xf_1 - m_xf_0) / (6 * spacing);
 }
@@ -73,6 +70,7 @@ __device__ auto Spline_TDP(fptype Mpair, fptype m1, fptype m2, ParameterContaine
     const fptype width     = pc.getParameter(1);
     const fptype radius    = pc.getConstant(1);
     const int numConstants = pc.getNumConstants();
+    const int numParams = pc.getNumParameters();
 
     fptype s  = POW2(Mpair);
     fptype s1 = POW2(m1);
@@ -93,7 +91,7 @@ __device__ auto Spline_TDP(fptype Mpair, fptype m1, fptype m2, ParameterContaine
     fptype running_width = width_norm == 0 ? 0 : width * width_shape / width_norm;
     fpcomplex iBW        = fpcomplex(POW2(mass) - s, -mass * running_width);
 
-    pc.incrementIndex(1, 2, numConstants, 0, 1);
+    pc.incrementIndex();
 
     return norm / iBW;
 }
@@ -147,9 +145,10 @@ Lineshapes::GSpline::GSpline(std::string name,
     registerConstant(std::get<1>(SplineInfo));
     registerConstant(std::get<2>(SplineInfo));
 
-    for(auto &par : AdditionalVars) {
-        registerParameter(par);
-    }
+    // Aren't these unnecessary?
+    // for(auto &par : AdditionalVars) {
+    //     registerParameter(par);
+    // }
 
     std::vector<fptype> SplineCTerms = make_spline_curvatures(AdditionalVars, SplineInfo);
 

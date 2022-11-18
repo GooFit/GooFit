@@ -64,7 +64,7 @@ __device__ auto FOCUSFunction(fptype Mpair, fptype m1, fptype m2, ParameterConta
     fpcomplex T22 = 1. - imag_i * rho1 * K11;
     fpcomplex T12 = imag_i * rho2 * K12;
 
-    fpcomplex T32 = 1. / (1. - imag_i * rho2 * K12);
+    fpcomplex T32 = 1. / (1. - imag_i * rho2 * K32);
 
     // printf("K11:%.7g, K12:%.7g, K22:%.7g, K32:%.7g, detK:%.7g, T11 re:%.7g, T11 im:%.7g, T22 re:%.7g, T22 im:%.7g,
     // T12 re:%.7g, T12 im:%.7g, T32 re:%.7g, T32 im:%.7g, del re:%.7g, del im:%.7g\n",

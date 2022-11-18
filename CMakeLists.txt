@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.16...3.23)
+cmake_minimum_required(VERSION 3.16...3.25)
 
 project(
   GOOFIT
-  VERSION 2.3.0
+  VERSION 2.4.0
   LANGUAGES CXX)
 
 #set(GOOFIT_TAG "dev")

@@ -1,11 +1,66 @@
 [build-system]
 requires = [
-  "cmake>=3.20",
-  "ninja>=1.9",
-  "scikit-build>=0.13",
-  "setuptools>=42",
+    "scikit-build-core",
 ]
-build-backend = "setuptools.build_meta"
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "goofit"
+version = "2.4.0"
+description = "GooFit fitting package"
+readme = "README-python.rst"
+requires-python = ">=3.7"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "License :: OSI Approved :: BSD License",
+    "Natural Language :: English",
+    "Operating System :: Unix",
+    "Programming Language :: C++",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+
+[project.urls]
+Homepage = "https://goofit.github.io"
+Documentation = "https://goofit.github.io/GooFit"
+"Bug Tracker" = "https://github.com/scikit-hep/package/issues"
+Changelog = "https://github.com/GooFit/GooFit/blob/master/docs/CHANGELOG.md"
+
+
+[project.optional-dependencies]
+test = [
+    "pytest>=6",
+]
+dev = [
+    "pytest",
+    "matplotlib>=1.5",
+    "pandas>=0.15.1",
+    "uncertainties>=3.0.2",
+    "scipy",
+    "plumbum",
+]
+
+
+[tool.scikit-build]
+minimum-version = "0.2"
+build-dir = "build/{cache_tag}"
+cmake.minimum-version = "3.16"
+
+[tool.scikit-build.cmake.define]
+GOOFIT_PYTHON = "ON"
+GOOFIT_TESTS = "OFF"
+GOOFIT_CERNROOT = "OFF"
+GOOFIT_EXAMPLES = "OFF"
+GOOFIT_PROJECTS = "OFF"
+
 
 [tool.pytest.ini_options]
 minversion = "6.0"

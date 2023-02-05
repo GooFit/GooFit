@@ -10,6 +10,7 @@ endif()
 goofit_add_pdf_library(
   PDFPhysics
   Amp3Body.cu
+  Amp3BodySqDP.cu
   Amp3BodyBase.cu
   Amp3Body_TD.cu
   Amp3Body_IS.cu
@@ -49,6 +50,9 @@ goofit_add_pdf_library(
   detail/SpecialResonanceIntegrator.cu
   detail/SpecialResonanceCalculator.cu
   detail/SpecialDalitzIntegrator.cu
+  detail/SpecialSqDpResonanceIntegrator.cu
+  detail/SpecialSqDpResonanceCalculator.cu
+  detail/SpecialSqDpDalitzIntegrator.cu
   detail/SpecialWaveCalculator.cu
   lineshapes/Lineshape.cu
   lineshapes/BW.cu

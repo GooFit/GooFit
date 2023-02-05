@@ -87,6 +87,7 @@ infrastructure, but will crash if used on its own.
 **/
 class ResonancePdf : public AmpComponent {
     friend class Amp3Body;
+    friend class Amp3BodySqDP;
     friend class Amp3Body_TD;
     friend class Amp3Body_IS;
 

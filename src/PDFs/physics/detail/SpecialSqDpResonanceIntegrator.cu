@@ -14,7 +14,7 @@ __device__ auto device_SqDalitzPlot_calcIntegrals(fptype mprime, fptype thetapri
     // observed points, that's why it doesn't use
     // cResonances. No need to cache the values at individual
     // grid points - we only care about totals.
-    fptype m12 = calc_m12(mprime,c_daug1Mass,c_daug2Mass);
+    fptype m12 = calc_m12(mprime,c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass);
     fptype m13 = calc_m13(thetaprime, m12, c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass);
     fptype s12 = m12*m12;
     fptype s13 = m13*m13;
@@ -112,6 +112,9 @@ __device__ auto SpecialSqDpResonanceIntegrator::operator()(thrust::tuple<int, fp
     // These complex numbers will not be squared when they
     // go into the integrals. They've been squared already,
     // as it were.
+    //fptype jacobian = calc_SqDp_Jacobian(binCenterMPrime, binCenterThetaPrime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
+    //ret *= eff/jacobian;
+    //ret*=eff*jacobian;
     ret *= eff;
     // printf("ret %f %f %f %f %f\n",binCenterMPrime, binCenterThetaPrime, ret.real, ret.imag, eff );
     return ret;

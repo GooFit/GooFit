@@ -24,7 +24,10 @@ class SqDalitzPlotter {
     Observable thetaprime;
     EventNumber eventNumber;
     UnbinnedDataSet data;
-    fptype mother;
+    fptype mother_mass;
+    fptype d1_mass;
+    fptype d2_mass;
+    fptype d3_mass;
 
   public:
     SqDalitzPlotter(GooPdf *overallSignal, Amp3BodySqDP *signalDalitz)
@@ -32,8 +35,15 @@ class SqDalitzPlotter {
         , thetaprime(signalDalitz->_thetaprime)
         , eventNumber(signalDalitz->_eventNumber)
         , data({mprime, thetaprime, eventNumber})
-        , mother(signalDalitz->decayInfo.motherMass) {
+        , mother_mass(signalDalitz->decayInfo.motherMass)
+        , d1_mass(signalDalitz->decayInfo.daug1Mass)
+        , d2_mass(signalDalitz->decayInfo.daug2Mass)
+        , d3_mass(signalDalitz->decayInfo.daug3Mass) {
         eventNumber.setValue(0);
+
+        std::default_random_engine generator;
+        std::uniform_real_distribution<fptype> distribution(0.0,1.0);
+        
 
         for(size_t i = 0; i < mprime.getNumBins(); ++i) {
             mprime.setValue(mprime.getLowerLimit() + mprime.getBinSize() * (i + 0.5));
@@ -53,6 +63,14 @@ class SqDalitzPlotter {
         overallSignal->setData(&data);
         signalDalitz->setDataSize(data.getNumEvents());
         pdfValues = overallSignal->getCompProbsAtDataPoints();
+
+        for(size_t i=0; i<data.getNumEvents();i++){
+            data.loadEvent(i);
+            fptype jacobian = calc_SqDp_Jacobian(mprime.getValue(), thetaprime.getValue(), mother_mass, d1_mass, d2_mass, d3_mass);
+            //pdfValues.at(0).at(i) *= jacobian;
+        }
+
+
         overallSignal->setData(old);
     }
 
@@ -67,21 +85,22 @@ class SqDalitzPlotter {
         std::uniform_real_distribution<> uniwhole(0.0, 1.0);
 
         // CumSum in other languages
-        std::vector<double> integral(pdfValues[0].size());
+        std::vector<fptype> integral(pdfValues[0].size());
         std::partial_sum(pdfValues[0].begin(), pdfValues[0].end(), integral.begin());
 
         // Make this a 0-1 fraction by dividing by the end value
-        std::for_each(integral.begin(), integral.end(), [&integral](double &val) { val /= integral.back(); });
+        std::for_each(integral.begin(), integral.end(), [&integral](fptype &val) { val /= integral.back(); });
 
         for(size_t i = 0; i < nTotal; i++) {
-            double r = uniwhole(gen);
+            fptype r = uniwhole(gen);
 
             // Binary search for integral[cell-1] < r < integral[cell]
             size_t j = std::lower_bound(integral.begin(), integral.end(), r) - integral.begin();
 
             // Fill in the grid square randomly
-            double currmprime = data.getValue(mprime, j) + mprime.getBinSize() * unihalf(gen);
-            double currthetaprime = data.getValue(thetaprime, j) + thetaprime.getBinSize() * unihalf(gen);
+            fptype currmprime = data.getValue(mprime, j) + mprime.getBinSize() ;//* unihalf(gen);
+            fptype currthetaprime = data.getValue(thetaprime, j) + thetaprime.getBinSize();// * unihalf(gen);
+            
 
             //printf("mprime=%.2f \t thetaprime=%.2f \t prob=%.4f \n", currmprime, currthetaprime, pdfValues[0][j]);
 
@@ -102,7 +121,7 @@ class SqDalitzPlotter {
 
     auto getYval(size_t event) const -> fptype { return data.getValue(thetaprime, event); }
 
-    auto getZval(size_t event) const -> fptype { return POW2(mother) - POW2(getXval(event)) - POW2(getYval(event)); }
+    auto getZval(size_t event) const -> fptype { return POW2(mother_mass) - POW2(getXval(event)) - POW2(getYval(event)); }
 
     auto getVal(size_t event, size_t num = 0) const -> fptype { return pdfValues.at(num).at(event); }
 
@@ -123,10 +142,14 @@ class SqDalitzPlotter {
                                     thetaprime.getLowerLimit(),
                                     thetaprime.getUpperLimit());
 
+        
+
         for(unsigned int j = 0; j < getNumEvents(); ++j) {
+           
             size_t currmprime = getX(j);
             size_t currthetaprime = getY(j);
-            double val     = getVal(j);
+            
+            fptype val     = getVal(j);
 
             dalitzplot->SetBinContent(1 + currmprime, 1 + currthetaprime, val);
         }

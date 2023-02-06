@@ -36,9 +36,11 @@ mother and daughter masses, and the efficiency function.
 
 __device__ auto inSqDalitz(const fptype &mprime,const fptype &thetaprime)-> bool;
 
-__device__ auto calc_m12(const fptype &mprime, const fptype &m1, const fptype &m2)->fptype;
+__device__ auto calc_m12(const fptype &mprime, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype;
 
 __device__ auto calc_m13(const fptype &thetaprime, const fptype &m12, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype;
+
+__device__ auto calc_SqDp_Jacobian(const fptype &mprime ,const fptype &thetaprime, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype;
 
 class Amp3BodySqDP : public Amp3BodyBase {
   public:
@@ -55,6 +57,13 @@ class Amp3BodySqDP : public Amp3BodyBase {
     __host__ auto normalize() -> fptype override;
     __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 3, unsigned int offset = 0);
     __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
+
+    __host__ void setGenerationOffset(int off) { generation_offset = off; }
+    __host__ auto getGenerationOffset() -> int { return generation_offset; }
+    __host__ auto GenerateSig(unsigned int numEvents, int seed = 0) -> std::
+        tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h>;
+
+
     __host__ void populateArrays() override;
 
     /// Get the cached wave (device) vectors

@@ -12,6 +12,8 @@ __device__ auto plainBW(fptype m12, fptype m13, fptype m23, ParameterContainer &
     unsigned int cyclic_index = pc.getConstant(1);
     bool norm                 = pc.getConstant(2);
 
+    //printf("m12=%.2f \t m13=%.2f \n", m12, m13);
+
     fptype resmass  = pc.getParameter(0);
     fptype reswidth = pc.getParameter(1);
 

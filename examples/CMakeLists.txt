@@ -71,6 +71,7 @@ if(ROOT_FOUND)
   add_subdirectory(zachFit)
   add_subdirectory(DP4)
   add_subdirectory(TDDP4)
+  #add_subdirectory(TDDP4WeightedMC)
 endif()
 
 # Root not required

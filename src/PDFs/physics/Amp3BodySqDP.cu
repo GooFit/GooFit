@@ -28,8 +28,8 @@ __device__  auto inSqDalitz(const fptype &mprime,const fptype &thetaprime) -> bo
     return (mprime>0. && mprime<1.)&&(thetaprime>0. && thetaprime<1.);
 }
 
-__device__  auto calc_m12(const fptype &mprime, const fptype &m1, const fptype &m2)->fptype{
-    return 0.5*(m2-m1)*(1.0 + cos(M_PI*mprime)) + (m1+m2);
+__device__  auto calc_m12(const fptype &mprime, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
+    return 0.5*( (m_mother-m3) - (m1+m2) )*(1.0 + cos(M_PI*mprime)) + (m1+m2);
 }
 
 __device__  auto calc_m13(const fptype &thetaprime, const fptype &m12,const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
@@ -61,6 +61,36 @@ __device__  auto calc_m13(const fptype &thetaprime, const fptype &m12,const fpty
         m13Sq = (m1+m3)*(m1+m3); //Laura protection, need to check!
 
     return sqrt(m13Sq);
+}
+
+__device__ auto calc_SqDp_Jacobian(const fptype &mprime ,const fptype &thetaprime, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
+
+    fptype m12 = calc_m12(mprime,m_mother,m1,m2,m3);
+    fptype m12Sq = m12*m12;
+
+    fptype m_motherSq = m_mother*m_mother;
+    fptype m1Sq = m1*m1;
+    fptype m2Sq = m2*m2;
+    fptype m3Sq = m3*m3;
+
+    fptype EiCmsij = (m12Sq - m2Sq + m1Sq)/(2.0*m12);
+    fptype EkCmsij = (m_motherSq - m12Sq - m3Sq)/(2.0*m12);
+
+    fptype qi = EiCmsij*EiCmsij - m1Sq;
+    qi = sqrt(qi) ? qi>0. : 0.;
+
+    fptype qk = EkCmsij*EkCmsij - m3Sq;
+    qk = sqrt(qk) ? qk>0. : 0.;
+
+    if(qi==0. || qk==0)
+        return 0.0;
+    
+    fptype deriv1 = (M_PI/2.)*((m_mother-m3) - (m1+m2))*sin(M_PI*mprime);
+    fptype deriv2 = M_PI*sin(M_PI*thetaprime);
+
+    fptype jacobian = 4.0*qi*qk*m12*deriv1*deriv2;
+
+    return jacobian;
 }
 
 // Functor used for fit fraction sum
@@ -140,6 +170,7 @@ __device__ auto device_SqDalitzPlot(fptype *evt, ParameterContainer &pc) -> fpty
         pc.incrementIndex();
 
     fptype eff = callFunction(evt, pc);
+    //fptype jacobian = calc_SqDp_Jacobian(mprime, thetaprime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
     ret *= eff;
 
     return ret;
@@ -266,7 +297,7 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
     // don't get zeroes through multiplying by the normFactor.
     // we need to update the normal here, as values are used at this point.
     host_normalizations.sync(d_normalizations);
-
+    printf("oi aqui \n");
     int totalBins = _mprime.getNumBins() * _thetaprime.getNumBins();
 
     if(!dalitzNormRange) {
@@ -452,6 +483,125 @@ __host__ auto Amp3BodySqDP::fit_fractions() -> std::vector<std::vector<fptype>> 
             ff[i][j] = (Amps_int[i][j] / total_PDF);
 
     return ff;
+}
+
+__host__ auto Amp3BodySqDP::GenerateSig(unsigned int numEvents, int seed) -> std::
+    tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h> {
+    // Must configure our functions before any calculations!
+    // setupObservables();
+    // setIndices();
+
+    initialize();
+
+    // Defining phase space
+    std::vector<mcbooster::GReal_t> masses{decayInfo.daug1Mass, decayInfo.daug2Mass, decayInfo.daug3Mass};
+    mcbooster::PhaseSpace phsp(decayInfo.motherMass, masses, numEvents, generation_offset);
+
+    if(seed != 0) {
+        phsp.SetSeed(seed);
+    } else {
+        GOOFIT_INFO("Current generator seed {}, offset {}", phsp.GetSeed(), generation_offset);
+    }
+
+    // Generating numEvents events. Events are all generated inside the phase space with uniform distribution in
+    // momentum space. Events must be weighted to have phase space distribution
+    phsp.Generate(mcbooster::Vector4R(decayInfo.motherMass, 0.0, 0.0, 0.0));
+
+    auto d1 = phsp.GetDaughters(0);
+    auto d2 = phsp.GetDaughters(1);
+    auto d3 = phsp.GetDaughters(2);
+
+    mcbooster::ParticlesSet_d pset(3);
+    pset[0] = &d1;
+    pset[1] = &d2;
+    pset[2] = &d3;
+
+    auto SigGen_M12_d = mcbooster::RealVector_d(numEvents);
+    auto SigGen_M13_d = mcbooster::RealVector_d(numEvents);
+    auto SigGen_M23_d = mcbooster::RealVector_d(numEvents);
+
+    mcbooster::VariableSet_d VarSet_d(3);
+    VarSet_d[0] = &SigGen_M12_d;
+    VarSet_d[1] = &SigGen_M23_d;
+    VarSet_d[2] = &SigGen_M13_d;
+
+    // Evaluating invariant masses for each event
+    Dim2 eval = Dim2();
+    mcbooster::EvaluateArray<Dim2>(eval, pset, VarSet_d);
+
+    mcbooster::VariableSet_d GooVarSet_d(3);
+    GooVarSet_d[0] = VarSet_d[0];
+    GooVarSet_d[1] = VarSet_d[2];
+    GooVarSet_d[2] = VarSet_d[1];
+
+    auto h1 = new mcbooster::Particles_h(d1);
+    auto h2 = new mcbooster::Particles_h(d2);
+    auto h3 = new mcbooster::Particles_h(d3);
+
+    mcbooster::ParticlesSet_h ParSet(3);
+    ParSet[0] = h1;
+    ParSet[1] = h2;
+    ParSet[2] = h3;
+
+    auto SigGen_M12_h = new mcbooster::RealVector_h(SigGen_M12_d);
+    auto SigGen_M23_h = new mcbooster::RealVector_h(SigGen_M23_d);
+    auto SigGen_M13_h = new mcbooster::RealVector_h(SigGen_M13_d);
+
+    mcbooster::VariableSet_h VarSet(3);
+    VarSet[0] = SigGen_M12_h;
+    VarSet[1] = SigGen_M23_h;
+    VarSet[2] = SigGen_M13_h;
+
+    mcbooster::RealVector_d weights(phsp.GetWeights());
+    phsp.FreeResources();
+
+    auto DS = new mcbooster::RealVector_d(3 * numEvents);
+    thrust::counting_iterator<int> eventNumber(0);
+
+#pragma unroll
+
+    for(int i = 0; i < 2; ++i) {
+        mcbooster::strided_range<mcbooster::RealVector_d::iterator> sr(DS->begin() + i, DS->end(), 3);
+        thrust::copy(GooVarSet_d[i]->begin(), GooVarSet_d[i]->end(), sr.begin());
+    }
+
+    mcbooster::strided_range<mcbooster::RealVector_d::iterator> sr(DS->begin() + 2, DS->end(), 3);
+    thrust::copy(eventNumber, eventNumber + numEvents, sr.begin());
+
+    // Giving events to GooFit. Format of dev_evt_array must be (s12, s13, eventNumber). s23 is calculated automatically
+    // in src/PDFs/physics/detail/SpecialResonanceCalculator.cu
+    dev_event_array = thrust::raw_pointer_cast(DS->data());
+    setDataSize(numEvents, 3);
+
+    generation_no_norm = true; // we need no normalization for generation, but we do need to make sure that norm = 1;
+    SigGenSetIndices();
+    copyParams();
+    normalize();
+    setForceIntegrals();
+    host_normalizations.sync(d_normalizations);
+
+    auto fc = fitControl;
+    setFitControl(std::make_shared<ProbFit>());
+
+    thrust::device_vector<fptype> results;
+    GooPdf::evaluate_with_metric(results);
+
+    // evaluating amplitudes for generated events, amplitudes are incorporated in weights
+    thrust::transform(
+        results.begin(), results.end(), weights.begin(), weights.begin(), thrust::multiplies<mcbooster::GReal_t>());
+
+    // Filing accept/reject flags for resonant distribution for each generated event
+    mcbooster::BoolVector_d flags(numEvents);
+    fillMCFlags(flags, weights, numEvents);
+
+    auto weights_h = mcbooster::RealVector_h(weights);
+    auto results_h = mcbooster::RealVector_h(results);
+    auto flags_h   = mcbooster::BoolVector_h(flags);
+    cudaDeviceSynchronize();
+
+    setFitControl(fc);
+
+    return std::make_tuple(ParSet, VarSet, weights_h, flags_h);
 }
 
 } // namespace GooFit

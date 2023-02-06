@@ -1,5 +1,4 @@
 goofit_add_directory()
-
 goofit_add_library(ToyModel ToyModel.cu ToyModel.h)
 
 goofit_add_executable(GenerateToy GenerateToy.cu)

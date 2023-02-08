@@ -25,7 +25,57 @@
 namespace GooFit {
 
 __device__  auto inSqDalitz(const fptype &mprime,const fptype &thetaprime) -> bool{
-    return (mprime>0. && mprime<1.)&&(thetaprime>0. && thetaprime<1.);
+    return (mprime>0.0 && mprime<1.0)&&(thetaprime>0. && thetaprime<1.0);
+}
+
+__device__ auto calc_mprime(const fptype &m12, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
+    fptype min = m1+m2;
+    fptype max = m_mother-m3;
+
+    fptype mprime = m12 - min;
+    mprime/= max - min;
+    mprime*=2.0;
+    mprime-=1.0;
+
+    if(mprime>1.)
+        mprime=1.;
+
+    if(mprime<-1.)
+        mprime=-1.;
+
+    mprime=acos(mprime);
+    mprime/=M_PI;
+
+    return mprime;
+}
+
+__device__ auto calc_thetaprime(const fptype &m12,const fptype &m13, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
+    fptype m12Sq = m12*m12;
+    fptype m13Sq = m13*m13;
+    fptype m_motherSq = m_mother*m_mother;
+    fptype m1Sq = m1*m1;
+    fptype m2Sq = m2*m2;
+    fptype m3Sq = m3*m3;
+
+    fptype EiCmsij = (m12Sq - m2Sq + m1Sq)/(2.0*m12);
+    fptype EkCmsij = (m_motherSq - m12Sq - m3Sq)/(2.0*m12);
+
+    fptype qi = EiCmsij*EiCmsij - m1Sq;
+    qi = sqrt(qi) ? qi>0. : 0.;
+
+    fptype qk = EkCmsij*EkCmsij - m3Sq;
+    qk = sqrt(qk) ? qk>0. : 0.;
+    
+    fptype coshel = -(m13Sq - m1Sq - m3Sq - 2.0*EiCmsij*EkCmsij)/(2.0*qi*qk);
+
+    if(coshel>1.)
+        coshel = 1.0;
+    
+    if(coshel < -1.0)
+        coshel = -1.0;
+
+    //printf("coshel = %.2f \n",coshel);
+    return acos(coshel)/M_PI;
 }
 
 __device__  auto calc_m12(const fptype &mprime, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
@@ -51,9 +101,6 @@ __device__  auto calc_m13(const fptype &thetaprime, const fptype &m12,const fpty
 
     fptype qk = EkCmsij*EkCmsij - m3Sq;
     qk = sqrt(qk) ? qk>0. : 0.;
-
-    if(qi==0. || qk==0)
-        return 0.0;
     
     fptype m13Sq = m1Sq + m3Sq + 2.0*EiCmsij*EkCmsij - 2.0*qi*qk*coshel;
 
@@ -68,6 +115,9 @@ __device__ auto calc_SqDp_Jacobian(const fptype &mprime ,const fptype &thetaprim
     fptype m12 = calc_m12(mprime,m_mother,m1,m2,m3);
     fptype m12Sq = m12*m12;
 
+    fptype m13 = calc_m13(thetaprime, m12 ,m_mother,m1,m2,m3);
+    fptype m13Sq = m13*m13;
+
     fptype m_motherSq = m_mother*m_mother;
     fptype m1Sq = m1*m1;
     fptype m2Sq = m2*m2;
@@ -75,22 +125,55 @@ __device__ auto calc_SqDp_Jacobian(const fptype &mprime ,const fptype &thetaprim
 
     fptype EiCmsij = (m12Sq - m2Sq + m1Sq)/(2.0*m12);
     fptype EkCmsij = (m_motherSq - m12Sq - m3Sq)/(2.0*m12);
+    
+    fptype qi = EiCmsij*EiCmsij - m1Sq;
+    qi = sqrt(qi) ? qi>0. : 0.;
 
+    fptype qk = EkCmsij*EkCmsij - m3Sq;
+    qk = sqrt(qk) ? qk>0. : 0.;
+    
+    fptype deriv1 = (M_PI)*((m_mother-m3) - (m1+m2))*sin(M_PI*mprime);
+    fptype deriv2 = (M_PI/2.)*sin(M_PI*thetaprime);
+
+    fptype jacobian = 4.0*qi*qk*m12*deriv1*deriv2;
+
+    return jacobian;
+}
+
+__device__ auto calc_SqDp_InvJacobian(const fptype &m12 ,const fptype &m13, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
+   
+    fptype m12Sq = m12*m12;
+    fptype m13Sq = m13*m13;
+
+    fptype m_motherSq = m_mother*m_mother;
+    fptype m1Sq = m1*m1;
+    fptype m2Sq = m2*m2;
+    fptype m3Sq = m3*m3;
+
+    fptype EiCmsij = (m12Sq - m2Sq + m1Sq)/(2.0*m12);
+    fptype EkCmsij = (m_motherSq - m12Sq - m3Sq)/(2.0*m12);
+    
     fptype qi = EiCmsij*EiCmsij - m1Sq;
     qi = sqrt(qi) ? qi>0. : 0.;
 
     fptype qk = EkCmsij*EkCmsij - m3Sq;
     qk = sqrt(qk) ? qk>0. : 0.;
 
-    if(qi==0. || qk==0)
-        return 0.0;
-    
-    fptype deriv1 = (M_PI/2.)*((m_mother-m3) - (m1+m2))*sin(M_PI*mprime);
-    fptype deriv2 = M_PI*sin(M_PI*thetaprime);
+    fptype min = m1+m2;
+    fptype max = m_mother-m3;
+    fptype diff = max-min;
 
-    fptype jacobian = 4.0*qi*qk*m12*deriv1*deriv2;
+    fptype inv_deriv1 = -M_PI*diff*sqrt(((min-m12)*(m12-max))/((min-max)*(min-max)));
+    fptype deriv1 = 1./inv_deriv1;
 
-    return jacobian;
+    fptype deriv2 = 2.*m13;
+    deriv2 /= M_PI*qk*qi*sqrt(1.0 - pow( (m1Sq + 2*EiCmsij*EkCmsij + m3Sq - m13Sq)/(qi*qk) ,2));
+
+    printf("qi = %f \t qk = %f \n", qi,qk );
+
+    fptype invjacobian = deriv1;
+
+    return invjacobian;
 }
 
 // Functor used for fit fraction sum
@@ -297,7 +380,7 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
     // don't get zeroes through multiplying by the normFactor.
     // we need to update the normal here, as values are used at this point.
     host_normalizations.sync(d_normalizations);
-    printf("oi aqui \n");
+    
     int totalBins = _mprime.getNumBins() * _thetaprime.getNumBins();
 
     if(!dalitzNormRange) {
@@ -526,6 +609,7 @@ __host__ auto Amp3BodySqDP::GenerateSig(unsigned int numEvents, int seed) -> std
     VarSet_d[2] = &SigGen_M13_d;
 
     // Evaluating invariant masses for each event
+    
     Dim2 eval = Dim2();
     mcbooster::EvaluateArray<Dim2>(eval, pset, VarSet_d);
 

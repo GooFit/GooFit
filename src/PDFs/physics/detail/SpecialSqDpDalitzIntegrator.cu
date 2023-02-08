@@ -98,7 +98,7 @@ __device__ auto SpecialSqDpDalitzIntegrator::operator()(thrust::tuple<int, fptyp
     int id_thetaprime = pc.getObservable(3);
     // if (0 == THREADIDX) cuPrintf("%i %i %i %f %f operator\n", thrust::get<0>(t), thrust::get<0>(t) % numBinsMPrime,
     // globalBinNumber, binCenterMPrime, binCenterThetaPrime);
-    //fptype jacobian = calc_SqDp_Jacobian(binCenterMPrime, binCenterThetaPrime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
+    fptype jacobian = calc_SqDp_Jacobian(binCenterMPrime, binCenterThetaPrime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
     ThreeComplex ret = device_SqTddp_calcIntegrals(binCenterMPrime, binCenterThetaPrime, resonance_i, resonance_j, pc);
 
     // fptype fakeEvt[10]; // Need room for many observables in case mprime or thetaprime were assigned a high index in an
@@ -129,18 +129,18 @@ __device__ auto SpecialSqDpDalitzIntegrator::operator()(thrust::tuple<int, fptyp
     // These complex numbers will not be squared when they
     // go into the integrals. They've been squared already,
     // as it were.
-    // thrust::get<0>(ret) *= eff*jacobian;
-    // thrust::get<1>(ret) *= eff*jacobian;
-    // thrust::get<2>(ret) *= eff*jacobian;
-    // thrust::get<3>(ret) *= eff*jacobian;
-    // thrust::get<4>(ret) *= eff*jacobian;
-    // thrust::get<5>(ret) *= eff*jacobian;
-    thrust::get<0>(ret) *= eff;
-    thrust::get<1>(ret) *= eff;
-    thrust::get<2>(ret) *= eff;
-    thrust::get<3>(ret) *= eff;
-    thrust::get<4>(ret) *= eff;
-    thrust::get<5>(ret) *= eff;
+    thrust::get<0>(ret) *= eff*jacobian;
+    thrust::get<1>(ret) *= eff*jacobian;
+    thrust::get<2>(ret) *= eff*jacobian;
+    thrust::get<3>(ret) *= eff*jacobian;
+    thrust::get<4>(ret) *= eff*jacobian;
+    thrust::get<5>(ret) *= eff*jacobian;
+    // thrust::get<0>(ret) *= eff;
+    // thrust::get<1>(ret) *= eff;
+    // thrust::get<2>(ret) *= eff;
+    // thrust::get<3>(ret) *= eff;
+    // thrust::get<4>(ret) *= eff;
+    // thrust::get<5>(ret) *= eff;
     return ret;
 }
 

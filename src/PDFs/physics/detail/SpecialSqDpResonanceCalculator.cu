@@ -43,11 +43,12 @@ __device__ auto SpecialSqDpResonanceCalculator::operator()(thrust::tuple<int, fp
     while(pc.funcIdx < resonance_i)
         pc.incrementIndex();
 
-    printf("s12=%.2f \t s13=%.2f \t s23=%.2f \t mp=%.2f \t tp=%.2f \n",s12, s13, s23, mprime, thetaprime);
+    //printf("s12=%.2f \t s13=%.2f \t s23=%.2f \t mp=%.2f \t tp=%.2f \n",s12, s13, s23, mprime, thetaprime);
 
     ret = getResonanceAmplitude(s12, s13, s23, pc);
 
-    //fptype jacobian = calc_SqDp_Jacobian(mprime, thetaprime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
+    fptype jacobian = calc_SqDp_Jacobian(mprime, thetaprime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
+   
     //ret*=jacobian;
 
     return ret;

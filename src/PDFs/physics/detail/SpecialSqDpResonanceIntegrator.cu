@@ -112,7 +112,7 @@ __device__ auto SpecialSqDpResonanceIntegrator::operator()(thrust::tuple<int, fp
     // These complex numbers will not be squared when they
     // go into the integrals. They've been squared already,
     // as it were.
-    //fptype jacobian = calc_SqDp_Jacobian(binCenterMPrime, binCenterThetaPrime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
+    fptype jacobian = calc_SqDp_Jacobian(binCenterMPrime, binCenterThetaPrime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
     //ret *= eff/jacobian;
     //ret*=eff*jacobian;
     ret *= eff;

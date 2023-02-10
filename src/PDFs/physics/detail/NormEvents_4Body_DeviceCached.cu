@@ -35,6 +35,8 @@ __host__ NormEvents_4Body_DeviceCached::NormEvents_4Body_DeviceCached(
                                                                           _norm_CosTheta12_d,
                                                                           _norm_CosTheta34_d,
                                                                           _norm_phi_d);
+    // Events are unweighted.
+    _sumInitWeights = _totNumAccNormEvents;
 
     GOOFIT_INFO("# of accepted MC events used for normalization: {}", getNumAccNormEvents());
 }

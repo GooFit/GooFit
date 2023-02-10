@@ -71,9 +71,10 @@ if(ROOT_FOUND)
   add_subdirectory(zachFit)
   add_subdirectory(DP4)
   add_subdirectory(TDDP4)
-  add_subdirectory(D2KKK)
-  add_subdirectory(B2KKK)
-  add_subdirectory(D2PPP)
+  # add_subdirectory(B2KKK_SqDP)
+  # add_subdirectory(D2KKK)
+  # add_subdirectory(B2KKK)
+  # add_subdirectory(D2PPP)
 endif()
 
 # Root not required

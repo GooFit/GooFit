@@ -56,13 +56,15 @@ namespace GooFit {
 struct genExp {
     fptype gamma;
     unsigned int offset;
+    unsigned int seed;
 
-    __host__ __device__ genExp(unsigned int c, fptype d)
+    __host__ __device__ genExp(unsigned int c, fptype d, unsigned int _seed)
         : gamma(d)
-        , offset(c){};
+        , offset(c)
+        , seed(_seed){};
 
     __host__ __device__ auto operator()(unsigned int x) const -> fptype {
-        thrust::random::default_random_engine rand(1431655765);
+        thrust::random::default_random_engine rand(seed);
         thrust::uniform_real_distribution<fptype> dist(0, 1);
 
         rand.discard(x + offset);
@@ -72,31 +74,45 @@ struct genExp {
 };
 
 struct exp_functor {
-    size_t tmpparam, tmpoff;
-    fptype gammamin, wmax;
+    size_t tmpparam; // index to access decay time in event array
+    size_t tmpoff;   // offset for discard() -> should correspond to the number of already generated events/batch size
+    fptype gammamin; // effective Gamma
+    fptype wmax;     // maximum value for envelope function
     exp_functor(size_t tmpparam, size_t tmpoff, fptype gammamin, fptype wmax)
         : tmpparam(tmpparam)
         , tmpoff(tmpoff)
         , gammamin(gammamin)
         , wmax(wmax) {}
 
-    __device__ auto operator()(thrust::tuple<unsigned int, fptype, fptype *, unsigned int> t) -> fptype {
-        int evtNum  = thrust::get<0>(t);
-        fptype *evt = thrust::get<2>(t) + (evtNum * thrust::get<3>(t));
-        // unsigned int *indices = paramIndices + tmpparam;
+    __device__ auto operator()(thrust::tuple<unsigned int, fptype, fptype *, unsigned int> t) -> bool {
+        int evtNum          = thrust::get<0>(t);
+        auto val_pdf_to_gen = thrust::get<1>(t);
+        fptype *evt         = thrust::get<2>(t) + (evtNum * thrust::get<3>(t));
+        /*
+        t0: event number
+        t1: values of pdf to generate (full model with decay-time dependence)
+        t2: pointer to event array
+        t3: event size
+        */
 
-        // while
-        //    fptype time = evt[indices[8 + indices[0]]];
-
-        // we are grabbing the time out
         fptype time = evt[tmpparam];
 
         thrust::random::minstd_rand0 rand(1431655765);
         thrust::uniform_real_distribution<fptype> dist(0, 1);
         rand.discard(tmpoff + evtNum);
 
-        return (dist(rand) * exp(-time * gammamin) * wmax) < thrust::get<1>(t);
-        // Should be something like: return thrust::get<1>(t) / exp(-time * gammamin);
+        // accept-reject method
+        auto val_pdf_envelope = exp(-time * gammamin) * wmax;
+        auto rand_uniform     = dist(rand);
+        if(val_pdf_envelope < thrust::get<1>(t)) {
+            printf("ERROR: Amp4Body_TD::exp_functor: value of envelope function smaller than pdf to generate in "
+                   "accept-reject method! envelope: %f pdf: %f decay time: %f expo: %f\n",
+                   val_pdf_envelope,
+                   val_pdf_to_gen,
+                   time,
+                   exp(-time * gammamin));
+        }
+        return rand_uniform * val_pdf_envelope < val_pdf_to_gen;
     }
 };
 
@@ -716,6 +732,14 @@ __host__ int Amp4Body_TD::getNumAccNormEvents() const {
     return totNumAccNormEvents;
 }
 
+__host__ fptype Amp4Body_TD::getSumInitNormEventWeights() const {
+    fptype sumWeights = 0;
+    for(auto const &n : _normEvents) {
+        sumWeights += n->getSumInitWeights();
+    }
+    return sumWeights;
+}
+
 // this is where the actual magic happens. This function does all the calculations!
 __host__ auto Amp4Body_TD::normalize() -> fptype {
     if(_cachedResSF == nullptr)
@@ -761,7 +785,7 @@ __host__ auto Amp4Body_TD::normalize() -> fptype {
                                                             getLSFunctionIndices());
         }
         fptype normResultsSum = MathUtils::doNeumaierSummation(normResults);
-        ret                   = normResultsSum / getNumAccNormEvents();
+        ret                   = normResultsSum / getSumInitNormEventWeights();
     }
 
     _SpinsCalculated = true;
@@ -852,7 +876,7 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
     fptype gammamin = 1.0 / tau - fabs(ymixing) / tau;
 
     thrust::transform(
-        index_sequence_begin, index_sequence_begin + nAcc, dtime_d.begin(), genExp(generation_offset, gammamin));
+        index_sequence_begin, index_sequence_begin + nAcc, dtime_d.begin(), genExp(generation_offset, gammamin, seed));
 
     mcbooster::VariableSet_d VarSet_d(5);
     VarSet_d[0] = &SigGen_M12_d;
@@ -891,7 +915,10 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
     VarSet[5] = dtime_h;
 
     phsp.FreeResources();
-
+    // QUESTION: why 8 variables per event? Is 8th variable filled?
+    // ANSWER: _model_m12, _model_m34,         _model_cos12, _model_cos34,
+    //   _model_phi, _model_eventNumber, _model_dtime, _model_sigmat
+    // -> 8th parameter is decay-time resolution -> not important when generating with truth resolution
     auto DS = new mcbooster::RealVector_d(8 * nAcc);
     thrust::counting_iterator<int> eventNumber(0);
 
@@ -905,6 +932,8 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
     mcbooster::strided_range<mcbooster::RealVector_d::iterator> sr(DS->begin() + 5, DS->end(), 8);
     thrust::copy(eventNumber, eventNumber + nAcc, sr.begin());
 
+    // NOTE/QUESTION: first setting decay time to 0?
+    // ANSWER: evaluate envelope function at decay time equal zero
     mcbooster::strided_range<mcbooster::RealVector_d::iterator> sr2(DS->begin() + 6, DS->end(), 8);
     thrust::fill_n(sr2.begin(), nAcc, 0);
 
@@ -943,8 +972,8 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
 
     maxWeight = wmax > maxWeight ? wmax : maxWeight;
 
+    // QUESTION: why are we doing this? -> copying decay times, where we evaluate function for accept-reject
     thrust::copy(dtime_d.begin(), dtime_d.end(), sr2.begin());
-
     dtime_d = mcbooster::RealVector_d();
     thrust::device_vector<fptype> results(nAcc);
 
@@ -954,10 +983,9 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
                       *logger);
 
     setFitControl(fc);
-
     cudaDeviceSynchronize();
 
-    thrust::device_vector<fptype> flag2(nAcc); // Should be weight2
+    thrust::device_vector<bool> flag2(nAcc); // Should be weight2
     thrust::counting_iterator<mcbooster::GLong_t> first(0);
     // thrust::counting_iterator<mcbooster::GLong_t> last = first + nAcc;
 

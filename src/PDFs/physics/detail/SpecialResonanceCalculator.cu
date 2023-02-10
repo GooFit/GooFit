@@ -1,4 +1,5 @@
 #include <goofit/PDFs/ParameterContainer.h>
+#include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/detail/SpecialResonanceCalculator.h>
 #include <goofit/PDFs/physics/resonances/Resonance.h>
@@ -36,6 +37,9 @@ __device__ auto SpecialResonanceCalculator::operator()(thrust::tuple<int, fptype
 
     while(pc.funcIdx < resonance_i)
         pc.incrementIndex();
+
+    printf("s12=%.2f \t s13=%.2f \t s23=%.2f \n",m12, m13, m23);
+
 
     ret = getResonanceAmplitude(m12, m13, m23, pc);
 

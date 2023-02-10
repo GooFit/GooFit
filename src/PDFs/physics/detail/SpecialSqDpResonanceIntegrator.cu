@@ -15,7 +15,7 @@ __device__ auto device_SqDalitzPlot_calcIntegrals(fptype mprime, fptype thetapri
     // cResonances. No need to cache the values at individual
     // grid points - we only care about totals.
     fptype m12 = calc_m12(mprime,c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass);
-    fptype m13 = calc_m13(thetaprime, m12, c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass);
+    fptype m13 = calc_m13(m12,cos(thetaprime*M_PI), c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass);
     fptype s12 = m12*m12;
     fptype s13 = m13*m13;
     fptype s23 = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass
@@ -30,13 +30,13 @@ __device__ auto device_SqDalitzPlot_calcIntegrals(fptype mprime, fptype thetapri
     while(ipc.funcIdx < res_i)
         ipc.incrementIndex();
 
-    ret = getResonanceAmplitude(s12, s13, s23, ipc);
+    ret = getResonanceAmplitude(s13, s23 , s12, ipc);
 
     ParameterContainer jpc = pc;
     while(jpc.funcIdx < res_j)
         jpc.incrementIndex();
 
-    ret *= conj(getResonanceAmplitude(s12, s13, s23, jpc));
+    ret *= conj(getResonanceAmplitude( s13, s23 , s12, jpc));
 
     return ret;
 }
@@ -83,8 +83,8 @@ __device__ auto SpecialSqDpResonanceIntegrator::operator()(thrust::tuple<int, fp
 
     // TODO: read id's in in order to set them for the fake event.
 
-    int id_m12 = pc.getObservable(0);
-    int id_m13 = pc.getObservable(1);
+    int id_m13 = pc.getObservable(0);
+    int id_m23 = pc.getObservable(1);
 
     // fptype fakeEvt[10]; // Need room for many observables in case mprime or thetaprime were assigned a high index in an
     // event-weighted fit.
@@ -92,9 +92,16 @@ __device__ auto SpecialSqDpResonanceIntegrator::operator()(thrust::tuple<int, fp
     // fakeEvt[id_m12] = binCenterMPrime;
     // fakeEvt[id_m13] = binCenterThetaPrime;
 
+    fptype m12 = calc_m12(binCenterMPrime,c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass);
+    fptype m13 = calc_m13(m12,cos(binCenterThetaPrime*M_PI), c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass);
+    fptype s12 = m12*m12;
+    fptype s13 = m13*m13;
+    fptype s23 = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass
+                 + c_daug3Mass * c_daug3Mass - s12 - s13;
+
     events[0]      = 2;
-    events[id_m12] = binCenterMPrime;
-    events[id_m13] = binCenterThetaPrime;
+    events[id_m13] = s13;
+    events[id_m23] = s23;
 
     // unsigned int numResonances           = indices[2];
     // int effFunctionIdx                   = parIndexFromResIndex_DP(numResonances);
@@ -114,7 +121,7 @@ __device__ auto SpecialSqDpResonanceIntegrator::operator()(thrust::tuple<int, fp
     // as it were.
     fptype jacobian = calc_SqDp_Jacobian(binCenterMPrime, binCenterThetaPrime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
     //ret *= eff/jacobian;
-    //ret*=eff*jacobian;
+    //ret*=eff*jacobian*jacobian*jacobian;
     ret *= eff;
     // printf("ret %f %f %f %f %f\n",binCenterMPrime, binCenterThetaPrime, ret.real, ret.imag, eff );
     return ret;

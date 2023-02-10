@@ -42,7 +42,7 @@ __device__ auto calc_thetaprime(const fptype &m12,const fptype &m13, const fptyp
 
 __device__ auto calc_m12(const fptype &mprime, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype;
 
-__device__ auto calc_m13(const fptype &thetaprime, const fptype &m12, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype;
+__device__ auto calc_m13(const fptype &m12, const fptype &cos_12, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype;
 
 __device__ auto calc_SqDp_Jacobian(const fptype &mprime ,const fptype &thetaprime, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype;
 

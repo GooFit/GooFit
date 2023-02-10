@@ -34,22 +34,23 @@ __device__ auto SpecialSqDpResonanceCalculator::operator()(thrust::tuple<int, fp
     // mprime, m23 and thetaprime stand for the squared invariant masses.
     // Now fixed.
     fptype m12 = calc_m12(mprime,c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass);
-    fptype m13 = calc_m13(thetaprime, m12, c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass);
+    fptype m13 = calc_m13(m12,cos(thetaprime*M_PI), c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass);
     fptype s12 = m12*m12;
     fptype s13 = m13*m13;
     fptype s23 = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass
                  + c_daug3Mass * c_daug3Mass - s12 - s13;
+    fptype m23 = sqrt(s23);
 
     while(pc.funcIdx < resonance_i)
         pc.incrementIndex();
 
-    //printf("s12=%.2f \t s13=%.2f \t s23=%.2f \t mp=%.2f \t tp=%.2f \n",s12, s13, s23, mprime, thetaprime);
+    ret = getResonanceAmplitude(s13, s23 , s12,  pc);
 
-    ret = getResonanceAmplitude(s12, s13, s23, pc);
-
-    fptype jacobian = calc_SqDp_Jacobian(mprime, thetaprime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
+    // fptype jacobian = calc_SqDp_Jacobian(mprime, thetaprime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
+    // fptype invjacobian = calc_SqDp_InvJacobian(m13 ,m23, m12, c_daug1Mass, c_daug2Mass, c_daug3Mass);
    
-    //ret*=jacobian;
+    // ret*=jacobian;
+    //ret*=invjacobian;
 
     return ret;
 }

@@ -25,33 +25,26 @@
 namespace GooFit {
 
 __device__  auto inSqDalitz(const fptype &mprime,const fptype &thetaprime) -> bool{
-    return (mprime>0.0 && mprime<1.0)&&(thetaprime>0. && thetaprime<1.0);
+    return (mprime>0.0 && mprime<1.0)&&(thetaprime>0.0 && thetaprime<1.0);
 }
 
 __device__ auto calc_mprime(const fptype &m12, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
     fptype min = m1+m2;
     fptype max = m_mother-m3;
-
-    fptype mprime = m12 - min;
-    mprime/= max - min;
-    mprime*=2.0;
-    mprime-=1.0;
-
-    if(mprime>1.)
-        mprime=1.;
+    fptype mprime = (2*(m12 - min)/(max-min)) - 1.0;
 
     if(mprime<-1.)
         mprime=-1.;
+    
+    if(mprime>1.)
+        mprime=1.;
 
-    mprime=acos(mprime);
-    mprime/=M_PI;
-
-    return mprime;
+    return acos(mprime)/M_PI;
 }
 
 __device__ auto calc_thetaprime(const fptype &m12,const fptype &m13, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
-    fptype m12Sq = m12*m12;
     fptype m13Sq = m13*m13;
+    fptype m12Sq = m12*m12;
     fptype m_motherSq = m_mother*m_mother;
     fptype m1Sq = m1*m1;
     fptype m2Sq = m2*m2;
@@ -60,33 +53,39 @@ __device__ auto calc_thetaprime(const fptype &m12,const fptype &m13, const fptyp
     fptype EiCmsij = (m12Sq - m2Sq + m1Sq)/(2.0*m12);
     fptype EkCmsij = (m_motherSq - m12Sq - m3Sq)/(2.0*m12);
 
+    //printf("EiCmsij=%f \t EkCmsij=%f \n",m12, m13);
+
     fptype qi = EiCmsij*EiCmsij - m1Sq;
-    qi = sqrt(qi) ? qi>0. : 0.;
+    qi = qi>0. ? sqrt(qi) : 0.;
 
     fptype qk = EkCmsij*EkCmsij - m3Sq;
-    qk = sqrt(qk) ? qk>0. : 0.;
+    qk = qk>0. ?  sqrt(qk) : 0.;
     
-    fptype coshel = -(m13Sq - m1Sq - m3Sq - 2.0*EiCmsij*EkCmsij)/(2.0*qi*qk);
+    fptype coshel = (m13Sq - m1Sq - m3Sq - 2.0*EiCmsij*EkCmsij)/(2.0*qi*qk);
 
+    if(coshel<-1.)
+        coshel=-1.;
+    
     if(coshel>1.)
-        coshel = 1.0;
-    
-    if(coshel < -1.0)
-        coshel = -1.0;
+        coshel=1.;
 
-    //printf("coshel = %.2f \n",coshel);
-    return acos(coshel)/M_PI;
+    fptype thetaprime = acos(coshel)/M_PI;
+
+    // if(thetaprime>0.5)
+    //     thetaprime=1.0-thetaprime;
+
+    return thetaprime;
 }
 
 __device__  auto calc_m12(const fptype &mprime, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
-    return 0.5*( (m_mother-m3) - (m1+m2) )*(1.0 + cos(M_PI*mprime)) + (m1+m2);
+
+    fptype m12 = 0.5*( (m_mother-m3) - (m1+m2) )*(1.0 + cos(M_PI*mprime)) + (m1+m2);
+
+    return m12;
 }
 
-__device__  auto calc_m13(const fptype &thetaprime, const fptype &m12,const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
-    //thetaprime(1,2) is the angle between particles 1 and 3 in the rest frame of particles 1 and 2
-    //m12  is the invariant mass of particles 1 and 2 in a given decay event
+__device__  auto calc_m13(const fptype &m12, const fptype &cos_12, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
     
-    fptype coshel = cos(M_PI*thetaprime);
     fptype m12Sq = m12*m12;
     fptype m_motherSq = m_mother*m_mother;
     fptype m1Sq = m1*m1;
@@ -97,25 +96,23 @@ __device__  auto calc_m13(const fptype &thetaprime, const fptype &m12,const fpty
     fptype EkCmsij = (m_motherSq - m12Sq - m3Sq)/(2.0*m12);
 
     fptype qi = EiCmsij*EiCmsij - m1Sq;
-    qi = sqrt(qi) ? qi>0. : 0.;
+    qi = qi>0. ? sqrt(qi) : 0.;
 
     fptype qk = EkCmsij*EkCmsij - m3Sq;
-    qk = sqrt(qk) ? qk>0. : 0.;
+    qk = qk>0. ? sqrt(qk)  : 0.;
     
-    fptype m13Sq = m1Sq + m3Sq + 2.0*EiCmsij*EkCmsij - 2.0*qi*qk*coshel;
-
-    if(m13Sq < (m1+m3)*(m1+m3))
-        m13Sq = (m1+m3)*(m1+m3); //Laura protection, need to check!
+    fptype m13Sq = m1Sq + m3Sq + 2.0*EiCmsij*EkCmsij - 2.0*qi*qk*cos_12;
 
     return sqrt(m13Sq);
 }
+
 
 __device__ auto calc_SqDp_Jacobian(const fptype &mprime ,const fptype &thetaprime, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
 
     fptype m12 = calc_m12(mprime,m_mother,m1,m2,m3);
     fptype m12Sq = m12*m12;
 
-    fptype m13 = calc_m13(thetaprime, m12 ,m_mother,m1,m2,m3);
+    fptype m13 = calc_m13(m12, cos(M_PI*thetaprime) ,m_mother,m1,m2,m3);
     fptype m13Sq = m13*m13;
 
     fptype m_motherSq = m_mother*m_mother;
@@ -127,10 +124,10 @@ __device__ auto calc_SqDp_Jacobian(const fptype &mprime ,const fptype &thetaprim
     fptype EkCmsij = (m_motherSq - m12Sq - m3Sq)/(2.0*m12);
     
     fptype qi = EiCmsij*EiCmsij - m1Sq;
-    qi = sqrt(qi) ? qi>0. : 0.;
+    qi = qi>0. ? sqrt(qi) : 0.;
 
     fptype qk = EkCmsij*EkCmsij - m3Sq;
-    qk = sqrt(qk) ? qk>0. : 0.;
+     qk = qk>0. ? sqrt(qk)  : 0.;
     
     fptype deriv1 = (M_PI)*((m_mother-m3) - (m1+m2))*sin(M_PI*mprime);
     fptype deriv2 = (M_PI/2.)*sin(M_PI*thetaprime);
@@ -154,10 +151,11 @@ __device__ auto calc_SqDp_InvJacobian(const fptype &m12 ,const fptype &m13, cons
     fptype EkCmsij = (m_motherSq - m12Sq - m3Sq)/(2.0*m12);
     
     fptype qi = EiCmsij*EiCmsij - m1Sq;
-    qi = sqrt(qi) ? qi>0. : 0.;
+    qi = qi>0. ? sqrt(qi) : 0.;
+
 
     fptype qk = EkCmsij*EkCmsij - m3Sq;
-    qk = sqrt(qk) ? qk>0. : 0.;
+    qk = qk>0. ? sqrt(qk)  : 0.;
 
     fptype min = m1+m2;
     fptype max = m_mother-m3;
@@ -169,9 +167,9 @@ __device__ auto calc_SqDp_InvJacobian(const fptype &m12 ,const fptype &m13, cons
     fptype deriv2 = 2.*m13;
     deriv2 /= M_PI*qk*qi*sqrt(1.0 - pow( (m1Sq + 2*EiCmsij*EkCmsij + m3Sq - m13Sq)/(qi*qk) ,2));
 
-    printf("qi = %f \t qk = %f \n", qi,qk );
+    //printf("qi = %f \t qk = %f \n", qi,qk );
 
-    fptype invjacobian = deriv1;
+    fptype invjacobian = deriv1*deriv2;
 
     return invjacobian;
 }
@@ -484,6 +482,7 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
 
             // Notice complex conjugation
             // amplitude_j.imag(), (*(integrals[i][j])).real(), (*(integrals[i][j])).imag() );
+            //printf("integral[%d][%d] = %.4f \n",i,j,(*(integrals[i][j]))*_mprime.getBinSize()*_thetaprime.getBinSize());
             sumIntegral += amplitude_i * amplitude_j * (*(integrals[i][j]));
         }
     }

@@ -31,6 +31,7 @@ class SqDalitzPlotter {
     fptype d3_mass;
     std::vector<fptype> m12_vec;
     std::vector<fptype> m13_vec;
+    
 
   public:
     SqDalitzPlotter(GooPdf *overallSignal, Amp3BodySqDP *signalDalitz)
@@ -44,78 +45,69 @@ class SqDalitzPlotter {
         , d3_mass(signalDalitz->decayInfo.daug3Mass) {
         eventNumber.setValue(0);
 
-        // for(size_t i = 0; i < mprime.getNumBins(); ++i) {
-        //     mprime.setValue(mprime.getLowerLimit() + mprime.getBinSize() * (i + 0.5));
-        //     for(size_t j = 0; j < thetaprime.getNumBins(); ++j) {
-        //         thetaprime.setValue(thetaprime.getLowerLimit() + thetaprime.getBinSize() * (j + 0.5));
-        //         if(inSqDalitz(mprime.getValue(),
-        //                     thetaprime.getValue())) {
-        //             xbins.push_back(i);
-        //             ybins.push_back(j);
+        fptype m23_min = d2_mass+d3_mass;   
+        fptype m13_min = d1_mass+d3_mass;  
+        fptype m23_max = mother_mass-d1_mass;   
+        fptype m13_max = mother_mass-d2_mass; 
+        fptype m23 = 0.0;
+        fptype m13 = 0.0;
+        fptype m12 = 0.0;
+        fptype NPTs = 1000000;
+
+        // std::random_device rd;  
+        // std::mt19937 gen(rd()); 
+        // std::uniform_real_distribution<> m23_gen(m23_min, m23_max);
+        // std::uniform_real_distribution<> m13_gen(m13_min, m13_max);
+
+        // while(data.getNumEvents()<NPTs){
+        //     m23 = m23_gen(gen);
+        //     m13 = m23_gen(gen);
+           
+        //     if(inDalitz(m13*m13,
+        //         m23*m23,
+        //         mother_mass,
+        //         d1_mass,
+        //         d2_mass,
+        //         d3_mass)) {
+                    
+        //             fptype m12 = sqrt(mother_mass*mother_mass + d1_mass*d1_mass + d2_mass*d2_mass + d3_mass*d3_mass - m23*m23 - m13*m13);
+        //             fptype mp = calc_mprime(m12, mother_mass, d1_mass, d2_mass, d3_mass);
+        //             fptype th = calc_thetaprime(m12, m13, mother_mass, d1_mass, d2_mass, d3_mass);
+
+        //             if(th>0.5)
+        //                 th = 1.0-th;
+                    
+        //             mprime.setValue(mp);
+        //             thetaprime.setValue(th);
         //             data.addEvent();
         //             eventNumber.setValue(eventNumber.getValue() + 1);
-        //         }
         //     }
+
         // }
 
-        std::random_device rd;  // Will be used to obtain a seed for the random number engine
-        std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
-        std::uniform_real_distribution<> dis(0.001,0.999);
-        
-        m12_vec.reserve(1000000);
-        m13_vec.reserve(1000000);
+        std::random_device rd;  
+        std::mt19937 gen(rd()); 
+        std::uniform_real_distribution<> random(0.0,1.0);
+     
 
-        for(size_t i = 0; i<1000000; i++){
-            mprime.setValue(dis(gen));
-            thetaprime.setValue(dis(gen));
-            //if(thetaprime.getValue()>0.5)
-            //    thetaprime.setValue(1.0-thetaprime.getValue());
-
-            m12_vec.emplace_back(calc_m12(mprime.getValue(), mother_mass, d1_mass, d2_mass, d3_mass));
-            m13_vec.emplace_back(calc_m13(thetaprime.getValue(),m12_vec.at(i),mother_mass, d1_mass, d2_mass, d3_mass));
-
+        while(data.getNumEvents()<NPTs){
+            fptype _mprime = random(gen);
+            fptype _thetaprime = random(gen);
+           
+            // if(_thetaprime>0.5)
+            //     _thetaprime = 1.0-_thetaprime;
+            
+            mprime.setValue(_mprime);
+            thetaprime.setValue(_thetaprime);
             data.addEvent();
             eventNumber.setValue(eventNumber.getValue() + 1);
+
         }
-
-        // size_t N = 0;
-        // std::random_device rd;  // Will be used to obtain a seed for the random number engine
-        // std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
-        // std::uniform_real_distribution<> dis(d1_mass+d2_mass,mother_mass-d3_mass);
-  
-        // m12_vec.reserve(1000000);
-        // m13_vec.reserve(1000000);
-
-        // while(N<1000000)
-        // {
-        //     fptype m12 = dis(gen);
-        //     fptype m13 = dis(gen);
-        //     if(inDalitz(m12*m12,m13*m13,mother_mass, d1_mass, d2_mass, d3_mass)){
-        //         m12_vec.emplace_back(m12);
-        //         m13_vec.emplace_back(m13);
-        //         mprime.setValue(calc_mprime(m12,mother_mass, d1_mass, d2_mass, d3_mass));
-        //         thetaprime.setValue(calc_thetaprime(m12,m13, mother_mass, d1_mass, d2_mass, d3_mass));
-        //         if(thetaprime.getValue()>0.5)
-        //             thetaprime.setValue(1.0-thetaprime.getValue());
-        //         data.addEvent();
-        //         eventNumber.setValue(eventNumber.getValue() + 1);
-        //         N++;
-        //     }
-        // }
 
         auto old = overallSignal->getData();
         overallSignal->setData(&data);
         signalDalitz->setDataSize(data.getNumEvents());
         pdfValues = overallSignal->getCompProbsAtDataPoints();
-
-        for(size_t i=0; i<data.getNumEvents();i++){
-            data.loadEvent(i);
-            fptype jacobian = calc_SqDp_InvJacobian(m12_vec.at(i), m13_vec.at(i), mother_mass, d1_mass, d2_mass, d3_mass);
-            //printf("invJac = %f \n",jacobian);
-            pdfValues.at(0).at(i) *= jacobian;
-        }
-
-
         overallSignal->setData(old);
     }
 
@@ -126,13 +118,13 @@ class SqDalitzPlotter {
         std::mt19937 gen(rd());
 
         // Uniform distribution
-        std::uniform_real_distribution<> unihalf(-.5, .5);
+        //std::uniform_real_distribution<> unihalf(-.5, +.5);
         std::uniform_real_distribution<> uniwhole(0.0, 1.0);
 
         // CumSum in other languages
         std::vector<fptype> integral(pdfValues[0].size());
         std::partial_sum(pdfValues[0].begin(), pdfValues[0].end(), integral.begin());
-
+        
         // Make this a 0-1 fraction by dividing by the end value
         std::for_each(integral.begin(), integral.end(), [&integral](fptype &val) { val /= integral.back(); });
 
@@ -143,12 +135,10 @@ class SqDalitzPlotter {
             size_t j = std::lower_bound(integral.begin(), integral.end(), r) - integral.begin();
 
             // Fill in the grid square randomly
-            fptype currmprime = data.getValue(mprime, j) + mprime.getBinSize() ;//* unihalf(gen);
-            fptype currthetaprime = data.getValue(thetaprime, j) + thetaprime.getBinSize();// * unihalf(gen);
             
-
-            //printf("mprime=%.2f \t thetaprime=%.2f \t prob=%.4f \n", currmprime, currthetaprime, pdfValues[0][j]);
-
+            fptype currmprime = data.getValue(mprime, j);
+            fptype currthetaprime = data.getValue(thetaprime, j);
+           
             mprime.setValue(currmprime);
             thetaprime.setValue(currthetaprime);
             eventNumber.setValue(i);

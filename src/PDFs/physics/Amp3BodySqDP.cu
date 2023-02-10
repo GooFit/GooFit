@@ -24,11 +24,11 @@
 
 namespace GooFit {
 
-__device__  auto inSqDalitz(const fptype &mprime,const fptype &thetaprime) -> bool{
+__host__ __device__   auto inSqDalitz(const fptype &mprime,const fptype &thetaprime) -> bool{
     return (mprime>0.0 && mprime<1.0)&&(thetaprime>0.0 && thetaprime<1.0);
 }
 
-__device__ auto calc_mprime(const fptype &m12, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
+__host__ __device__  auto calc_mprime(const fptype &m12, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
     fptype min = m1+m2;
     fptype max = m_mother-m3;
     fptype mprime = (2*(m12 - min)/(max-min)) - 1.0;
@@ -42,7 +42,7 @@ __device__ auto calc_mprime(const fptype &m12, const fptype &m_mother, const fpt
     return acos(mprime)/M_PI;
 }
 
-__device__ auto calc_thetaprime(const fptype &m12,const fptype &m13, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
+__host__ __device__  auto calc_thetaprime(const fptype &m12,const fptype &m13, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
     fptype m13Sq = m13*m13;
     fptype m12Sq = m12*m12;
     fptype m_motherSq = m_mother*m_mother;
@@ -77,14 +77,14 @@ __device__ auto calc_thetaprime(const fptype &m12,const fptype &m13, const fptyp
     return thetaprime;
 }
 
-__device__  auto calc_m12(const fptype &mprime, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
+__host__ __device__   auto calc_m12(const fptype &mprime, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
 
     fptype m12 = 0.5*( (m_mother-m3) - (m1+m2) )*(1.0 + cos(M_PI*mprime)) + (m1+m2);
 
     return m12;
 }
 
-__device__  auto calc_m13(const fptype &m12, const fptype &cos_12, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
+__host__ __device__   auto calc_m13(const fptype &m12, const fptype &cos_12, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
     
     fptype m12Sq = m12*m12;
     fptype m_motherSq = m_mother*m_mother;
@@ -107,13 +107,10 @@ __device__  auto calc_m13(const fptype &m12, const fptype &cos_12, const fptype 
 }
 
 
-__device__ auto calc_SqDp_Jacobian(const fptype &mprime ,const fptype &thetaprime, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
+__host__ __device__  auto calc_SqDp_Jacobian(const fptype &mprime ,const fptype &thetaprime, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
 
     fptype m12 = calc_m12(mprime,m_mother,m1,m2,m3);
     fptype m12Sq = m12*m12;
-
-    fptype m13 = calc_m13(m12, cos(M_PI*thetaprime) ,m_mother,m1,m2,m3);
-    fptype m13Sq = m13*m13;
 
     fptype m_motherSq = m_mother*m_mother;
     fptype m1Sq = m1*m1;
@@ -137,7 +134,7 @@ __device__ auto calc_SqDp_Jacobian(const fptype &mprime ,const fptype &thetaprim
     return jacobian;
 }
 
-__device__ auto calc_SqDp_InvJacobian(const fptype &m12 ,const fptype &m13, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
+__host__ __device__  auto calc_SqDp_InvJacobian(const fptype &m12 ,const fptype &m13, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
    
     fptype m12Sq = m12*m12;
     fptype m13Sq = m13*m13;

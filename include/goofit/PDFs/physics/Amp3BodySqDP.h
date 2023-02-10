@@ -34,19 +34,19 @@ of GooFit::ResonancePdf's as well as some global information like the
 mother and daughter masses, and the efficiency function.
 **/
 
-__device__ auto inSqDalitz(const fptype &mprime,const fptype &thetaprime)-> bool;
+__host__ __device__  auto inSqDalitz(const fptype &mprime,const fptype &thetaprime)-> bool;
 
-__device__ auto calc_mprime(const fptype &m12, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype;
+__host__ __device__  auto calc_mprime(const fptype &m12, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype;
 
-__device__ auto calc_thetaprime(const fptype &m12,const fptype &m13, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype;
+__host__ __device__  auto calc_thetaprime(const fptype &m12,const fptype &m13, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype;
 
-__device__ auto calc_m12(const fptype &mprime, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype;
+__host__ __device__ auto calc_m12(const fptype &mprime, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype;
 
-__device__ auto calc_m13(const fptype &m12, const fptype &cos_12, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype;
+__host__ __device__  auto calc_m13(const fptype &m12, const fptype &cos_12, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype;
 
-__device__ auto calc_SqDp_Jacobian(const fptype &mprime ,const fptype &thetaprime, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype;
+__host__ __device__  auto calc_SqDp_Jacobian(const fptype &mprime ,const fptype &thetaprime, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype;
 
-__device__ auto calc_SqDp_InvJacobian(const fptype &m12 ,const fptype &m13, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype;
+__host__ __device__  auto calc_SqDp_InvJacobian(const fptype &m12 ,const fptype &m13, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype;
 
 class Amp3BodySqDP : public Amp3BodyBase {
   public:

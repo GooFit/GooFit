@@ -29,17 +29,9 @@ struct Dim2 : public mcbooster::IFunctionArray {
         mcbooster::Vector4R p23 = p2 + p3;
         mcbooster::Vector4R p13 = p1 + p3;
 
-        // variables[0] = p12.mass2();
-        // variables[1] = p23.mass2();
-        // variables[2] = p13.mass2();
-
-        mcbooster::GReal_t mprime = calc_mprime(sqrt(p13.mass2()), 5.27934, p1.mass(), p2.mass(), p3.mass());
-        mcbooster::GReal_t thprime = calc_thetaprime(sqrt(p13.mass2()),sqrt(p23.mass2()), 5.27934, p1.mass(), p2.mass(), p3.mass());
-        
-        variables[0] = mprime;
-        variables[2] = thprime;
-        variables[1] = p13.mass2();
-
+        variables[0] = p12.mass2();
+        variables[1] = p23.mass2();
+        variables[2] = p13.mass2();
     }
 };
 

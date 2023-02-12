@@ -71,7 +71,7 @@ Variable Daughter2_Mass("DecayProduct_2_Mass", d2_MASS);
 Variable Daughter3_Mass("DecayProduct_3_Mass", d3_MASS);
 
 // Bins for grid normalization
-const int bins = 500;
+const int bins = 200;
 
 // Dalitz Limits
 const fptype s12_min = (d1_MASS + d2_MASS) * (d1_MASS + d2_MASS);
@@ -83,7 +83,7 @@ const fptype s23_max = (Decay_MASS - d1_MASS) * (Decay_MASS - d1_MASS);
 
 // Observables
 Observable mprime("mprime",0,1);
-Observable thetaprime("thetaprime",0,1.0);
+Observable thetaprime("thetaprime",0,0.5);
 Observable s23("s23", s23_min, s23_max);
 EventNumber eventNumber("eventNumber");
 
@@ -125,24 +125,24 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
     Variable v_f2p_1525_img("f2p_1525_IMAG", f2p_1525_img, 0.01, 0, 0);
 
     auto f2p_1525 = new Resonances::RBW(
-        "f2p_1525", v_f2p_1525_real, v_f2p_1525_img, v_f2p_1525_Mass, v_f2p_1525_Width, 2, PAIR_12, true);
+        "f2p_1525", v_f2p_1525_real, v_f2p_1525_img, v_f2p_1525_Mass, v_f2p_1525_Width, 2, PAIR_12, true, false);
 
     double phi1020_MASS  = 1.019461;
     double phi1020_WIDTH = 0.00429;
-    double phi1020_amp   = 10.;
+    double phi1020_amp   = 1.;
     double phi1020_img   = 0.;
 
     Variable v_phi1020_Mass("phi1020_MASS", phi1020_MASS);
     Variable v_phi1020_Width("phi1020_WIDTH", phi1020_WIDTH);
-    Variable v_phi1020_real("phi1020_REAL", phi1020_amp);
-    Variable v_phi1020_img("phi1020_IMAG", phi1020_img);
+    Variable v_phi1020_real("phi1020_REAL", phi1020_amp,0.01,0,0);
+    Variable v_phi1020_img("phi1020_IMAG", phi1020_img,0.01,0,0);
 
     auto phi1020 = new Resonances::RBW(
-        "phi1020", v_phi1020_real, v_phi1020_img, v_phi1020_Mass, v_phi1020_Width, 1, PAIR_12, true);
+        "phi1020", v_phi1020_real, v_phi1020_img, v_phi1020_Mass, v_phi1020_Width, 1, PAIR_12, true, false);
 
     // If you want include a resonance in your model, just push into the vector 'vec_resonances'
 
-    auto nonres = new Resonances::NonRes("NonRes",Variable("re",10.,0.01,0,0),Variable("im",0.,0.01,0,0));
+    auto nonres = new Resonances::NonRes("NonRes",Variable("re",1.,0.01,0,0),Variable("im",0.,0.01,0,0));
 
     std::vector<ResonancePdf *> vec_resonances;
 
@@ -164,14 +164,14 @@ void getData(std::string toyFileName, GooFit::Application &app, DataSet &data, b
     Observable eventNumber = obs.at(2);
 
     auto openRoot = new TFile(toyFileName.c_str());
-    auto tree     = (TTree *)openRoot->Get("DecayTree");
+    auto tree     = (TTree *)openRoot->Get("genResults");
     auto mprime_val(0.);
     auto thetaprime_val(0.);
 
     printf("NEntries = %f \n",tree->GetEntries());
 
-    tree->SetBranchAddress("mprime", &mprime_val);
-    tree->SetBranchAddress("thetaprime", &thetaprime_val);
+    tree->SetBranchAddress("mPrime", &mprime_val);
+    tree->SetBranchAddress("thPrime", &thetaprime_val);
    
     size_t j = 0;
     for(size_t i = 0; i < tree->GetEntries(); i++) {
@@ -257,7 +257,7 @@ int main(int argc, char **argv) {
     bool save_toy               = false;
     bool is_toy                 = false;
     bool no_acc_and_bkg         = true;
-    size_t Nevents              = 1000000;
+    size_t Nevents              = 100000;
 
     auto fit = app.add_subcommand("fit", "fit data");
     fit->add_option("-f,--file", input_data_name, "name_of_file.root");
@@ -395,7 +395,26 @@ int main(int argc, char **argv) {
         std::cout << "Num Entries Loaded =  " << data.getNumEvents() << std::endl;
         std::cout << "------------------------------------------" << std::endl;
         auto output_signal = runFit(totalpdf, signal, &data, fit_name);
+        data.clear();
+        SqDalitzPlotter dplotter{totalpdf, signal};
+        dplotter.fillDataSetMC(data, Nevents);
+        std::cout << "----------------------------------------------------------" << std::endl;
+        std::cout << data.getNumEvents() << " events was generated!" << std::endl;
+        std::cout << "----------------------------------------------------------" << std::endl;
+        auto fullName = fmt::format("MC/{0}", toyName);
+        to_root(data, fullName);
+        std::cout << toyName << " root file was saved in MC folder" << std::endl;
+        std::cout << "----------------------------------------------------------" << std::endl;
 
-        std::cout << "norm = " << output_signal->normalize() << std::endl;
+        std::cout << "Fit Fractions Interference" << '\n';
+        signal->setDataSize(data.getNumEvents());
+        totalpdf->setData(&data);
+        printf("norm: %.4f \n",signal->normalize());
+        auto frac = signal->fit_fractions(true);
+        // for(int i=0; i<frac.size();i++)
+        //     for(int j=0; j<frac.size();j++)
+        //         printf("FF[%d][%d] = %.4f \n",i,j,frac[i][j]);
+
+        // std::cout << "norm = " << output_signal->normalize() << std::endl;
     }
 }

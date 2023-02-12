@@ -16,12 +16,14 @@ class SpecialSqDpResonanceIntegrator : public thrust::unary_function<thrust::tup
     void setResonanceIndex(unsigned int id) { resonance_i = id; }
     void setEfficiencyIndex(unsigned int id) { resonance_j = id; }
     __device__ auto operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex;
+    void setNoEff() { m_no_eff = true; }
 
   private:
     unsigned int dalitz_i;
     unsigned int resonance_i;
     unsigned int resonance_j;
     unsigned int parameters;
+    bool m_no_eff = false;
 };
 
 } // namespace GooFit

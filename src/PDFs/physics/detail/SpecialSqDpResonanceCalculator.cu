@@ -49,7 +49,7 @@ __device__ auto SpecialSqDpResonanceCalculator::operator()(thrust::tuple<int, fp
     // fptype jacobian = calc_SqDp_Jacobian(mprime, thetaprime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
     // fptype invjacobian = calc_SqDp_InvJacobian(m13 ,m23, m12, c_daug1Mass, c_daug2Mass, c_daug3Mass);
    
-    // ret*=jacobian;
+    //ret*=jacobian;
     //ret*=invjacobian;
 
     return ret;

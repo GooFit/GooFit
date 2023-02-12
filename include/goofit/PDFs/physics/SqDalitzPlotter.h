@@ -52,57 +52,57 @@ class SqDalitzPlotter {
         fptype m23 = 0.0;
         fptype m13 = 0.0;
         fptype m12 = 0.0;
-        fptype NPTs = 1000000;
-
-        // std::random_device rd;  
-        // std::mt19937 gen(rd()); 
-        // std::uniform_real_distribution<> m23_gen(m23_min, m23_max);
-        // std::uniform_real_distribution<> m13_gen(m13_min, m13_max);
-
-        // while(data.getNumEvents()<NPTs){
-        //     m23 = m23_gen(gen);
-        //     m13 = m23_gen(gen);
-           
-        //     if(inDalitz(m13*m13,
-        //         m23*m23,
-        //         mother_mass,
-        //         d1_mass,
-        //         d2_mass,
-        //         d3_mass)) {
-                    
-        //             fptype m12 = sqrt(mother_mass*mother_mass + d1_mass*d1_mass + d2_mass*d2_mass + d3_mass*d3_mass - m23*m23 - m13*m13);
-        //             fptype mp = calc_mprime(m12, mother_mass, d1_mass, d2_mass, d3_mass);
-        //             fptype th = calc_thetaprime(m12, m13, mother_mass, d1_mass, d2_mass, d3_mass);
-
-        //             if(th>0.5)
-        //                 th = 1.0-th;
-                    
-        //             mprime.setValue(mp);
-        //             thetaprime.setValue(th);
-        //             data.addEvent();
-        //             eventNumber.setValue(eventNumber.getValue() + 1);
-        //     }
-
-        // }
+        fptype NPTs = 10000000;
 
         std::random_device rd;  
         std::mt19937 gen(rd()); 
-        std::uniform_real_distribution<> random(0.0,1.0);
-     
+        std::uniform_real_distribution<> m23_gen(m23_min*m23_min, m23_max*m23_max);
+        std::uniform_real_distribution<> m13_gen(m13_min*m13_min, m13_max*m13_max);
 
         while(data.getNumEvents()<NPTs){
-            fptype _mprime = random(gen);
-            fptype _thetaprime = random(gen);
+            m23 = m23_gen(gen);
+            m13 = m23_gen(gen);
            
-            // if(_thetaprime>0.5)
-            //     _thetaprime = 1.0-_thetaprime;
-            
-            mprime.setValue(_mprime);
-            thetaprime.setValue(_thetaprime);
-            data.addEvent();
-            eventNumber.setValue(eventNumber.getValue() + 1);
+            if(inDalitz(m13,
+                m23,
+                mother_mass,
+                d1_mass,
+                d2_mass,
+                d3_mass)) {
+                    
+                    fptype m12 = sqrt(mother_mass*mother_mass + d1_mass*d1_mass + d2_mass*d2_mass + d3_mass*d3_mass - m23- m13);
+                    fptype mp = calc_mprime(m12, mother_mass, d1_mass, d2_mass, d3_mass);
+                    fptype th = calc_thetaprime(m12, sqrt(m13), mother_mass, d1_mass, d2_mass, d3_mass);
+
+                    if(th>0.5)
+                        th = 1.0-th;
+                    
+                    mprime.setValue(mp);
+                    thetaprime.setValue(th);
+                    data.addEvent();
+                    eventNumber.setValue(eventNumber.getValue() + 1);
+            }
 
         }
+
+        // std::random_device rd;  
+        // std::mt19937 gen(rd()); 
+        // std::uniform_real_distribution<> random(0.0,1.0);
+     
+
+        // while(data.getNumEvents()<NPTs){
+        //     fptype _mprime = random(gen);
+        //     fptype _thetaprime = random(gen);
+           
+        //     if(_thetaprime>0.5)
+        //         _thetaprime = 1.0-_thetaprime;
+            
+        //     mprime.setValue(_mprime);
+        //     thetaprime.setValue(_thetaprime);
+        //     data.addEvent();
+        //     eventNumber.setValue(eventNumber.getValue() + 1);
+
+        // }
 
         auto old = overallSignal->getData();
         overallSignal->setData(&data);

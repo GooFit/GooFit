@@ -7,6 +7,10 @@
 
 #include <goofit/detail/Complex.h>
 
+// Matrix
+#include <Eigen/Core>
+#include <Eigen/LU>
+
 namespace GooFit {
 
 class SpecialSqDpResonanceIntegrator;
@@ -87,7 +91,7 @@ class Amp3BodySqDP : public Amp3BodyBase {
     __host__ static void resetCacheCounter() { cacheCount = 0; }
 
     /// Calculate fit fractions (Cache should be pre-filled)
-    __host__ auto fit_fractions() -> std::vector<std::vector<fptype>>;
+    __host__ auto fit_fractions(bool print = false) -> std::vector<std::vector<fptype>>;
 
     friend SqDalitzPlotter;
 
@@ -102,6 +106,7 @@ class Amp3BodySqDP : public Amp3BodyBase {
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
     thrust::device_vector<fpcomplex> *cachedWaves[16]; // Caches the BW values for each event.
     fpcomplex ***integrals; // Caches the integrals of the BW waves for each combination of resonances.
+    fpcomplex ***integrals_ff;
 
     mutable bool generation_no_norm{false};
     bool *redoIntegral;
@@ -114,8 +119,10 @@ class Amp3BodySqDP : public Amp3BodyBase {
     static int cacheCount;
     int generation_offset{0};
     SpecialSqDpResonanceIntegrator ***integrators;
+    SpecialSqDpResonanceIntegrator ***integrators_ff;
     SpecialSqDpResonanceCalculator **calculators;
     unsigned int efficiencyFunction;
+    fptype totalFF_integral;
 };
 
 } // namespace GooFit

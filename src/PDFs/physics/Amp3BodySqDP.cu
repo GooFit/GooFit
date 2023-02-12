@@ -454,7 +454,7 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
         }
 
         // Possibly this can be done more efficiently by exploiting symmetry?
-        for(int j = 0; j < decayInfo.resonances.size(); ++j) {
+        for(int j = 0; j <= i; ++j) {
             if((!redoIntegral[i]) && (!redoIntegral[j]))
                 continue;
 
@@ -471,6 +471,9 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
                 *(integrators[i][j]),
                 dummy,
                 complexSum);
+
+            if(j<i)
+                (*(integrals[j][i])) = (*(integrals[i][j]));
         }
     }
 
@@ -481,15 +484,18 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
         // int param_i = parameters + resonanceOffset_DP + resonanceSize * i;
         fpcomplex amplitude_i(host_parameters[parametersIdx + i * 2 + 1], host_parameters[parametersIdx + i * 2 + 2]);
 
-        for(unsigned int j = 0; j < decayInfo.resonances.size(); ++j) {
+        for(unsigned int j = 0; j<=i ; ++j) {
             // int param_j = parameters + resonanceOffset_DP + resonanceSize * j;
             fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 1],
                                   -host_parameters[parametersIdx + j * 2 + 2]);
+            
 
-            // Notice complex conjugation
-            // amplitude_j.imag(), (*(integrals[i][j])).real(), (*(integrals[i][j])).imag() );
-            //printf("integral[%d][%d] = %.4f \n",i,j,(*(integrals[i][j]))*_mprime.getBinSize()*_thetaprime.getBinSize());
-            sumIntegral += amplitude_i * amplitude_j * (*(integrals[i][j]));
+            if(j<i)
+                sumIntegral += 2.0*amplitude_i * amplitude_j * (*(integrals[i][j]));
+            else if(i==j)
+                sumIntegral += amplitude_i * amplitude_j * (*(integrals[i][j]));
+            else
+                sumIntegral += 0.0;
         }
     }
 
@@ -566,7 +572,7 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
     thrust::counting_iterator<int> binIndex(0);
 
     for(int i = 0; i < n_res; ++i) {
-        for(int j = 0; j < n_res; ++j) {
+        for(int j = 0; j <=i ; ++j) {
             integrators_ff[i][j]->setDalitzIndex(getFunctionIndex());
             integrators_ff[i][j]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
             integrators_ff[i][j]->setEfficiencyIndex(decayInfo.resonances[j]->getFunctionIndex());
@@ -580,7 +586,11 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
                 *(integrators_ff[i][j]),
                 dummy_ff,
                 complexSum_ff);
+            
+            if(j<i)
+                (*(integrals_ff[j][i]))=(*(integrals_ff[i][j]));
         }
+
     }
 
     // End of time-consuming integrals.
@@ -591,11 +601,16 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
         fpcomplex amplitude_i(host_parameters[parametersIdx + i * 2 + 1], host_parameters[parametersIdx + i * 2 + 2]);
         fpcomplex buffer(0., 0.);
 
-        for(unsigned int j = 0; j < n_res; ++j) {
+        for(unsigned int j = 0; j <= i; ++j) {
             fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 1],
                                   -host_parameters[parametersIdx + j * 2 + 2]);
 
-            buffer = amplitude_i * amplitude_j * (*(integrals_ff[i][j]));
+            if(i==j)
+                buffer = amplitude_i * amplitude_j * (*(integrals_ff[i][j]));
+            else if(j<i)
+                buffer = 2.*amplitude_i * amplitude_j * (*(integrals_ff[i][j]));
+            else
+                buffer = 0.0;
 
             AmpIntegral[i][j] = buffer.real();
             sumIntegral += buffer;

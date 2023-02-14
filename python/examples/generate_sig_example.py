@@ -3,8 +3,6 @@
 
 from __future__ import division, print_function
 
-import copy
-
 import matplotlib.pyplot as plt
 import numpy as np
 

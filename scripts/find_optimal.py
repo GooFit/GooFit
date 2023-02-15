@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-from __future__ import print_function
 
 import ctypes
 import os
@@ -44,12 +42,12 @@ strings = []
 # we need to make the first string, which will be the header for the csv file
 header = "block,"
 for y in range(4, 11):
-    header += "grain:{}, total,".format(y)
+    header += f"grain:{y}, total,"
 
 strings.append(header + "\r\n")
 
 # copy our path to /tmp and work out of there
-os.system("cp -r {} /tmp".format(path))
+os.system(f"cp -r {path} /tmp")
 
 # remove the path, only grab the very end...
 wrkdir = "/tmp/{}".format("GooFit/")
@@ -63,7 +61,7 @@ currentMin = 1000000
 
 # loop over the possible range
 for i in range(begin, end):
-    s = "{},".format(str(begin))
+    s = f"{str(begin)},"
     for j in range(4, 11):
         # i is our group size
         # j is our grain size
@@ -86,7 +84,7 @@ for i in range(begin, end):
         after = monotonic_time()
 
         # we are going to do two things: first parse the log file
-        f = open("log", "r")
+        f = open("log")
         lines = f.readlines()
         f.close()
 

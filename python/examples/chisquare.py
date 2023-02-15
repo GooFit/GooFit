@@ -74,7 +74,6 @@ def integralExpSqu(lo, hi):
 def generateEvents(
     numbins, lowerlimit, upperlimit, conCoef, linCoef, squCoef, eventsToGenerate
 ):
-
     totalRSintegral = integralExpCon(0, 100)
     step = (upperlimit - lowerlimit) / numbins
 
@@ -82,7 +81,6 @@ def generateEvents(
     wsEvtVec = np.empty(numbins)
 
     for i in range(numbins):
-
         binStart = i * step
         binStart += lowerlimit
         binFinal = binStart + step
@@ -102,7 +100,6 @@ def generateEvents(
 
 
 def produce_hist(rsEvts, wsEvts):
-
     rsEvts[rsEvts == 0] = 1  # Cheating to avoid div by zero.
     ratio = wsEvts / rsEvts
     wsEvts[wsEvts == 0] = 1  # Avoid zero errors
@@ -112,7 +109,6 @@ def produce_hist(rsEvts, wsEvts):
 
 
 def fitRatio(decayTime, weights, rsEvts, wsEvts, plotname=None):
-
     ratioData = BinnedDataSet(decayTime)
 
     ratio, error = produce_hist(rsEvts, wsEvts)
@@ -166,7 +162,6 @@ def plot_ratio(xvals, ratio, error, p, plotname, cov=None):
         ax.text(0.1, 0.85, "${}$".format(result), transform=ax.transAxes, fontsize=16)
 
         if cov is not None and unc is not None:
-
             p_unc = unc.correlated_values(p, cov)
             y = np.polyval(p_unc, xvals)
             ax.fill_between(

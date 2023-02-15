@@ -503,10 +503,10 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
         // std::cout << std::endl;
     }
 
-    registerConstant(_LineShapes.size());  //#LS
-    registerConstant(_SpinFactors.size()); //#SF
+    registerConstant(_LineShapes.size());  // #LS
+    registerConstant(_SpinFactors.size()); // #SF
     _NUM_AMPLITUDES = components.size();
-    registerConstant(_NUM_AMPLITUDES); //# AMP
+    registerConstant(_NUM_AMPLITUDES); // # AMP
     registerConstant(coeff_counter); // Number of coefficients, because its not necessary to be equal to number of Amps.
     registerConstant(total_lineshapes_spinfactors);
 

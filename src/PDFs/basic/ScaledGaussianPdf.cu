@@ -2,7 +2,7 @@
 #include <goofit/PDFs/basic/ScaledGaussianPdf.h>
 #include <goofit/Variable.h>
 
-//#include <limits>
+// #include <limits>
 
 namespace GooFit {
 

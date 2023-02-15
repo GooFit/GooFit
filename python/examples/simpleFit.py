@@ -191,7 +191,6 @@ def generate_bifg(xvar, numevents):
 
 
 def main(numevents=100000):
-
     # Independent variable.
     xvar = Observable("xvar", -100, 100)
     xvar.numbins = 1000  # For such a large range, want more bins for better accuracy in normalization.

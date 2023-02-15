@@ -20,7 +20,7 @@ jobs:
       with:
         submodules: true
 
-    - uses: actions/setup-python@v3
+    - uses: actions/setup-python@v4
 
     - name: Build sdist for Python
       run: pipx run build --sdist

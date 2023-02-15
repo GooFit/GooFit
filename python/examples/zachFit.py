@@ -27,7 +27,6 @@ def getData(data, dm, filename, mode, reduce=1, keyw="data_hist"):
 
 
 def main(mode=0, data=0, reduce=10):
-
     # Get the name of the files to use
     if data == 0:
         mcfile = (

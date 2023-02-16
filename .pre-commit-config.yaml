@@ -22,22 +22,11 @@ repos:
   - id: requirements-txt-fixer
   - id: trailing-whitespace
 
-- repo: https://github.com/PyCQA/isort
-  rev: 5.12.0
+- repo: https://github.com/charliermarsh/ruff-pre-commit
+  rev: "v0.0.246"
   hooks:
-  - id: isort
-
-- repo: https://github.com/asottile/pyupgrade
-  rev: v3.3.1
-  hooks:
-  - id: pyupgrade
-    args: ["--py36-plus"]
-
-- repo: https://github.com/PyCQA/flake8
-  rev: 6.0.0
-  hooks:
-  - id: flake8
-    additional_dependencies: [flake8-bugbear]
+  - id: ruff
+    args: ["--fix", "--show-fixes"]
 
 - repo: https://github.com/cheshirekow/cmake-format-precommit
   rev: v0.6.13
@@ -56,11 +45,6 @@ repos:
 - repo: https://github.com/pre-commit/pygrep-hooks
   rev: v1.10.0
   hooks:
-  - id: python-check-blanket-noqa
-  - id: python-check-blanket-type-ignore
-  - id: python-no-log-warn
-  - id: python-no-eval
-  - id: python-use-type-annotations
   - id: rst-backticks
   - id: rst-directive-colons
   - id: rst-inline-touching-normal

@@ -21,7 +21,7 @@ def getData(data, dm, filename, mode, reduce=1, keyw="data_hist"):
             if dm:
                 data.addEvent()
 
-    print("Read in events:", data.getNumEvents())
+    print(f"Read in {keyw} events:", data.getNumEvents())
 
 
 def main(mode=0, data=0, reduce=10):
@@ -149,7 +149,7 @@ def main(mode=0, data=0, reduce=10):
     total.setData(data_dataset)
 
     chi_control = ()
-    if 2 == mode:
+    if mode == 2:
         chi_control.reset(BinnedChisqFit)
         total.setFitControl(chi_control.get())
 

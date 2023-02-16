@@ -13,7 +13,7 @@ except ImportError:
 
 DIR = local.path(__file__).dirname
 
-conversion = dict()
+conversion = {}
 conversion["brackets"] = [
     (r'^#include\s+"(\S+)"', r"#include <\1>"),
 ]

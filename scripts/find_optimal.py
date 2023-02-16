@@ -50,7 +50,7 @@ strings.append(header + "\r\n")
 os.system(f"cp -r {path} /tmp")
 
 # remove the path, only grab the very end...
-wrkdir = "/tmp/{}".format("GooFit/")
+wrkdir = "/tmp/GooFit/"
 
 # go to this directory
 os.chdir(wrkdir)
@@ -71,9 +71,7 @@ for i in range(begin, end):
 
         os.system("make clean")
         os.system(
-            "cmake ../ -DGOOFIT_CUDA_OR_GROUPSIZE={} -DGOOFIT_CUDA_OR_GRAINSIZE={}".format(
-                i, j
-            )
+            f"cmake ../ -DGOOFIT_CUDA_OR_GROUPSIZE={i} -DGOOFIT_CUDA_OR_GRAINSIZE={j}"
         )
         os.system("make -j 12")
 

@@ -1,12 +1,11 @@
 [build-system]
 requires = [
-    "setuptools>=42",
-    "scikit-build>=0.13",
-    "cmake>=3.20",
-    "ninja>=1.9"
+  "cmake>=3.20",
+  "ninja>=1.9",
+  "scikit-build>=0.13",
+  "setuptools>=42",
 ]
 build-backend = "setuptools.build_meta"
-
 
 [tool.pytest.ini_options]
 minversion = "6.0"
@@ -15,7 +14,6 @@ xfail_strict = true
 filterwarnings = ["error"]
 log_cli_level = "info"
 testpaths = ["python/tests"]
-
 
 [tool.ruff]
 select = [
@@ -36,12 +34,12 @@ select = [
   "YTT",         # flake8-2020
 ]
 ignore = [
-    "E402",
-    "E501",
-    "E722",
-    "F403",
-    "F405",
-    "PLR",
+  "E402",
+  "E501",
+  "E722",
+  "F403",
+  "F405",
+  "PLR",
 ]
 target-version = "py37"
 exclude = []

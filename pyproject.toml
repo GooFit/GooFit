@@ -7,9 +7,6 @@ requires = [
 ]
 build-backend = "setuptools.build_meta"
 
-[tool.isort]
-profile = "black"
-
 
 [tool.pytest.ini_options]
 minversion = "6.0"
@@ -18,3 +15,36 @@ xfail_strict = true
 filterwarnings = ["error"]
 log_cli_level = "info"
 testpaths = ["python/tests"]
+
+
+[tool.ruff]
+select = [
+  "E", "F", "W", # flake8
+  "B", "B904",   # flake8-bugbear
+  "I",           # isort
+  "ARG",         # flake8-unused-arguments
+  "C4",          # flake8-comprehensions
+  "ISC",         # flake8-implicit-str-concat
+  "PGH",         # pygrep-hooks
+  "PIE",         # flake8-pie
+  "PL",          # pylint
+  "PT",          # flake8-pytest-style
+  "RET",         # flake8-return
+  "RUF",         # Ruff-specific
+  "SIM",         # flake8-simplify
+  "UP",          # pyupgrade
+  "YTT",         # flake8-2020
+]
+ignore = [
+    "E402",
+    "E501",
+    "E722",
+    "F403",
+    "F405",
+    "PLR",
+]
+target-version = "py37"
+exclude = []
+flake8-unused-arguments.ignore-variadic-names = true
+isort.known-first-party = ["goofit"]
+mccabe.max-complexity = 12

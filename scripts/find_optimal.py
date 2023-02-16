@@ -84,9 +84,8 @@ for i in range(begin, end):
         after = monotonic_time()
 
         # we are going to do two things: first parse the log file
-        f = open("log")
-        lines = f.readlines()
-        f.close()
+        with open("log") as f:
+            lines = f.readlines()
 
         # we are pulling out 3rd from last line
         line = lines[len(lines) - 4]
@@ -105,13 +104,10 @@ for i in range(begin, end):
 
     strings.append(s + "\r\n")
 
-timing = open(output + ".csv", "w")
+with open(f"{output}.csv", "w") as timing:
+    for s in strings:
+        timing.write(s)
 
-for s in strings:
-    timing.write(s)
-
-timing.close()
-
-print("Group: " + minGroup + " Grain: " + minGrain + "\n")
+print(f"Group: {minGroup} Grain: {minGrain}\n")
 
 print("Done")

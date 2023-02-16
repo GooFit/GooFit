@@ -43,13 +43,13 @@ def test(filename, *args):
             colors.success.print(filename, "Successful")
         else:
             colors.fatal.print(filename, "Failed with status code:", code)
-    return dict(
-        name=filename + " " + " ".join(map(str, args)),
-        code=code,
-        time=t.interval,
-        stdout=stdout,
-        stderr=stderr,
-    )
+    return {
+        "name": filename + " " + " ".join(map(str, args)),
+        "code": code,
+        "time": t.interval,
+        "stdout": stdout,
+        "stderr": stderr,
+    }
 
 
 def make_results(profile=False):

@@ -319,7 +319,7 @@ def plot_multi_body_resonance(amplitude, index):
     plt.figure()
     plt.hist(accepted_m12_amp, bins=100)
     # plt.savefig(f'amp4body_amplitude_plots/amplitude_{i}_accepted_m12.png')
-    plt.savefig(f"amp4body_td_amplitude_plots/amplitude_{i}_accepted_m12.png")
+    plt.savefig(f"amp4body_td_amplitude_plots/amplitude_{index}_accepted_m12.png")
 
 
 for i in range(len(DK3P_DI.amplitudes)):

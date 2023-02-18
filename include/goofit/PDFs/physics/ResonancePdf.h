@@ -13,6 +13,8 @@
 #include <goofit/PDFs/physics/resonances/RhoOmegaMix.h>
 #include <goofit/PDFs/physics/resonances/Spline.h>
 #include <goofit/PDFs/physics/resonances/NonRes3k.h>
+#include <goofit/PDFs/physics/resonances/PolarFFNR.h>
+#include <goofit/PDFs/physics/resonances/Rescattering2.h>
 
 #if GOOFIT_KMATRIX
 #include <goofit/PDFs/physics/resonances/kMatrix.h>

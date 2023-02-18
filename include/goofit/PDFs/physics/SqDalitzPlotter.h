@@ -61,9 +61,9 @@ class SqDalitzPlotter {
 
         while(data.getNumEvents()<NPTs){
             m23 = m23_gen(gen);
-            m13 = m23_gen(gen);
-           
-            if(inDalitz(m13,
+            m13 = m13_gen(gen);
+            
+            if(inDalitz2(m13,
                 m23,
                 mother_mass,
                 d1_mass,
@@ -71,11 +71,15 @@ class SqDalitzPlotter {
                 d3_mass)) {
                     
                     fptype m12 = sqrt(mother_mass*mother_mass + d1_mass*d1_mass + d2_mass*d2_mass + d3_mass*d3_mass - m23- m13);
+                    
                     fptype mp = calc_mprime(m12, mother_mass, d1_mass, d2_mass, d3_mass);
                     fptype th = calc_thetaprime(m12, sqrt(m13), mother_mass, d1_mass, d2_mass, d3_mass);
 
-                    if(th>0.5)
-                        th = 1.0-th;
+                    if(d2_mass==d3_mass){
+                         if(th>0.5)
+                            th = 1.0-th;
+                    }
+                  
                     
                     mprime.setValue(mp);
                     thetaprime.setValue(th);

@@ -71,7 +71,7 @@ Variable Daughter2_Mass("DecayProduct_2_Mass", d2_MASS);
 Variable Daughter3_Mass("DecayProduct_3_Mass", d3_MASS);
 
 // Bins for grid normalization
-const int bins = 200;
+const int bins = 1000;
 
 // Dalitz Limits
 const fptype s12_min = (d1_MASS + d2_MASS) * (d1_MASS + d2_MASS);
@@ -125,7 +125,7 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
     Variable v_f2p_1525_img("f2p_1525_IMAG", f2p_1525_img, 0.01, 0, 0);
 
     auto f2p_1525 = new Resonances::RBW(
-        "f2p_1525", v_f2p_1525_real, v_f2p_1525_img, v_f2p_1525_Mass, v_f2p_1525_Width, 2, PAIR_12, true, false);
+        "f2p_1525", v_f2p_1525_real, v_f2p_1525_img, v_f2p_1525_Mass, v_f2p_1525_Width, 2, PAIR_13, true, false);
 
     double phi1020_MASS  = 1.019461;
     double phi1020_WIDTH = 0.00429;
@@ -138,7 +138,7 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
     Variable v_phi1020_img("phi1020_IMAG", phi1020_img,0.01,0,0);
 
     auto phi1020 = new Resonances::RBW(
-        "phi1020", v_phi1020_real, v_phi1020_img, v_phi1020_Mass, v_phi1020_Width, 1, PAIR_12, true, false);
+        "phi1020", v_phi1020_real, v_phi1020_img, v_phi1020_Mass, v_phi1020_Width, 1, PAIR_13, true, false);
 
     // If you want include a resonance in your model, just push into the vector 'vec_resonances'
 
@@ -239,7 +239,7 @@ Amp3BodySqDP *runFit(GooPdf *totalPdf, Amp3BodySqDP *signal, UnbinnedDataSet *da
 
     // Start fit
     auto func_min = datapdf.fit();
-
+    datapdf.printParams();
     output = fmt::format("Fit/{0}/fit_result_fitted.txt", name.c_str());
     writeToFile(totalPdf, output.c_str());
 
@@ -316,14 +316,12 @@ int main(int argc, char **argv) {
             std::cout << "----------------------------------------------------------" << std::endl;
         }
 
-        std::cout << "Fit Fractions Interference" << '\n';
+        
         signal->setDataSize(data.getNumEvents());
         totalpdf->setData(&data);
-        printf("norm: %.4f \n",signal->normalize());
-        auto frac = signal->fit_fractions();
-        for(int i=0; i<frac.size();i++)
-            for(int j=0; j<frac.size();j++)
-                printf("FF[%d][%d] = %.4f \n",i,j,frac[i][j]);
+        
+        auto frac = signal->fit_fractions(true);
+       
     
 
         return 0;
@@ -406,15 +404,11 @@ int main(int argc, char **argv) {
         std::cout << toyName << " root file was saved in MC folder" << std::endl;
         std::cout << "----------------------------------------------------------" << std::endl;
 
-        std::cout << "Fit Fractions Interference" << '\n';
+   
         signal->setDataSize(data.getNumEvents());
         totalpdf->setData(&data);
-        printf("norm: %.4f \n",signal->normalize());
+    
         auto frac = signal->fit_fractions(true);
-        // for(int i=0; i<frac.size();i++)
-        //     for(int j=0; j<frac.size();j++)
-        //         printf("FF[%d][%d] = %.4f \n",i,j,frac[i][j]);
-
-        // std::cout << "norm = " << output_signal->normalize() << std::endl;
+       
     }
 }

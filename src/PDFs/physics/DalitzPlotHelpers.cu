@@ -11,6 +11,46 @@ Helper functions
 
 namespace GooFit {
 
+__host__ __device__ auto inDalitz2(const fptype &s13, const fptype &s23, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3) -> bool{
+
+    // Find out whether the point (m13Sq,m23Sq) is within the limits of the
+	// Dalitz plot. The limits are specified by the invariant masses
+	// of the parent (e.g. B) and its three daughters that were
+	// defined in the constructor of this class. Here
+	// m_13Sq = square of invariant mass of daughters 1 and 3 
+	// m_23Sq = square of invariant mass of daughters 2 and 3.
+
+    bool withinDP = false;
+
+    fptype m13_min = dm1+dm3;
+    fptype m13_max = bigM-dm2;
+
+    if (!((s13 > m13_min*m13_min) && (s13 < m13_max*m13_max))) {
+		return false;
+	}
+
+    fptype m13 = sqrt(s13);
+    fptype m23 = sqrt(s23);
+
+    fptype e3Cms13 = (s13 - dm1*dm1 + dm3*dm3)/(2.0*m13);
+	fptype p3Cms13 = sqrt(e3Cms13*e3Cms13 - dm3*dm3);
+
+	fptype e2Cms13 = (bigM*bigM - s13 - dm2*dm2)/(2.0*m13);
+	fptype p2Cms13 = sqrt(e2Cms13*e2Cms13 - dm2*dm2);
+
+    fptype term = 2.0*e2Cms13*e3Cms13 + dm2*dm2 + dm3*dm3;
+
+    fptype m23SqLocMin = term - 2.0*p2Cms13*p3Cms13;
+	fptype m23SqLocMax = term + 2.0*p2Cms13*p3Cms13;
+
+    if (s23 > m23SqLocMin && s23 < m23SqLocMax) {    
+		withinDP = true;
+	}
+
+	return withinDP;
+
+}
+
 __host__ __device__ auto inDalitz(
     const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3)
     -> bool {

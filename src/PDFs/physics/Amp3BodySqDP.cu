@@ -100,6 +100,8 @@ __host__ __device__   auto calc_m13(const fptype &m12, const fptype &cos_12, con
 
     fptype qk = EkCmsij*EkCmsij - m3Sq;
     qk = qk>0. ? sqrt(qk)  : 0.;
+
+    //printf("coshel = %.2f \n",cos_12);
     
     fptype m13Sq = m1Sq + m3Sq + 2.0*EiCmsij*EkCmsij - 2.0*qi*qk*cos_12;
 
@@ -200,6 +202,9 @@ constexpr int resonanceOffset_DP = 4; // Offset of the first resonance into the 
 // this needs to be large enough to hold all samples
 __device__ fpcomplex *cSqDpResonances[16 * 20];
 
+thrust::host_vector<fptype> h_saveAmpIntegral;
+thrust::device_vector<fptype> d_saveAmpIntegral;
+
 __device__ inline auto parIndexFromResIndex_DP(int resIndex) -> int {
     return resonanceOffset_DP + resIndex * resonanceSize;
 }
@@ -235,12 +240,20 @@ __device__ auto device_SqDalitzPlot(fptype *evt, ParameterContainer &pc) -> fpty
     fpcomplex totalAmp(0, 0);
 
     for(int i = 0; i < numResonances; ++i) {
-        fpcomplex amp = fpcomplex(pc.getParameter(i * 2), pc.getParameter(i * 2 + 1));
-        fpcomplex me = RO_CACHE(cSqDpResonances[i + (16 * cacheToUse)][evtNum]);
-        totalAmp += amp * me;
+        for(int j = 0; j < numResonances; ++j) {
+        fpcomplex amp_i = fpcomplex(pc.getParameter(i * 2), pc.getParameter(i * 2 + 1));
+        fpcomplex amp_j = fpcomplex(pc.getParameter(j * 2), pc.getParameter(j * 2 + 1));
+        fpcomplex me_i = RO_CACHE(cSqDpResonances[i + (16 * cacheToUse)][evtNum]);
+        fpcomplex me_j = RO_CACHE(cSqDpResonances[j + (16 * cacheToUse)][evtNum]);
+        fptype fNorm_i = 1./sqrt(d_saveAmpIntegral[i]);
+        fptype fNorm_j = 1./sqrt(d_saveAmpIntegral[j]);
+        
+        totalAmp += amp_i*conj(amp_j)*me_i*conj(me_j)*fNorm_i*fNorm_j;
+        }
     }
 
-    fptype ret = thrust::norm(totalAmp);
+    fptype ret = thrust::abs(totalAmp);
+    //printf("ret = %f, %f \n",totalAmp.real(),totalAmp.imag());
     pc.incrementIndex(1, numResonances * 2, 2, num_obs, 1);
 
     // loop to efficiency idx
@@ -373,7 +386,7 @@ __host__ void Amp3BodySqDP::setDataSize(unsigned int dataSize, unsigned int evtS
                          ((16 * cacheToUse) + i) * sizeof(fpcomplex *),
                          cudaMemcpyHostToDevice);
     }
-
+    fit_fractions(false);
     setForceIntegrals();
 }
 
@@ -386,6 +399,9 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
     host_normalizations.sync(d_normalizations);
     
     int totalBins = _mprime.getNumBins() * _thetaprime.getNumBins();
+    double binSizeFactor = 1;
+    binSizeFactor *= _mprime.getBinSize();
+    binSizeFactor *= _thetaprime.getBinSize();
 
     if(!dalitzNormRange) {
         gooMalloc((void **)&dalitzNormRange, 6 * sizeof(fptype));
@@ -432,6 +448,7 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
         calculators[i]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
         calculators[i]->setDalitzIndex(getFunctionIndex());
         if(redoIntegral[i]) {
+            
 #ifdef GOOFIT_MPI
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
@@ -457,7 +474,7 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
         for(int j = 0; j <= i; ++j) {
             if((!redoIntegral[i]) && (!redoIntegral[j]))
                 continue;
-
+        
             integrators[i][j]->setDalitzIndex(getFunctionIndex());
             integrators[i][j]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
             // integrators[i][j]->setEfficiencyIndex(efficiencyFunction);
@@ -474,6 +491,8 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
 
             if(j<i)
                 (*(integrals[j][i])) = (*(integrals[i][j]));
+
+           
         }
     }
 
@@ -488,22 +507,25 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
             // int param_j = parameters + resonanceOffset_DP + resonanceSize * j;
             fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 1],
                                   -host_parameters[parametersIdx + j * 2 + 2]);
-            
+
+            fptype fNorm_i = binSizeFactor/h_saveAmpIntegral[i];
+            fptype fNorm_j = binSizeFactor/h_saveAmpIntegral[j];
 
             if(j<i)
-                sumIntegral += 2.0*amplitude_i * amplitude_j * (*(integrals[i][j]));
+                sumIntegral += 2.0*amplitude_i * amplitude_j * (*(integrals[i][j]))*binSizeFactor*sqrt(fNorm_i)*sqrt(fNorm_j);
             else if(i==j)
-                sumIntegral += amplitude_i * amplitude_j * (*(integrals[i][j]));
+                sumIntegral += amplitude_i * amplitude_j * (*(integrals[i][j]))*binSizeFactor*fNorm_i;
             else
                 sumIntegral += 0.0;
         }
     }
 
+    
+   
+
     fptype ret           = sumIntegral.real(); // That complex number is a square, so it's fully real
-    double binSizeFactor = 1;
-    binSizeFactor *= _mprime.getBinSize();
-    binSizeFactor *= _thetaprime.getBinSize();
-    ret *= binSizeFactor;
+  
+    //ret *= binSizeFactor;
     host_normalizations[normalIdx + 1] = 1.0 / ret;
     cachedNormalization                = 1.0 / ret;
     return ret;
@@ -535,6 +557,9 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
 
     size_t n_res     = getDecayInfo().resonances.size();
     size_t totalBins = _mprime.getNumBins() * _thetaprime.getNumBins();
+    double binSizeFactor = 1;
+    binSizeFactor *= _mprime.getBinSize();
+    binSizeFactor *= _thetaprime.getBinSize();
 
     if(!dalitzNormRange) {
         gooMalloc((void **)&dalitzNormRange, 6 * sizeof(fptype));
@@ -589,9 +614,19 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
             
             if(j<i)
                 (*(integrals_ff[j][i]))=(*(integrals_ff[i][j]));
+
+
+            
         }
 
     }
+
+    for(int i = 0; i < n_res; ++i) {
+        h_saveAmpIntegral.push_back((*(integrals_ff[i][i])).real()*binSizeFactor);
+        // std::cout << h_saveAmpIntegral[i] << std::endl;
+    }
+
+    d_saveAmpIntegral = h_saveAmpIntegral;
 
     // End of time-consuming integrals.
     fpcomplex sumIntegral(0, 0);
@@ -605,10 +640,13 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
             fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 1],
                                   -host_parameters[parametersIdx + j * 2 + 2]);
 
+            fptype fNorm_i = binSizeFactor/h_saveAmpIntegral[i];
+            fptype fNorm_j = binSizeFactor/h_saveAmpIntegral[j];
+
             if(i==j)
-                buffer = amplitude_i * amplitude_j * (*(integrals_ff[i][j]));
+                buffer = amplitude_i * amplitude_j * (*(integrals_ff[i][j]))*binSizeFactor*fNorm_i;
             else if(j<i)
-                buffer = 2.*amplitude_i * amplitude_j * (*(integrals_ff[i][j]));
+                buffer = 2.*amplitude_i * amplitude_j * (*(integrals_ff[i][j]))*binSizeFactor*sqrt(fNorm_i)*sqrt(fNorm_j);
             else
                 buffer = 0.0;
 
@@ -617,7 +655,7 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
         }
     }
 
-    totalFF_integral = sumIntegral.real();
+    totalFF_integral = thrust::abs(sumIntegral);
 
     for(int i = 0; i < n_res; i++) {
         for(int j = 0; j < n_res; j++) {

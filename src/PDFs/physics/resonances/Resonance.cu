@@ -111,18 +111,43 @@ __device__ auto cFromM(
     fptype daug1Mass,
     fptype daug2Mass,
     fptype daug3Mass,
-    fptype m12,
     fptype m13,
     fptype m23,
+    fptype m12,
     unsigned int cyclic_index) -> fptype {
 
-        auto const _mA  = (PAIR_12 == cyclic_index ? daug1Mass : (PAIR_13 == cyclic_index ? daug3Mass : daug2Mass));
-        auto const _mC  = (PAIR_12 == cyclic_index ? daug3Mass : (PAIR_13 == cyclic_index ? daug2Mass : daug1Mass));
-        auto const _mAC = (PAIR_12 == cyclic_index ? m13 : (PAIR_13 == cyclic_index ? m23 : m12));
-        auto const _mAB = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
+        fptype  _mA  = 0.;
+        fptype  _mB  = 0.;
+        fptype  _mC  = 0.;
+        fptype  _mAC = 0.;
+        fptype  _mAB = 0.;
+
+        if(PAIR_12 == cyclic_index){
+            _mAB = m12;
+            _mAC = m13;
+            _mA = daug1Mass;
+            _mB = daug2Mass;
+            _mC = daug3Mass;
+        }
+
+        if(PAIR_13 == cyclic_index){
+            _mAB = m13;
+            _mAC = m23;
+            _mA = daug3Mass;
+            _mB = daug1Mass;
+            _mC = daug2Mass;
+        }
+
+         if(PAIR_23 == cyclic_index){
+            _mAB = m23;
+            _mAC = m12;
+            _mA = daug2Mass;
+            _mB = daug3Mass;
+            _mC = daug1Mass;
+        }
     
 
-        fptype EACmsAB = (_mAB - _mA*_mA + _mC*_mC)/(2.0*sqrt(_mAB));
+        fptype EACmsAB = (_mAB - _mB*_mB + _mA*_mA)/(2.0*sqrt(_mAB));
         fptype ECCmsAB = (motherMass*motherMass - _mAB - _mC*_mC)/(2.0*sqrt(_mAB));
 
         if(EACmsAB<_mA){
@@ -148,7 +173,7 @@ __device__ auto cFromM(
             cosHel = -1.0;
         }
 
-        if(cyclic_index==PAIR_12 || cyclic_index==PAIR_13)
+        if(cyclic_index==PAIR_12 || cyclic_index==PAIR_13 )
             cosHel *= -1.0;
 
         return cosHel;

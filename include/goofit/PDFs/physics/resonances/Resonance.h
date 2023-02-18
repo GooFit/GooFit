@@ -32,9 +32,9 @@ __device__ auto cFromM(fptype motherMass,
                            fptype daug1Mass,
                            fptype daug2Mass,
                            fptype daug3Mass,
-                           fptype m12,
                            fptype m13,
                            fptype m23,
+                           fptype m12,
                            unsigned int cyclic_index
                            ) -> fptype;
 

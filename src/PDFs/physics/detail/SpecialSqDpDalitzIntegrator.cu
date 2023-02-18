@@ -38,18 +38,18 @@ __device__ auto device_SqTddp_calcIntegrals(fptype mprime, fptype thetaprime, in
         ipc.incrementIndex();
 
     ParameterContainer t = ipc;
-    fpcomplex ai         = getResonanceAmplitude(s23, s13 , s12, t);
+    fpcomplex ai         = getResonanceAmplitude(s13, s23 , s12, t);
     t                    = ipc;
-    fpcomplex bi         = getResonanceAmplitude(s23, s13 , s12, t);
+    fpcomplex bi         = getResonanceAmplitude(s13, s23 , s12, t);
 
     ParameterContainer jpc = pc;
     while(jpc.funcIdx < res_j)
         jpc.incrementIndex();
 
     t            = jpc;
-    fpcomplex aj = conj(getResonanceAmplitude(s23, s13 , s12, t));
+    fpcomplex aj = conj(getResonanceAmplitude(s13, s23 , s12, t));
     t            = jpc;
-    fpcomplex bj = conj(getResonanceAmplitude(s23, s13 , s12, t));
+    fpcomplex bj = conj(getResonanceAmplitude(s13, s23 , s12, t));
 
     ret = ThreeComplex(
         (ai * aj).real(), (ai * aj).imag(), (ai * bj).real(), (ai * bj).imag(), (bi * bj).real(), (bi * bj).imag());

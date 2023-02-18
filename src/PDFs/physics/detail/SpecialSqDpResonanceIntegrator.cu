@@ -30,13 +30,13 @@ __device__ auto device_SqDalitzPlot_calcIntegrals(fptype mprime, fptype thetapri
     while(ipc.funcIdx < res_i)
         ipc.incrementIndex();
 
-    ret = getResonanceAmplitude(s13, s23 , s12, ipc);
+    ret = getResonanceAmplitude(s13, s23 , s12 , ipc);
 
     ParameterContainer jpc = pc;
     while(jpc.funcIdx < res_j)
         jpc.incrementIndex();
 
-    ret *= conj(getResonanceAmplitude( s13, s23 , s12, jpc));
+    ret *= conj(getResonanceAmplitude(s13, s23 , s12 , jpc));
 
     return ret;
 }

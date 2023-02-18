@@ -26,6 +26,8 @@ constexpr auto enum_to_underlying(E e) -> typename std::underlying_type<E>::type
     return static_cast<typename std::underlying_type<E>::type>(e);
 }
 
+__host__ __device__ auto inDalitz2(const fptype &s13, const fptype &s23, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3) -> bool;
+
 __host__ __device__ auto inDalitz(
     const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3)
     -> bool;
@@ -77,7 +79,7 @@ enum DP4Pair {
 
 std::ostream &operator<<(std::ostream &out, const DP4Pair &obj);
 
-enum DaughterPair { PAIR_12 = 0, PAIR_13, PAIR_23 };
+enum DaughterPair { PAIR_23 = 1, PAIR_13=2, PAIR_12=3 };
 
 const int resonanceSize = 4; // Number of parameters to describe one resonance.
 // Why not make this a static const member of ResonancePdf? Because the 'static'

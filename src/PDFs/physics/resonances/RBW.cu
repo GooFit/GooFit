@@ -8,7 +8,7 @@ namespace GooFit {
 
 
 template <int I>
-__device__ auto plainBW(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
+__device__ auto plainBW(fptype m13, fptype m23, fptype m12, ParameterContainer &pc) -> fpcomplex {
     unsigned int spin         = pc.getConstant(0);
     unsigned int cyclic_index = pc.getConstant(1);
     bool bachPframe = pc.getConstant(2);
@@ -20,6 +20,12 @@ __device__ auto plainBW(fptype m12, fptype m13, fptype m23, ParameterContainer &
 
     fpcomplex result{0.0, 0.0};
     fptype resmass2 = resmass*resmass;
+
+    fptype s  = 0.0;
+    fptype m = 0.0;
+    fptype m1= 0.0;
+    fptype m2= 0.0;
+    fptype m3= 0.0;
 
     if(resmass < 1.e-10) {
         GOOFIT_TRACE("Resonance Mass zero!");
@@ -33,11 +39,31 @@ __device__ auto plainBW(fptype m12, fptype m13, fptype m23, ParameterContainer &
 
 #pragma unroll
     for(size_t i = 0; i < I; i++) {
-        fptype s    = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
-        fptype m    = sqrt(s);
-        fptype m1 = PAIR_23 == cyclic_index ? c_daug2Mass : c_daug1Mass;
-        fptype m2 = PAIR_12 == cyclic_index ? c_daug2Mass : c_daug3Mass;
-        fptype m3 = (PAIR_12 == cyclic_index ? c_daug3Mass : (PAIR_13 == cyclic_index ? c_daug2Mass : c_daug1Mass));
+        
+        if(PAIR_12 == cyclic_index){
+            s    = m12 ;
+            m    = sqrt(s);
+            m1 = c_daug1Mass;
+            m2 = c_daug2Mass;
+            m3 = c_daug3Mass;
+        }
+
+        if(PAIR_13 == cyclic_index){
+            s    = m13 ;
+            m    = sqrt(s);
+            m1 = c_daug3Mass;
+            m2 = c_daug1Mass;
+            m3 = c_daug2Mass;
+        }
+
+         if(PAIR_23 == cyclic_index){
+            s    = m23 ;
+            m    = sqrt(s);
+            m1 = c_daug2Mass;
+            m2 = c_daug3Mass;
+            m3 = c_daug1Mass;
+        }
+       
 
         fptype q0_ = DaugDecayMomResFrame(resmass2, m1, m2);
 
@@ -59,7 +85,7 @@ __device__ auto plainBW(fptype m12, fptype m13, fptype m23, ParameterContainer &
         
         fptype gamma = ignoreMom ? reswidth : reswidth*pow(q_/q0_,2.0*spin + 1.0)*(resmass/m)*POW2(FR/FR0);
                   
-        fptype A = (resmass2 - s);
+        fptype A = (-resmass2 + s);
         fptype B = gamma*resmass;
         fptype C = 1.0 / (A*A + B*B);
 
@@ -67,7 +93,7 @@ __device__ auto plainBW(fptype m12, fptype m13, fptype m23, ParameterContainer &
         ret *= ignoreBW ? 1.0 : (FR/FR0);
         ret *= ignoreBW ? 1.0 : (FP/FP0);
 
-        fptype cosHel = cFromM(c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
+        fptype cosHel = cFromM(c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m13, m23, m12, cyclic_index);
         fptype legPol = calcLegendrePoly(cosHel,spin);
         fptype ZemachSpinFactor = ignoreMom ? calcZemachSpinFactor(1.0, legPol, spin) :calcZemachSpinFactor(q_*p_, legPol, spin);
         ret *= ZemachSpinFactor;
@@ -76,9 +102,9 @@ __device__ auto plainBW(fptype m12, fptype m13, fptype m23, ParameterContainer &
         result += ret;
 
         if(I != 0) {
-            fptype swpmass = m12;
-            m12            = m13;
-            m13            = swpmass;
+            fptype swpmass = m13;
+            m13            = m23;
+            m23            = swpmass;
         }
     }
 

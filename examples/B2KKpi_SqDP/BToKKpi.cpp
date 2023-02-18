@@ -58,11 +58,11 @@ using namespace ROOT;
 // B_MASS (PDG)
 double B_MASS = 5.27934;
 double k_MASS = 0.493677;
-double pi_MASS = 0.139;
+double pi_MASS = 0.13957039;
 
 double Decay_MASS = B_MASS;
 double d1_MASS    = k_MASS;
-double d2_MASS    = k_MASS;
+double d2_MASS    = pi_MASS;
 double d3_MASS    = k_MASS;
 
 Variable Mother_Mass("DecayParticle_Mass", Decay_MASS);
@@ -71,7 +71,7 @@ Variable Daughter2_Mass("DecayProduct_2_Mass", d2_MASS);
 Variable Daughter3_Mass("DecayProduct_3_Mass", d3_MASS);
 
 // Bins for grid normalization
-const int bins = 500;
+const int bins = 200;
 
 // Dalitz Limits
 const fptype s12_min = (d1_MASS + d2_MASS) * (d1_MASS + d2_MASS);
@@ -103,6 +103,22 @@ GooPdf *polyEff(Observable s12, Observable s13) {
     return eff;
 }
 
+GooPdf *Vetos(std::string name) {
+    // for Dzero veto
+    fptype DMin31 = 1.83*1.83;
+	fptype DMax31 = 2.00*2.00;
+
+    VetoInfo veto13(Variable("veto13_min", DMin31), Variable("veto13_max", DMax31), PAIR_13);
+    VetoInfo veto23(Variable("veto23_min", DMin31), Variable("veto23_max", DMax31), PAIR_23);
+
+    vector<VetoInfo> vetos;
+    vetos.push_back(veto13);
+    vetos.push_back(veto23);
+
+
+    return new DalitzVetoPdf(name, mprime, thetaprime, Mother_Mass, Daughter1_Mass, Daughter2_Mass, Daughter3_Mass, vetos);
+}
+
 Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumber eventNumber, GooPdf *eff = 0) {
     // set up the decay channel
     DecayInfo3 D2KKK;
@@ -111,13 +127,114 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
     D2KKK.daug2Mass           = d2_MASS;
     D2KKK.daug3Mass           = d3_MASS;
     D2KKK.meson_radius        = 4.0; // GeV^-1
-    D2KKK.mother_meson_radius = 5.0; // GeV^-1
+    D2KKK.mother_meson_radius = 4.0; // GeV^-1
+    //PAIR_12 = K+pi+
+    //PAIR_13 = K+K-
+    //PAIR_23 = pi+K-
+    //Laura (1 => m_23, 2 => m_13, 3 => m_12), i.e. the bachelor track number.
+    //Kst(1430)
+    double Ks1430_MASS  = 1.425;
+    double Ks1430_WIDTH = 0.270;
+    double Ks1430_amp   = 1.;
+    double Ks1430_img   = 0.;
 
+    Variable v_Ks1430_Mass("Ks1430_MASS", Ks1430_MASS);
+    Variable v_Ks1430_Width("Ks1430_WIDTH", Ks1430_WIDTH);
+    Variable v_Ks1430_real("Ks1430_REAL", Ks1430_amp,0.01,0,0);
+    Variable v_Ks1430_img("Ks1430_IMAG", Ks1430_img,0.01,0,0);
 
-    double f2p_1525_MASS  = 1.5174;
-    double f2p_1525_WIDTH = 0.086;
-    double f2p_1525_amp   = 76.;
-    double f2p_1525_img   = -786.;
+    auto Ks1430 = new Resonances::RBW(
+        "Ks1430", v_Ks1430_real, v_Ks1430_img, v_Ks1430_Mass, v_Ks1430_Width, 0, PAIR_23, false, false);
+
+     //chi_c0
+    double Chic0_MASS  = 3.41475;
+    double Chic0_WIDTH = 0.0105;
+    double Chic0_amp   = 1.;
+    double Chic0_img   = 0.;
+
+    Variable v_Chic0_Mass("Chic0_MASS", Chic0_MASS);
+    Variable v_Chic0_Width("Chic0_WIDTH", Chic0_WIDTH);
+    Variable v_Chic0_real("Chic0_REAL", Chic0_amp,0.01,0,0);
+    Variable v_Chic0_img("Chic0_IMAG", Chic0_img,0.01,0,0);
+
+    auto Chic0 = new Resonances::RBW(
+        "Chic0", v_Chic0_real, v_Chic0_img, v_Chic0_Mass, v_Chic0_Width, 0, PAIR_13, false, false);
+
+    double Ks892_MASS  = 0.89581;
+    double Ks892_WIDTH = 0.0474;
+    double Ks892_amp   = 1.;
+    double Ks892_img   = 0.;
+
+    //K*(892)
+    Variable v_Ks892_Mass("Ks892_MASS", Ks892_MASS);
+    Variable v_Ks892_Width("Ks892_WIDTH", Ks892_WIDTH);
+    Variable v_Ks892_real("Ks892_REAL", Ks892_amp);
+    Variable v_Ks892_img("Ks892_IMAG", Ks892_img);
+
+    auto Ks892 = new Resonances::RBW(
+        "Ks892", v_Ks892_real, v_Ks892_img, v_Ks892_Mass, v_Ks892_Width, 1, PAIR_23, false, false);
+
+    //phi(1020)
+    double phi1020_MASS  = 1.019461;
+    double phi1020_WIDTH = 0.004266;
+    double phi1020_amp   = 1.;
+    double phi1020_img   = 0.;
+
+    Variable v_phi1020_Mass("phi1020_MASS", phi1020_MASS);
+    Variable v_phi1020_Width("phi1020_WIDTH", phi1020_WIDTH);
+    Variable v_phi1020_real("phi1020_REAL", phi1020_amp,0.01,0,0);
+    Variable v_phi1020_img("phi1020_IMAG", phi1020_img,0.01,0,0);
+
+    auto phi1020 = new Resonances::RBW(
+        "phi1020", v_phi1020_real, v_phi1020_img, v_phi1020_Mass, v_phi1020_Width, 1, PAIR_13, false, false);
+    
+    //rho(1450)
+    double rho1450_MASS  = 1.465;
+    double rho1450_WIDTH = 0.4;
+    double rho1450_amp   = 1.;
+    double rho1450_img   = 0.;
+
+    Variable v_rho1450_Mass("rho1450_MASS", rho1450_MASS);
+    Variable v_rho1450_Width("rho1450_WIDTH", rho1450_WIDTH);
+    Variable v_rho1450_real("rho1450_REAL", rho1450_amp,0.01,0,0);
+    Variable v_rho1450_img("rho1450_IMAG", rho1450_img,0.01,0,0);
+
+    auto rho1450 = new Resonances::RBW(
+        "rho1450", v_rho1450_real, v_rho1450_img, v_rho1450_Mass, v_rho1450_Width, 1, PAIR_13, false, false);
+
+    //rho(1700)
+    double rho1700_MASS  = 1.720;
+    double rho1700_WIDTH = 0.250;
+    double rho1700_amp   = 1.;
+    double rho1700_img   = 0.;
+
+    Variable v_rho1700_Mass("rho1700_MASS", rho1700_MASS);
+    Variable v_rho1700_Width("rho1700_WIDTH", rho1700_WIDTH);
+    Variable v_rho1700_real("rho1700_REAL", rho1700_amp,0.01,0,0);
+    Variable v_rho1700_img("rho1700_IMAG", rho1700_img,0.01,0,0);
+
+    auto rho1700 = new Resonances::RBW(
+        "rho1700", v_rho1700_real, v_rho1700_img, v_rho1700_Mass, v_rho1700_Width, 1, PAIR_13, false, false);
+
+    //f2(1270)
+    double f2_1270_MASS  = 1.2751;
+    double f2_1270_WIDTH = 0.1851;
+    double f2_1270_amp   = 0.;
+    double f2_1270_img   = 1.;
+
+    Variable v_f2_1270_Mass("f2_1270_MASS", f2_1270_MASS);
+    Variable v_f2_1270_Width("f2_1270_WIDTH", f2_1270_WIDTH);
+    Variable v_f2_1270_real("f2_1270_REAL", f2_1270_amp, 0.01, 0, 0);
+    Variable v_f2_1270_img("f2_1270_IMAG", f2_1270_img, 0.01, 0, 0);
+
+    auto f2_1270 = new Resonances::RBW(
+        "f2_1270", v_f2_1270_real, v_f2_1270_img, v_f2_1270_Mass, v_f2_1270_Width, 2, PAIR_13, false, false);
+    
+    //f'2(1525)
+    double f2p_1525_MASS  = 1.525;
+    double f2p_1525_WIDTH = 0.073;
+    double f2p_1525_amp   = 0.;
+    double f2p_1525_img   = 1.;
 
     Variable v_f2p_1525_Mass("f2p_1525_MASS", f2p_1525_MASS);
     Variable v_f2p_1525_Width("f2p_1525_WIDTH", f2p_1525_WIDTH);
@@ -125,30 +242,46 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
     Variable v_f2p_1525_img("f2p_1525_IMAG", f2p_1525_img, 0.01, 0, 0);
 
     auto f2p_1525 = new Resonances::RBW(
-        "f2p_1525", v_f2p_1525_real, v_f2p_1525_img, v_f2p_1525_Mass, v_f2p_1525_Width, 2, PAIR_13, true, false);
+        "f2p_1525", v_f2p_1525_real, v_f2p_1525_img, v_f2p_1525_Mass, v_f2p_1525_Width, 2, PAIR_13, false, false);
 
-    double phi1020_MASS  = 1.019461;
-    double phi1020_WIDTH = 0.00429;
-    double phi1020_amp   = 1.;
-    double phi1020_img   = 0.;
 
-    Variable v_phi1020_Mass("phi1020_MASS", phi1020_MASS);
-    Variable v_phi1020_Width("phi1020_WIDTH", phi1020_WIDTH);
-    Variable v_phi1020_real("phi1020_REAL", phi1020_amp);
-    Variable v_phi1020_img("phi1020_IMAG", phi1020_img);
+    auto nonres = new Resonances::NonRes("NonRes",Variable("NR_REAL",1.,0.01,0,0),Variable("NR_IMAG",0.,0.01,0,0));
 
-    auto phi1020 = new Resonances::RBW(
-        "phi1020", v_phi1020_real, v_phi1020_img, v_phi1020_Mass, v_phi1020_Width, 1, PAIR_13, true, false);
+    auto PolarFFNR = new Resonances::PolarFFNR("PolarFFNR",Variable("FFNR_REAL",1.,0.01,0,0),Variable("FFNR_IMAG",0.,0.01,0,0),Variable("lambda",1.18),PAIR_23,false);
 
-    // If you want include a resonance in your model, just push into the vector 'vec_resonances'
+    std::vector<Variable> ScatteringCoefs;
+    ScatteringCoefs.push_back(Variable("B1Val",23.6));
+    ScatteringCoefs.push_back(Variable("B2Val",29.4));
+    ScatteringCoefs.push_back(Variable("B3Val",0.6));
+    ScatteringCoefs.push_back(Variable("C1Val",34.39));
+    ScatteringCoefs.push_back(Variable("C2Val",4.4));
+    ScatteringCoefs.push_back(Variable("C3Val",-32.9));
+    ScatteringCoefs.push_back(Variable("C4Val",-16.));
+    ScatteringCoefs.push_back(Variable("C5Val",7.4));
+    ScatteringCoefs.push_back(Variable("D0Val",0.59));
+    ScatteringCoefs.push_back(Variable("D1Val",-0.38));
+    ScatteringCoefs.push_back(Variable("D2Val",0.12));
+    ScatteringCoefs.push_back(Variable("D3Val",-0.09));
+    ScatteringCoefs.push_back(Variable("F1Val",-0.043));
+    ScatteringCoefs.push_back(Variable("F2Val",-0.008));
+    ScatteringCoefs.push_back(Variable("F3Val",-0.28));
+    ScatteringCoefs.push_back(Variable("F4Val",0.026));
 
-    auto nonres = new Resonances::NonRes("NonRes",Variable("re",1.,0.01,0,0),Variable("im",0.,0.01,0,0));
+    auto Scattering = new Resonances::Rescattering2("Scattering",Variable("Scat_REAL",1.,0.01,0,0),Variable("Scat_IMAG",0.,0.01,0,0),ScatteringCoefs,PAIR_13,false);
+
 
     std::vector<ResonancePdf *> vec_resonances;
 
-    //vec_resonances.push_back(phi1020);
-    //vec_resonances.push_back(f2p_1525);
-    vec_resonances.push_back(nonres);
+    vec_resonances.push_back(Ks892);
+    vec_resonances.push_back(phi1020);
+    vec_resonances.push_back(f2_1270);
+    vec_resonances.push_back(Ks1430);
+    vec_resonances.push_back(rho1450);
+    vec_resonances.push_back(f2p_1525);
+    vec_resonances.push_back(rho1700);
+    vec_resonances.push_back(Chic0);
+    vec_resonances.push_back(PolarFFNR);
+    vec_resonances.push_back(Scattering);
 
     D2KKK.resonances = vec_resonances;
 
@@ -167,15 +300,20 @@ void getData(std::string toyFileName, GooFit::Application &app, DataSet &data, b
     auto tree     = (TTree *)openRoot->Get("genResults");
     auto mprime_val(0.);
     auto thetaprime_val(0.);
+    int charge(0);
 
     printf("NEntries = %f \n",tree->GetEntries());
 
     tree->SetBranchAddress("mPrime", &mprime_val);
     tree->SetBranchAddress("thPrime", &thetaprime_val);
+    tree->SetBranchAddress("charge", &charge);
    
     size_t j = 0;
     for(size_t i = 0; i < tree->GetEntries(); i++) {
         tree->GetEntry(i);
+        if(charge<0)
+            continue;
+
         mprime.setValue(mprime_val);
         thetaprime.setValue(thetaprime_val);
         eventNumber.setValue(data.getNumEvents());
@@ -209,8 +347,6 @@ void to_root(UnbinnedDataSet &toyMC, std::string name) {
         t->GetEntry(i);
         _mprime = mprime.getValue();
         _thetaprime = thetaprime.getValue();
-        if(_thetaprime>0.5)
-            _thetaprime = 1.0 -_thetaprime;
         _s12 = pow(calc_m12(_mprime, Decay_MASS, d1_MASS, d2_MASS, d3_MASS),2);
         _s13 = pow(calc_m13(sqrt(_s12), cos(_thetaprime*M_PI), Decay_MASS, d1_MASS, d2_MASS, d3_MASS),2);
         _s23 = Decay_MASS*Decay_MASS + d1_MASS*d1_MASS + d2_MASS*d2_MASS + d3_MASS*d3_MASS - _s13 - _s12;
@@ -259,7 +395,7 @@ int main(int argc, char **argv) {
     bool save_toy               = false;
     bool is_toy                 = false;
     bool no_acc_and_bkg         = true;
-    size_t Nevents              = 100000;
+    size_t Nevents              = 100875;
 
     auto fit = app.add_subcommand("fit", "fit data");
     fit->add_option("-f,--file", input_data_name, "name_of_file.root");
@@ -296,9 +432,11 @@ int main(int argc, char **argv) {
     thetaprime.setNumBins(bins);
 
     auto efficiency  = polyEff(mprime, thetaprime);
+    auto veto = Vetos("veto");
+    auto vetoEff = new ProdPdf("vetoEff",{efficiency,veto}) ;
     GooPdf *totalpdf = nullptr;
 
-    auto signal = makesignalpdf(mprime, thetaprime, eventNumber, efficiency);
+    auto signal = makesignalpdf(mprime, thetaprime, eventNumber, vetoEff);
     totalpdf    = new ProdPdf("totalpdf", {signal});
 
     

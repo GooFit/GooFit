@@ -5,9 +5,9 @@
 
 namespace GooFit {
 
-__device__ auto nonres(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
+__device__ auto nonres(fptype m13, fptype m23, fptype m12, ParameterContainer &pc) -> fpcomplex {
     pc.incrementIndex(1, 0, 0, 0, 1);
-    return {1.0, 0.0};
+    return fpcomplex(1.0, 0.0);
 }
 
 __device__ resonance_function_ptr ptr_to_NONRES = nonres;

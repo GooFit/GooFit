@@ -50,7 +50,6 @@ __host__ __device__  auto calc_m13(const fptype &m12, const fptype &cos_12, cons
 
 __host__ __device__  auto calc_SqDp_Jacobian(const fptype &mprime ,const fptype &thetaprime, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype;
 
-__host__ __device__  auto calc_SqDp_InvJacobian(const fptype &m12 ,const fptype &m13, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype;
 
 class Amp3BodySqDP : public Amp3BodyBase {
   public:

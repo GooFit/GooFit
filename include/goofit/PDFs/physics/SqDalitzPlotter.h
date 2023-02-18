@@ -54,64 +54,84 @@ class SqDalitzPlotter {
         fptype m12 = 0.0;
         fptype NPTs = 10000000;
 
-        std::random_device rd;  
-        std::mt19937 gen(rd()); 
-        std::uniform_real_distribution<> m23_gen(m23_min*m23_min, m23_max*m23_max);
-        std::uniform_real_distribution<> m13_gen(m13_min*m13_min, m13_max*m13_max);
+        // std::random_device rd;  
+        // std::mt19937 gen(rd()); 
+        // std::uniform_real_distribution<> m23_gen(m23_min*m23_min, m23_max*m23_max);
+        // std::uniform_real_distribution<> m13_gen(m13_min*m13_min, m13_max*m13_max);
 
-        while(data.getNumEvents()<NPTs){
-            m23 = m23_gen(gen);
-            m13 = m13_gen(gen);
+        // while(data.getNumEvents()<NPTs){
+        //     m23 = m23_gen(gen);
+        //     m13 = m13_gen(gen);
             
-            if(inDalitz2(m13,
-                m23,
-                mother_mass,
-                d1_mass,
-                d2_mass,
-                d3_mass)) {
+        //     if(inDalitz2(m13,
+        //         m23,
+        //         mother_mass,
+        //         d1_mass,
+        //         d2_mass,
+        //         d3_mass)) {
                     
-                    fptype m12 = sqrt(mother_mass*mother_mass + d1_mass*d1_mass + d2_mass*d2_mass + d3_mass*d3_mass - m23- m13);
+        //             fptype m12 = sqrt(mother_mass*mother_mass + d1_mass*d1_mass + d2_mass*d2_mass + d3_mass*d3_mass - m23- m13);
                     
-                    fptype mp = calc_mprime(m12, mother_mass, d1_mass, d2_mass, d3_mass);
-                    fptype th = calc_thetaprime(m12, sqrt(m13), mother_mass, d1_mass, d2_mass, d3_mass);
+        //             fptype mp = calc_mprime(m12, mother_mass, d1_mass, d2_mass, d3_mass);
+        //             fptype th = calc_thetaprime(m12, sqrt(m13), mother_mass, d1_mass, d2_mass, d3_mass);
 
-                    if(d2_mass==d3_mass){
-                         if(th>0.5)
-                            th = 1.0-th;
-                    }
+        //             // if(d2_mass==d3_mass){
+        //             //      if(th>0.5)
+        //             //         th = 1.0-th;
+        //             // }
                   
                     
-                    mprime.setValue(mp);
-                    thetaprime.setValue(th);
-                    data.addEvent();
-                    eventNumber.setValue(eventNumber.getValue() + 1);
-            }
+        //             mprime.setValue(mp);
+        //             thetaprime.setValue(th);
+        //             data.addEvent();
+        //             eventNumber.setValue(eventNumber.getValue() + 1);
+        //     }
+
+        // }
+
+        std::random_device rd;  
+        std::mt19937 gen(rd()); 
+        std::uniform_real_distribution<> random(0.0,1.0);
+     
+
+        while(data.getNumEvents()<NPTs){
+            fptype _mprime = random(gen);
+            fptype _thetaprime = random(gen);
+           
+            // if(_thetaprime>0.5)
+            //     _thetaprime = 1.0-_thetaprime;
+            
+            mprime.setValue(_mprime);
+            thetaprime.setValue(_thetaprime);
+            data.addEvent();
+            eventNumber.setValue(eventNumber.getValue() + 1);
 
         }
 
-        // std::random_device rd;  
-        // std::mt19937 gen(rd()); 
-        // std::uniform_real_distribution<> random(0.0,1.0);
-     
-
-        // while(data.getNumEvents()<NPTs){
-        //     fptype _mprime = random(gen);
-        //     fptype _thetaprime = random(gen);
-           
-        //     if(_thetaprime>0.5)
-        //         _thetaprime = 1.0-_thetaprime;
-            
-        //     mprime.setValue(_mprime);
-        //     thetaprime.setValue(_thetaprime);
-        //     data.addEvent();
-        //     eventNumber.setValue(eventNumber.getValue() + 1);
-
+        // for(int i=0; i<500; i++){
+        //     fptype _mprime = 0. + (i+0.5)*1./500.;
+        //     for(int j=0; j<500; j++){
+        //         fptype _thetaprime = 0. + (j+0.5)*1./500.;
+        //         mprime.setValue(_mprime);
+        //         thetaprime.setValue(_thetaprime);
+        //         data.addEvent();
+        //         eventNumber.setValue(eventNumber.getValue() + 1);
+        //     }
         // }
+
+        
 
         auto old = overallSignal->getData();
         overallSignal->setData(&data);
         signalDalitz->setDataSize(data.getNumEvents());
         pdfValues = overallSignal->getCompProbsAtDataPoints();
+
+        for(int i =0; i<pdfValues[0].size();i++){
+            data.loadEvent(i);
+            auto jac = calc_SqDp_Jacobian(mprime.getValue(), thetaprime.getValue(), mother_mass, d1_mass, d2_mass, d3_mass);
+            pdfValues.at(0).at(i) *= jac;
+        }
+
         overallSignal->setData(old);
     }
 

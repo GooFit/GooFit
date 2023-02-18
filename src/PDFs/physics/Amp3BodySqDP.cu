@@ -128,50 +128,15 @@ __host__ __device__  auto calc_SqDp_Jacobian(const fptype &mprime ,const fptype 
     fptype qk = EkCmsij*EkCmsij - m3Sq;
      qk = qk>0. ? sqrt(qk)  : 0.;
     
-    fptype deriv1 = (M_PI)*((m_mother-m3) - (m1+m2))*sin(M_PI*mprime);
-    fptype deriv2 = (M_PI/2.)*sin(M_PI*thetaprime);
+    fptype deriv1 = 0.5*M_PI*((m_mother-m3) - (m1+m2))*sin(M_PI*mprime);
+    fptype deriv2 = M_PI*sin(M_PI*thetaprime);
 
     fptype jacobian = 4.0*qi*qk*m12*deriv1*deriv2;
 
     return jacobian;
 }
 
-__host__ __device__  auto calc_SqDp_InvJacobian(const fptype &m12 ,const fptype &m13, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
-   
-    fptype m12Sq = m12*m12;
-    fptype m13Sq = m13*m13;
 
-    fptype m_motherSq = m_mother*m_mother;
-    fptype m1Sq = m1*m1;
-    fptype m2Sq = m2*m2;
-    fptype m3Sq = m3*m3;
-
-    fptype EiCmsij = (m12Sq - m2Sq + m1Sq)/(2.0*m12);
-    fptype EkCmsij = (m_motherSq - m12Sq - m3Sq)/(2.0*m12);
-    
-    fptype qi = EiCmsij*EiCmsij - m1Sq;
-    qi = qi>0. ? sqrt(qi) : 0.;
-
-
-    fptype qk = EkCmsij*EkCmsij - m3Sq;
-    qk = qk>0. ? sqrt(qk)  : 0.;
-
-    fptype min = m1+m2;
-    fptype max = m_mother-m3;
-    fptype diff = max-min;
-
-    fptype inv_deriv1 = -M_PI*diff*sqrt(((min-m12)*(m12-max))/((min-max)*(min-max)));
-    fptype deriv1 = 1./inv_deriv1;
-
-    fptype deriv2 = 2.*m13;
-    deriv2 /= M_PI*qk*qi*sqrt(1.0 - pow( (m1Sq + 2*EiCmsij*EkCmsij + m3Sq - m13Sq)/(qi*qk) ,2));
-
-    //printf("qi = %f \t qk = %f \n", qi,qk );
-
-    fptype invjacobian = deriv1*deriv2;
-
-    return invjacobian;
-}
 
 // Functor used for fit fraction sum
 struct CoefSumFunctor {
@@ -201,12 +166,13 @@ constexpr int resonanceOffset_DP = 4; // Offset of the first resonance into the 
 // NOTE: This is does not support ten instances (ten threads) of resoncances now, only one set of resonances.
 // this needs to be large enough to hold all samples
 __device__ fpcomplex *cSqDpResonances[16 * 20];
-thrust::host_vector<fptype> h_saveAmpIntegral(16 * 20);
-thrust::device_vector<fptype> d_saveAmpIntegral;
+thrust::host_vector<fptype> h_saveAmpIntegral;
+thrust::device_vector<fptype> d_saveAmpIntegral(16 * 20);
 
 __device__ inline auto parIndexFromResIndex_DP(int resIndex) -> int {
     return resonanceOffset_DP + resIndex * resonanceSize;
 }
+
 
 __device__ auto device_SqDalitzPlot(fptype *evt, ParameterContainer &pc) -> fptype {
     int num_obs = pc.getNumObservables();
@@ -245,7 +211,7 @@ __device__ auto device_SqDalitzPlot(fptype *evt, ParameterContainer &pc) -> fpty
         fpcomplex me_i = RO_CACHE(cSqDpResonances[i + (16 * cacheToUse)][evtNum]);
         fpcomplex me_j = RO_CACHE(cSqDpResonances[j + (16 * cacheToUse)][evtNum]);
         fptype fNorm_i = 1./sqrt(d_saveAmpIntegral[i + (16 * cacheToUse)]);
-        fptype fNorm_j = 1./sqrt(d_saveAmpIntegral[j] + (16 * cacheToUse));
+        fptype fNorm_j = 1./sqrt(d_saveAmpIntegral[j + (16 * cacheToUse)]);
         
         totalAmp += amp_i*conj(amp_j)*me_i*conj(me_j)*fNorm_i*fNorm_j;
         }
@@ -621,11 +587,13 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
     }
 
     for(int i = 0; i < n_res; ++i) {
-        h_saveAmpIntegral[i + (16*cacheToUse)] = ((*(integrals_ff[i][i])).real()*binSizeFactor);
-        // std::cout << h_saveAmpIntegral[i] << std::endl;
+       
+        h_saveAmpIntegral.push_back(((*(integrals_ff[i][i])).real()*binSizeFactor));
+        std::cout << h_saveAmpIntegral[i] << std::endl;
     }
 
-    d_saveAmpIntegral = h_saveAmpIntegral;
+    thrust::copy(h_saveAmpIntegral.begin(),h_saveAmpIntegral.end(),d_saveAmpIntegral.begin() + 16*cacheToUse);
+
 
     // End of time-consuming integrals.
     fpcomplex sumIntegral(0, 0);
@@ -639,8 +607,8 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
             fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 1],
                                   -host_parameters[parametersIdx + j * 2 + 2]);
 
-            fptype fNorm_i = binSizeFactor/h_saveAmpIntegral[i + (16*cacheToUse)];
-            fptype fNorm_j = binSizeFactor/h_saveAmpIntegral[j + (16*cacheToUse)];
+            fptype fNorm_i = binSizeFactor/h_saveAmpIntegral[i];
+            fptype fNorm_j = binSizeFactor/h_saveAmpIntegral[j];
 
             if(i==j)
                 buffer = amplitude_i * amplitude_j * (*(integrals_ff[i][j]))*binSizeFactor*fNorm_i;

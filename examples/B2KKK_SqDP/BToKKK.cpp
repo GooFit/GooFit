@@ -116,8 +116,8 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
 
     double f2p_1525_MASS  = 1.5174;
     double f2p_1525_WIDTH = 0.086;
-    double f2p_1525_amp   = 0.;
-    double f2p_1525_img   = 1.;
+    double f2p_1525_amp   = 231.;
+    double f2p_1525_img   = 123.;
 
     Variable v_f2p_1525_Mass("f2p_1525_MASS", f2p_1525_MASS);
     Variable v_f2p_1525_Width("f2p_1525_WIDTH", f2p_1525_WIDTH);
@@ -134,15 +134,15 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
 
     Variable v_phi1020_Mass("phi1020_MASS", phi1020_MASS);
     Variable v_phi1020_Width("phi1020_WIDTH", phi1020_WIDTH);
-    Variable v_phi1020_real("phi1020_REAL", phi1020_amp,0.01,0,0);
-    Variable v_phi1020_img("phi1020_IMAG", phi1020_img,0.01,0,0);
+    Variable v_phi1020_real("phi1020_REAL", phi1020_amp);
+    Variable v_phi1020_img("phi1020_IMAG", phi1020_img);
 
     auto phi1020 = new Resonances::RBW(
         "phi1020", v_phi1020_real, v_phi1020_img, v_phi1020_Mass, v_phi1020_Width, 1, PAIR_13, true, false);
 
     // If you want include a resonance in your model, just push into the vector 'vec_resonances'
 
-    auto nonres = new Resonances::NonRes("NonRes",Variable("re",1.,0.01,0,0),Variable("im",0.,0.01,0,0));
+    auto nonres = new Resonances::NonRes("NonRes",Variable("re",-234.,0.01,0,0),Variable("im",0.,0.01,0,0));
 
     std::vector<ResonancePdf *> vec_resonances;
 

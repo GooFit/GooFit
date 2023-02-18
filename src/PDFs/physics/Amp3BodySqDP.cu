@@ -201,8 +201,7 @@ constexpr int resonanceOffset_DP = 4; // Offset of the first resonance into the 
 // NOTE: This is does not support ten instances (ten threads) of resoncances now, only one set of resonances.
 // this needs to be large enough to hold all samples
 __device__ fpcomplex *cSqDpResonances[16 * 20];
-
-thrust::host_vector<fptype> h_saveAmpIntegral;
+thrust::host_vector<fptype> h_saveAmpIntegral(16 * 20);
 thrust::device_vector<fptype> d_saveAmpIntegral;
 
 __device__ inline auto parIndexFromResIndex_DP(int resIndex) -> int {
@@ -245,8 +244,8 @@ __device__ auto device_SqDalitzPlot(fptype *evt, ParameterContainer &pc) -> fpty
         fpcomplex amp_j = fpcomplex(pc.getParameter(j * 2), pc.getParameter(j * 2 + 1));
         fpcomplex me_i = RO_CACHE(cSqDpResonances[i + (16 * cacheToUse)][evtNum]);
         fpcomplex me_j = RO_CACHE(cSqDpResonances[j + (16 * cacheToUse)][evtNum]);
-        fptype fNorm_i = 1./sqrt(d_saveAmpIntegral[i]);
-        fptype fNorm_j = 1./sqrt(d_saveAmpIntegral[j]);
+        fptype fNorm_i = 1./sqrt(d_saveAmpIntegral[i + (16 * cacheToUse)]);
+        fptype fNorm_j = 1./sqrt(d_saveAmpIntegral[j] + (16 * cacheToUse));
         
         totalAmp += amp_i*conj(amp_j)*me_i*conj(me_j)*fNorm_i*fNorm_j;
         }
@@ -622,7 +621,7 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
     }
 
     for(int i = 0; i < n_res; ++i) {
-        h_saveAmpIntegral.push_back((*(integrals_ff[i][i])).real()*binSizeFactor);
+        h_saveAmpIntegral[i + (16*cacheToUse)] = ((*(integrals_ff[i][i])).real()*binSizeFactor);
         // std::cout << h_saveAmpIntegral[i] << std::endl;
     }
 
@@ -640,8 +639,8 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
             fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 1],
                                   -host_parameters[parametersIdx + j * 2 + 2]);
 
-            fptype fNorm_i = binSizeFactor/h_saveAmpIntegral[i];
-            fptype fNorm_j = binSizeFactor/h_saveAmpIntegral[j];
+            fptype fNorm_i = binSizeFactor/h_saveAmpIntegral[i + (16*cacheToUse)];
+            fptype fNorm_j = binSizeFactor/h_saveAmpIntegral[j + (16*cacheToUse)];
 
             if(i==j)
                 buffer = amplitude_i * amplitude_j * (*(integrals_ff[i][j]))*binSizeFactor*fNorm_i;

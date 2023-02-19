@@ -116,7 +116,7 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
 
     double f2p_1525_MASS  = 1.5174;
     double f2p_1525_WIDTH = 0.086;
-    double f2p_1525_amp   = 22.;
+    double f2p_1525_amp   = 0.;
     double f2p_1525_img   = 1.;
 
     Variable v_f2p_1525_Mass("f2p_1525_MASS", f2p_1525_MASS);
@@ -142,7 +142,7 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
 
     // If you want include a resonance in your model, just push into the vector 'vec_resonances'
 
-    auto nonres = new Resonances::NonRes("NonRes",Variable("re",435.,0.01,0,0),Variable("im",0.,0.01,0,0));
+    auto nonres = new Resonances::NonRes("NonRes",Variable("re",1.,0.01,0,0),Variable("im",0.,0.01,0,0));
 
     std::vector<ResonancePdf *> vec_resonances;
 

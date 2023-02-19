@@ -159,7 +159,7 @@ struct prg
 
 
 
-__host__ __device__ void genNormFakeEvents(size_t n){
+__host__  void genNormFakeEvents(size_t n){
    
     thrust::device_vector<fptype> mprime(n);
     thrust::device_vector<fptype> thprime(n);
@@ -230,8 +230,7 @@ constexpr int resonanceOffset_DP = 4; // Offset of the first resonance into the 
 // NOTE: This is does not support ten instances (ten threads) of resoncances now, only one set of resonances.
 // this needs to be large enough to hold all samples
 __device__ fpcomplex *cSqDpResonances[16 * 20];
-thrust::host_vector<fptype> h_saveAmpIntegral(16 * 20);
-thrust::device_vector<fptype> d_saveAmpIntegral(16 * 20);
+
 
 __device__ inline auto parIndexFromResIndex_DP(int resIndex) -> int {
     return resonanceOffset_DP + resIndex * resonanceSize;
@@ -269,20 +268,15 @@ __device__ auto device_SqDalitzPlot(fptype *evt, ParameterContainer &pc) -> fpty
     fpcomplex totalAmp(0, 0);
 
     for(int i = 0; i < numResonances; ++i) {
-        for(int j = 0; j < numResonances; ++j) {
+    
         fpcomplex amp_i = fpcomplex(pc.getParameter(i * 2), pc.getParameter(i * 2 + 1));
-        fpcomplex amp_j = fpcomplex(pc.getParameter(j * 2), pc.getParameter(j * 2 + 1));
         fpcomplex me_i = RO_CACHE(cSqDpResonances[i + (16 * cacheToUse)][evtNum]);
-        fpcomplex me_j = RO_CACHE(cSqDpResonances[j + (16 * cacheToUse)][evtNum]);
-        fptype fNorm_i = 1./sqrt(d_saveAmpIntegral[i + (16 * cacheToUse)]);
-        fptype fNorm_j = 1./sqrt(d_saveAmpIntegral[j + (16 * cacheToUse)]);
-        
-        totalAmp += amp_i*conj(amp_j)*me_i*conj(me_j)*fNorm_i*fNorm_j;
-        }
+        totalAmp += amp_i*me_i;
+
     }
 
-    fptype ret = thrust::abs(totalAmp);
-    //printf("ret = %f, %f \n",totalAmp.real(),totalAmp.imag());
+    fptype ret = thrust::norm(totalAmp);
+   
     pc.incrementIndex(1, numResonances * 2, 2, num_obs, 1);
 
     // loop to efficiency idx
@@ -424,7 +418,7 @@ __host__ void Amp3BodySqDP::setDataSize(unsigned int dataSize, unsigned int evtS
         std::cout << "END: Done! \n";
     }
    
-   
+  
     setForceIntegrals();
    
 }
@@ -483,7 +477,9 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
     thrust::counting_iterator<int> eventIndex(eventOffset);
 
     //Calculate Resonances integrals
-    for(int i = 0; i < decayInfo.resonances.size(); ++i) {
+    size_t n_res=decayInfo.resonances.size();
+
+    for(int i = 0; i < n_res; ++i) {
                 if((!redoIntegral[i]))
                     continue;
 
@@ -500,14 +496,8 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
                     *(integrators[i][i]),
                     dummy,
                     complexSum);  
-       
-                h_saveAmpIntegral[i + cacheToUse*16] = (*(integrals[i][i])).real();
-        
     }
-    //copy to device
-    thrust::copy(h_saveAmpIntegral.begin() + cacheToUse*16, h_saveAmpIntegral.end() + 16*(cacheToUse + 1), d_saveAmpIntegral.begin() + 16*cacheToUse);
     
-   
     for(int i = 0; i < decayInfo.resonances.size(); ++i) {
         // grab the index for this resonance.
         calculators[i]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
@@ -525,13 +515,15 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
 #else
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
-                // was this correct before?
-                // thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
                 strided_range<thrust::device_vector<fpcomplex>::iterator>(
                     cachedWaves[i]->begin(), cachedWaves[i]->end(), 1)
                     .begin(),
                 *(calculators[i]));
+
+            //normalize cache
+            const fptype fNorm = 1./sqrt((*(integrals[i][i])).real());
+            thrust::transform(cachedWaves[i]->begin(), cachedWaves[i]->end(), cachedWaves[i]->begin(), [&fNorm](fpcomplex &c){return c*fNorm;});
 #endif
         }
 
@@ -572,8 +564,8 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
             fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 1],
                                   -host_parameters[parametersIdx + j * 2 + 2]);
 
-            fptype fNorm_i = 1./h_saveAmpIntegral[i + 16*cacheToUse];
-            fptype fNorm_j = 1./h_saveAmpIntegral[j + 16*cacheToUse];
+            fptype fNorm_i = 1./(*(integrals[i][i])).real();
+            fptype fNorm_j = 1./(*(integrals[j][j])).real();
 
             if(j<i)
                 sumIntegral += 2.0*amplitude_i * amplitude_j * (*(integrals[i][j]))*sqrt(fNorm_i)*sqrt(fNorm_j);
@@ -612,13 +604,10 @@ __host__ auto Amp3BodySqDP::getCachedWave(size_t i) const -> const std::vector<s
 }
 
 __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector<fptype>> {
-     recursiveSetNormalization(1.0); // Not going to normalize efficiency,
-    // so set normalization factor to 1 so it doesn't get multiplied by zero.
-    // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency,
-    // don't get zeroes through multiplying by the normFactor.
-    // we need to update the normal here, as values are used at this point.
-    host_normalizations.sync(d_normalizations);
+     recursiveSetNormalization(1.0);
 
+    host_normalizations.sync(d_normalizations);
+    
     size_t n_res     = getDecayInfo().resonances.size();
     size_t totalBins = _mprime.getNumBins() * _thetaprime.getNumBins();
     double binSizeFactor = 1;
@@ -658,7 +647,6 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
 
     // Only do this bit if masses or widths have changed.
     thrust::constant_iterator<fptype *> arrayAddress(dalitzNormRange);
-    thrust::counting_iterator<int> binIndex(0);
     thrust::counting_iterator<int> fakeEvtIndex(0);
     thrust::constant_iterator<fptype *> fakedataArray(dev_fake_event_array);
     thrust::constant_iterator<int> fakeeventSize(totalEventSize);
@@ -681,15 +669,10 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
             
             if(j<i)
                 (*(integrals_ff[j][i]))=(*(integrals_ff[i][j]));
-
-
             
         }
 
     }
-
-    
-
 
     // End of time-consuming integrals.
     fpcomplex sumIntegral(0, 0);
@@ -703,13 +686,13 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
             fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 1],
                                   -host_parameters[parametersIdx + j * 2 + 2]);
 
-            fptype fNorm_i = 1./h_saveAmpIntegral[i + 16*cacheToUse];
-            fptype fNorm_j = 1./h_saveAmpIntegral[j + 16*cacheToUse];
+            fptype fNorm_i = 1./(*(integrals[i][i])).real();
+            fptype fNorm_j = 1./(*(integrals[j][j])).real();
 
             if(i==j)
-                buffer = amplitude_i * amplitude_j * (*(integrals_ff[i][j]))*fNorm_i;
+                buffer = amplitude_i * amplitude_j * (*(integrals[i][j]))*fNorm_i;
             else if(j<i)
-                buffer = 2.*amplitude_i * amplitude_j * (*(integrals_ff[i][j]))*sqrt(fNorm_i)*sqrt(fNorm_j);
+                buffer = 2.*amplitude_i * amplitude_j * (*(integrals[i][j]))*sqrt(fNorm_i)*sqrt(fNorm_j);
             else
                 buffer = 0.0;
 
@@ -718,7 +701,7 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
         }
     }
 
-    totalFF_integral = thrust::abs(sumIntegral);
+    totalFF_integral = sumIntegral.real();
 
     for(int i = 0; i < n_res; i++) {
         for(int j = 0; j < n_res; j++) {
@@ -749,14 +732,6 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
         }
         std::cout << "Sum of Diag FFs: " << sumdiagffs << "\n";
         std::cout << "\n";
-
-        
-        // for (size_t i = 0; i < n_res; i++)
-        // {
-        //     auto name = decayInfo.resonances[i]->getName();
-        //     std::cout << "Integral " << name << "= " << h_saveAmpIntegral[i]/totalFakeEvent << std::endl;
-        // }
-        
     }
 
     return AmpIntegral;

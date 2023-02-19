@@ -47,5 +47,6 @@ extern std::map<void *, std::string> functionPtrToNameMap;
 
 extern void *host_fcn_ptr;
 extern fptype *dev_event_array;
+extern fptype *dev_fake_event_array;
 
 } // namespace GooFit

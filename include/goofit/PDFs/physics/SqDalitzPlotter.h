@@ -52,7 +52,7 @@ class SqDalitzPlotter {
         fptype m23 = 0.0;
         fptype m13 = 0.0;
         fptype m12 = 0.0;
-        fptype NPTs = 10000000;
+        fptype NPTs = 1000000;
 
         // std::random_device rd;  
         // std::mt19937 gen(rd()); 

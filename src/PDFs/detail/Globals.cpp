@@ -9,7 +9,7 @@ std::map<void *, int> functionAddressToDeviceIndexMap;
 std::map<void *, std::string> functionPtrToNameMap;
 
 fptype *dev_event_array;
-
+fptype *dev_fake_event_array;
 int host_callnumber = 0;
 
 } // namespace GooFit

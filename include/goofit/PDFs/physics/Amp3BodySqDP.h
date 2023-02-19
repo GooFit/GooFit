@@ -64,6 +64,7 @@ class Amp3BodySqDP : public Amp3BodyBase {
     // normalization will get *really* confused and give wrong answers.
 
     __host__ auto normalize() -> fptype override;
+    __host__ void setNumNormEvents(unsigned int N =1000000){NumNormEvents=N;};
     __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 3, unsigned int offset = 0);
     __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
 
@@ -122,6 +123,7 @@ class Amp3BodySqDP : public Amp3BodyBase {
     SpecialSqDpResonanceCalculator **calculators;
     unsigned int efficiencyFunction;
     fptype totalFF_integral;
+    int NumNormEvents=1000000;
 };
 
 } // namespace GooFit

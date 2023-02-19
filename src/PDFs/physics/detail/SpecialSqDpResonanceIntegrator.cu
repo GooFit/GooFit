@@ -46,31 +46,35 @@ SpecialSqDpResonanceIntegrator::SpecialSqDpResonanceIntegrator(int pIdx, unsigne
     , resonance_j(rj)
     , parameters(pIdx) {}
 
-__device__ auto SpecialSqDpResonanceIntegrator::operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex {
+__device__ auto SpecialSqDpResonanceIntegrator::operator()(thrust::tuple<int, fptype *, int, int> t) const -> fpcomplex {
     //(brad): new indexing plan: bin number, function id, parameter id (not required), fptype with actual
     // bins(needed???)
     // Bin index, base address [lower, upper,getNumBins]
     // Notice that this is basically MetricTaker::operator (binned) with the special-case knowledge
     // that event size is two, and that the function to call is dev_DalitzPlot_calcIntegrals.
 
-    int globalBinNumber  = thrust::get<0>(t);
-    fptype lowerBoundMPrime = thrust::get<1>(t)[0];
-    fptype upperBoundMPrime = thrust::get<1>(t)[1];
-    auto numBinsMPrime      = static_cast<int>(floor(thrust::get<1>(t)[2] + 0.5));
-    int binNumberMPrime     = globalBinNumber % numBinsMPrime;
-    fptype binCenterMPrime  = upperBoundMPrime - lowerBoundMPrime;
-    binCenterMPrime /= numBinsMPrime;
-    binCenterMPrime *= (binNumberMPrime + 0.5);
-    binCenterMPrime += lowerBoundMPrime;
+    // int globalBinNumber  = thrust::get<0>(t);
+    // fptype lowerBoundMPrime = thrust::get<1>(t)[0];
+    // fptype upperBoundMPrime = thrust::get<1>(t)[1];
+    // auto numBinsMPrime      = static_cast<int>(floor(thrust::get<1>(t)[2] + 0.5));
+    // int binNumberMPrime     = globalBinNumber % numBinsMPrime;
+    // fptype binCenterMPrime  = upperBoundMPrime - lowerBoundMPrime;
+    // binCenterMPrime /= numBinsMPrime;
+    // binCenterMPrime *= (binNumberMPrime + 0.5);
+    // binCenterMPrime += lowerBoundMPrime;
 
-    globalBinNumber /= numBinsMPrime;
-    fptype lowerBoundThetaPrime = thrust::get<1>(t)[3];
-    fptype upperBoundThetaPrime = thrust::get<1>(t)[4];
-    auto numBinsThetaPrime      = static_cast<int>(floor(thrust::get<1>(t)[2] + 0.5));
-    fptype binCenterThetaPrime  = upperBoundThetaPrime - lowerBoundThetaPrime;
-    binCenterThetaPrime /= numBinsThetaPrime;
-    binCenterThetaPrime *= (globalBinNumber + 0.5);
-    binCenterThetaPrime += lowerBoundThetaPrime;
+    // globalBinNumber /= numBinsMPrime;
+    // fptype lowerBoundThetaPrime = thrust::get<1>(t)[3];
+    // fptype upperBoundThetaPrime = thrust::get<1>(t)[4];
+    // auto numBinsThetaPrime      = static_cast<int>(floor(thrust::get<1>(t)[2] + 0.5));
+    // fptype binCenterThetaPrime  = upperBoundThetaPrime - lowerBoundThetaPrime;
+    // binCenterThetaPrime /= numBinsThetaPrime;
+    // binCenterThetaPrime *= (globalBinNumber + 0.5);
+    // binCenterThetaPrime += lowerBoundThetaPrime;
+   
+    
+    int evtNum  = thrust::get<0>(t);
+    fptype *evt = thrust::get<1>(t) + (evtNum * thrust::get<2>(t));
 
     ParameterContainer pc;
 
@@ -79,7 +83,17 @@ __device__ auto SpecialSqDpResonanceIntegrator::operator()(thrust::tuple<int, fp
     while(pc.funcIdx < dalitz_i)
         pc.incrementIndex();
 
-    fpcomplex ret = device_SqDalitzPlot_calcIntegrals(binCenterMPrime, binCenterThetaPrime, resonance_i, resonance_j, pc);
+    int id_mprime = pc.getObservable(0);
+    int id_thetaprime = pc.getObservable(1);
+
+    fptype mprime = RO_CACHE(evt[id_mprime]);
+    fptype thetaprime = RO_CACHE(evt[id_thetaprime]);
+
+    if(!inSqDalitz(mprime, thetaprime))
+        return fpcomplex(0.,0.);
+
+
+    fpcomplex ret = device_SqDalitzPlot_calcIntegrals(mprime, thetaprime, resonance_i, resonance_j, pc);
 
     // TODO: read id's in in order to set them for the fake event.
 
@@ -92,8 +106,8 @@ __device__ auto SpecialSqDpResonanceIntegrator::operator()(thrust::tuple<int, fp
     // fakeEvt[id_m12] = binCenterMPrime;
     // fakeEvt[id_m13] = binCenterThetaPrime;
 
-    fptype m12 = calc_m12(binCenterMPrime,c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass);
-    fptype m13 = calc_m13(m12,cos(binCenterThetaPrime*M_PI), c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass);
+    fptype m12 = calc_m12(mprime,c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass);
+    fptype m13 = calc_m13(m12,cos(thetaprime*M_PI), c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass);
     fptype s12 = m12*m12;
     fptype s13 = m13*m13;
     fptype s23 = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass
@@ -107,7 +121,7 @@ __device__ auto SpecialSqDpResonanceIntegrator::operator()(thrust::tuple<int, fp
     // int effFunctionIdx                   = parIndexFromResIndex_DP(numResonances);
 
     // increment until we are on the efficiency function (17)
-    int effFunc = thrust::get<2>(t);
+    int effFunc = thrust::get<3>(t);
     while(pc.funcIdx < effFunc)
         pc.incrementIndex();
 
@@ -122,7 +136,7 @@ __device__ auto SpecialSqDpResonanceIntegrator::operator()(thrust::tuple<int, fp
     // These complex numbers will not be squared when they
     // go into the integrals. They've been squared already,
     // as it were.
-    fptype jacobian = calc_SqDp_Jacobian(binCenterMPrime, binCenterThetaPrime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
+    fptype jacobian = calc_SqDp_Jacobian(mprime, thetaprime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
     ret*=eff*jacobian;
     // printf("ret %f %f %f %f %f\n",binCenterMPrime, binCenterThetaPrime, ret.real, ret.imag, eff );
     return ret;

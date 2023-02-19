@@ -71,7 +71,7 @@ Variable Daughter2_Mass("DecayProduct_2_Mass", d2_MASS);
 Variable Daughter3_Mass("DecayProduct_3_Mass", d3_MASS);
 
 // Bins for grid normalization
-const int bins = 500;
+const int bins = 1000;
 
 // Dalitz Limits
 const fptype s12_min = (d1_MASS + d2_MASS) * (d1_MASS + d2_MASS);
@@ -116,8 +116,8 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
 
     double f2p_1525_MASS  = 1.5174;
     double f2p_1525_WIDTH = 0.086;
-    double f2p_1525_amp   = 76.;
-    double f2p_1525_img   = -786.;
+    double f2p_1525_amp   = 22.;
+    double f2p_1525_img   = 1.;
 
     Variable v_f2p_1525_Mass("f2p_1525_MASS", f2p_1525_MASS);
     Variable v_f2p_1525_Width("f2p_1525_WIDTH", f2p_1525_WIDTH);
@@ -142,12 +142,12 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
 
     // If you want include a resonance in your model, just push into the vector 'vec_resonances'
 
-    auto nonres = new Resonances::NonRes("NonRes",Variable("re",1.,0.01,0,0),Variable("im",0.,0.01,0,0));
+    auto nonres = new Resonances::NonRes("NonRes",Variable("re",435.,0.01,0,0),Variable("im",0.,0.01,0,0));
 
     std::vector<ResonancePdf *> vec_resonances;
 
-    //vec_resonances.push_back(phi1020);
-    //vec_resonances.push_back(f2p_1525);
+    vec_resonances.push_back(phi1020);
+    vec_resonances.push_back(f2p_1525);
     vec_resonances.push_back(nonres);
 
     D2KKK.resonances = vec_resonances;
@@ -299,6 +299,7 @@ int main(int argc, char **argv) {
     GooPdf *totalpdf = nullptr;
 
     auto signal = makesignalpdf(mprime, thetaprime, eventNumber, efficiency);
+    //signal->setNumNormEvents(1000000);
     totalpdf    = new ProdPdf("totalpdf", {signal});
 
     

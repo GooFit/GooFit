@@ -81,7 +81,7 @@ class FitManagerMinuit2 {
     void setMinos(bool minos_flag = 1) { minos = minos_flag; }
 
   private:
-    unsigned int strategy = 2;
+    unsigned int strategy = 1;
     Params upar_;
     PdfBase *pdfPointer;
     FCN fcn_;

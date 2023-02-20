@@ -29,7 +29,7 @@ class kMatrix : public Lineshape {
             fptype radius = 1.5);
 
     ~kMatrix() override = default;
-  };
+};
 
 } // namespace Lineshapes
 } // namespace GooFit

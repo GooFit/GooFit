@@ -21,8 +21,6 @@ void init_Lineshapes(py::module &m) {
         .value("BL2", FF::BL2)
 
         ;
-    
-    
 
     auto m_ls = m.def_submodule("Lineshapes");
 
@@ -169,16 +167,17 @@ void init_Lineshapes(py::module &m) {
         .value("I32", Lineshapes::FOCUS::Mod::I32);
 
     py::class_<Lineshapes::FOCUS, Lineshape>(m_ls, "FOCUS")
-        .def(py::init<std::string, Lineshapes::FOCUS::Mod, Variable, Variable, unsigned int, unsigned int, FF, fptype>(),
-             "Create a FOCUS lineshape",
-             "name"_a,
-             "mod"_a,
-             "mass"_a,
-             "width"_a,
-             "L"_a,
-             "Mpair"_a,
-             "FormFac"_a        = FF::BL_Prime,
-             "radius"_a         = 1.5);
+        .def(
+            py::init<std::string, Lineshapes::FOCUS::Mod, Variable, Variable, unsigned int, unsigned int, FF, fptype>(),
+            "Create a FOCUS lineshape",
+            "name"_a,
+            "mod"_a,
+            "mass"_a,
+            "width"_a,
+            "L"_a,
+            "Mpair"_a,
+            "FormFac"_a = FF::BL_Prime,
+            "radius"_a  = 1.5);
 
     py::class_<Lineshapes::GSpline, Lineshape>(m_ls, "GSpline")
         .def(py::init<std::string,

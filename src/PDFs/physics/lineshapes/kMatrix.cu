@@ -20,7 +20,7 @@ __device__ auto kMatrixFunction(fptype Mpair, fptype m1, fptype m2, ParameterCon
 
     // parameter index
     unsigned int idx = 0;
-    //get relevant parameters when dealing with a single pole/prod
+    // get relevant parameters when dealing with a single pole/prod
     unsigned int pterm = pc.getConstant(1);
     bool is_pole       = pc.getConstant(2) == 1;
 
@@ -53,9 +53,9 @@ __device__ auto kMatrixFunction(fptype Mpair, fptype m1, fptype m2, ParameterCon
     for(int i = 0; i < 5; i++) {
         for(int j = 0; j < 5; j++) {
             kMatrix[i][j] = 0;
-            for(int k = 0; k < 5; k++){
+            for(int k = 0; k < 5; k++) {
                 kMatrix[i][j] += couplings[k][i] * couplings[k][j] / (POW2(pmasses[k]) - s);
-                }
+            }
             if(i == 0 || j == 0) // Scattering term
                 kMatrix[i][j] += fscat[i + j] * (1 - s0_scatt) / (s - s0_scatt);
         }
@@ -78,18 +78,16 @@ __device__ auto kMatrixFunction(fptype Mpair, fptype m1, fptype m2, ParameterCon
 
     fpcomplex ret(0, 0), pole(0, 0), prod(0, 0);
 
-    if(is_pole){ //pole
+    if(is_pole) { // pole
         fpcomplex M = 0;
         for(int i = 0; i < NCHANNELS; i++) {
             fptype coupling = couplings[pterm][i];
             M += F[0][i] * coupling;
         }
-        ret = M / (POW2(pmasses[pterm]) - s);        
+        ret = M / (POW2(pmasses[pterm]) - s);
+    } else { // prod
+        ret = F[0][pterm] * (1 - s0_prod) / (s - s0_prod);
     }
-     else{ //prod
-	    ret = F[0][pterm] * (1 - s0_prod) / (s - s0_prod);
-        }
-    
 
     return ret;
 } // kMatrixFunction
@@ -112,13 +110,12 @@ Lineshapes::kMatrix::kMatrix(std::string name,
                              FF FormFac,
                              fptype radius)
     : Lineshape("kMatrix", name, L, Mpair, FormFac, radius) {
-    
     if(fscat.size() != NCHANNELS)
         throw GooFit::GeneralError("You must have {} channels in fscat, not {}", NCHANNELS, fscat.size());
 
     if(poles.size() != NPOLES * (NPOLES + 1))
         throw GooFit::GeneralError("You must have {}x{} channels in poles, not {}", NPOLES, NPOLES + 1, poles.size());
-    
+
     registerConstant(pterm);
     registerConstant(is_pole ? 1 : 0);
 

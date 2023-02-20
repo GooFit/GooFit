@@ -19,6 +19,13 @@ __host__ __device__ auto inDalitz2(const fptype &s13, const fptype &s23, const f
 	// defined in the constructor of this class. Here
 	// m_13Sq = square of invariant mass of daughters 1 and 3 
 	// m_23Sq = square of invariant mass of daughters 2 and 3.
+    fptype s12 = bigM*bigM + dm1*dm1 + dm2*dm2 + dm3*dm3 - s13 -s23;
+    fptype m12_min = dm1+dm2;
+    fptype m12_max = bigM-dm3;
+    if (!((s12 > m12_min*m12_min) && (s12 < m12_max*m12_max))) {
+		return false;
+	}
+
 
     bool withinDP = false;
 

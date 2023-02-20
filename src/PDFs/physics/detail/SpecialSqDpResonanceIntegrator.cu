@@ -14,6 +14,13 @@ __device__ auto device_SqDalitzPlot_calcIntegrals(fptype mprime, fptype thetapri
     // observed points, that's why it doesn't use
     // cResonances. No need to cache the values at individual
     // grid points - we only care about totals.
+
+    fpcomplex ret(0.,0.);
+
+    if(!inSqDalitz(mprime, thetaprime))
+        return ret;
+
+
     fptype m12 = calc_m12(mprime,c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass);
     fptype m13 = calc_m13(m12,cos(thetaprime*M_PI), c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass);
     fptype s12 = m12*m12;
@@ -21,9 +28,11 @@ __device__ auto device_SqDalitzPlot_calcIntegrals(fptype mprime, fptype thetapri
     fptype s23 = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass
                  + c_daug3Mass * c_daug3Mass - s12 - s13;
 
-    fpcomplex ret;
+    
 
-    if(!inSqDalitz(mprime, thetaprime))
+    
+
+    if(!inDalitz2(s13, s23,c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass ))
         return ret;
 
     ParameterContainer ipc = pc;

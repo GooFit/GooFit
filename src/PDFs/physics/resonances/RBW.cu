@@ -27,15 +27,15 @@ __device__ auto plainBW(fptype m13, fptype m23, fptype m12, ParameterContainer &
     fptype m2= 0.0;
     fptype m3= 0.0;
 
-    if(resmass < 1.e-10) {
-        GOOFIT_TRACE("Resonance Mass zero!");
-        return result;
-    }
+    // if(resmass < 1.e-10) {
+    //     GOOFIT_TRACE("Resonance Mass zero!");
+    //     return result;
+    // }
 
-    if(reswidth < 1.e-10) {
-        GOOFIT_TRACE("Resonance Width zero!");
-        return result;
-    }
+    // if(reswidth < 1.e-10) {
+    //     GOOFIT_TRACE("Resonance Width zero!");
+    //     return result;
+    // }
 
 #pragma unroll
     for(size_t i = 0; i < I; i++) {

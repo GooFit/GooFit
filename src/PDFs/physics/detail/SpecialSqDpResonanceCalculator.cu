@@ -13,7 +13,7 @@ SpecialSqDpResonanceCalculator::SpecialSqDpResonanceCalculator(int pIdx, unsigne
 
 __device__ auto SpecialSqDpResonanceCalculator::operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex {
     // Calculates the BW values for a specific resonance.
-    fpcomplex ret;
+    fpcomplex ret(0.,0.);
     int evtNum  = thrust::get<0>(t);
     fptype *evt = thrust::get<1>(t) + (evtNum * thrust::get<2>(t));
 
@@ -40,6 +40,9 @@ __device__ auto SpecialSqDpResonanceCalculator::operator()(thrust::tuple<int, fp
     fptype s23 = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass
                  + c_daug3Mass * c_daug3Mass - s12 - s13;
     // fptype m23 = sqrt(s23);
+
+     if(!inDalitz2(s13, s23,c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass ))
+        return ret;
 
     while(pc.funcIdx < resonance_i)
         pc.incrementIndex();

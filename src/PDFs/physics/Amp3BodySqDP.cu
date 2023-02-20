@@ -479,6 +479,9 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
     //Calculate Resonances integrals
     size_t n_res=decayInfo.resonances.size();
 
+    thrust::host_vector<fptype> host_integrals(n_res);
+    thrust::device_vector<fptype> device_integrals(n_res);
+
     for(int i = 0; i < n_res; ++i) {
                 if((!redoIntegral[i]))
                     continue;
@@ -496,7 +499,13 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
                     *(integrators[i][i]),
                     dummy,
                     complexSum);  
+                if((*(integrals[i][i])).real()>0.)
+                    device_integrals[i] = 1./sqrt((*(integrals[i][i])).real()) ;
+                else
+                    device_integrals[i] = 1.;
     }
+
+    //device_integrals=host_integrals;
     
     for(int i = 0; i < decayInfo.resonances.size(); ++i) {
         // grab the index for this resonance.
@@ -521,9 +530,13 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
                     .begin(),
                 *(calculators[i]));
 
-            //normalize cache
-            const fptype fNorm = 1./sqrt((*(integrals[i][i])).real());
-            thrust::transform(cachedWaves[i]->begin(), cachedWaves[i]->end(), cachedWaves[i]->begin(), [&fNorm](fpcomplex &c){return c*fNorm;});
+            auto fNorm = device_integrals[i];
+            thrust::transform(cachedWaves[i]->begin(),
+                  cachedWaves[i]->end(), 
+                  thrust::make_constant_iterator(fNorm),
+                  cachedWaves[i]->begin(),
+                  thrust::multiplies<fpcomplex>());
+            
 #endif
         }
 

@@ -10,6 +10,8 @@ project(
 #set(GOOFIT_TAG "beta")
 set(GOOFIT_TAG "release")
 
+set(CLI11_PRECOMPILED ON)
+
 include(FeatureSummary)
 include(CMakePrintHelpers)
 

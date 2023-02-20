@@ -20,7 +20,7 @@ jobs:
       with:
         submodules: true
 
-    - uses: actions/setup-python@v3
+    - uses: actions/setup-python@v4
 
     - name: Build sdist for Python
       run: pipx run build --sdist
@@ -49,7 +49,7 @@ jobs:
 
     - name: Publish to PyPI
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
-      uses: pypa/gh-action-pypi-publish@v1.5.0
+      uses: pypa/gh-action-pypi-publish@v1.6.4
       with:
         password: ${{ secrets.pypi_password }}
 

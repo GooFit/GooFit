@@ -1,7 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-from __future__ import division, print_function
 
 # Standard library stuff
 import sys
@@ -12,10 +9,10 @@ from time import time
 # Protect the matplotlib call for systems with no graphics
 import matplotlib
 import numpy as np
-from goofit.landau import landau_quantile  # Copy of C++ lambda function in pybind11
 
 # GooFit packages
 from goofit import *
+from goofit.landau import landau_quantile  # Copy of C++ lambda function in pybind11
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -93,10 +90,7 @@ def novosib(x, peak, width, tail):
         qy = 1.0 + tail * qx
 
         # ---- Cutting curve from right side
-        if qy > 10 ** (-7):
-            qc = 0.5 * ((np.log(qy) / tail) ** 2 + tail * tail)
-        else:
-            qc = 15.0
+        qc = 0.5 * ((np.log(qy) / tail) ** 2 + tail * tail) if qy > 10 ** (-7) else 15.0
 
     # ---- Normalize the result
     return np.exp(-qc)
@@ -111,7 +105,7 @@ def novo_make_vector(peak, width, tail, maxNovo, lowerlimit, upperlimit, numeven
         arr[i] = np.random.uniform(lowerlimit, upperlimit)
         y = np.random.uniform(0, maxNovo)
 
-        if y < novosib(arr[i], 0.3, 0.5, 1.0):
+        if y < novosib(arr[i], peak, width, tail):
             i += 1
     return arr
 
@@ -191,7 +185,6 @@ def generate_bifg(xvar, numevents):
 
 
 def main(numevents=100000):
-
     # Independent variable.
     xvar = Observable("xvar", -100, 100)
     xvar.numbins = 1000  # For such a large range, want more bins for better accuracy in normalization.

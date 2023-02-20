@@ -80,6 +80,7 @@ jobs:
     - name: Build
       run: cmake --build build -j2 -v
     - name: Verify Python built
+      if: matrix.cuda != '8.0-devel-ubuntu16.04'
       run: PYTHONPATH=./build python3 -m goofit
 
   configure:

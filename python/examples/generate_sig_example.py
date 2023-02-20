@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 
+import matplotlib.pyplot as plt
 import numpy as np
 
 from goofit import *
@@ -12,7 +13,15 @@ _mD0 = 1.8645
 piPlusMass = 0.13957018
 KmMass = 0.493677
 
-DK3P_DI = DecayInfo4()
+# DK3P_DI = DecayInfo4()
+
+DK3P_DI = DecayInfo4t(
+    Variable("tau", 0.4101, 0.001, 0.300, 0.500),
+    Variable("xmixing", 0.0),
+    Variable("ymixing", 0.0),
+    Variable("SqWStoRSrate", 1.0 / np.sqrt(300.0)),
+)
+
 DK3P_DI.meson_radius = 1.5
 DK3P_DI.particle_masses = (_mD0, piPlusMass, piPlusMass, KmMass, piPlusMass)
 
@@ -214,12 +223,16 @@ m34 = Observable("m34", 0, 3)
 cos12 = Observable("cos12", -1, 1)
 cos34 = Observable("m12", -1, 1)
 phi = Observable("phi", -3.5, 3.5)
-eventNumber = EventNumber("eventNumber", 0, INT_MAX)
+eventNumber = EventNumber("eventNumber", 0, int(10e7))
+dtime = Observable("dtime", 0, 100)
+sigmat = Observable("sigmat", -3, 3)
 constantOne = Variable("constantOne", 1)
 constantZero = Variable("constantZero", 0)
 
-
-observables = (m12, m34, cos12, cos34, phi, eventNumber)
+# time independent observable order
+# observables = (m12, m34, cos12, cos34, phi, eventNumber)
+# time dependent observable order
+observables = (m12, m34, cos12, cos34, phi, eventNumber, dtime, sigmat)
 offsets = (
     constantZero,
     constantZero,
@@ -227,12 +240,87 @@ offsets = (
 coefficients = (constantOne,)
 
 eff = PolynomialPdf("constantEff", observables, coefficients, offsets, 0)
-dp = Amp4Body("test", observables, DK3P_DI, eff, 5)
+# dp = Amp4Body("test", observables, DK3P_DI, eff, 5)
+mistag = None
+res = TruthResolution()
+
+dp = Amp4Body_TD("test", observables, DK3P_DI, res, eff, mistag, 0, 1)
+accepted = []
+accepted_m12 = []
+accepted_m34 = []
+accepted_c12 = []
+accepted_c34 = []
+accepted_phi = []
+accepted_dtime = []
 
 for k in range(4):
-    numEvents = 1000000
+    numEvents = 50000
     dp.setGenerationOffset(k * numEvents)
     print("Using accept-reject method", end=" ")
     particles, variables, weights, flags = dp.GenerateSig(numEvents)
+    # Flags == 1 means the data was accepted
+    accepted_m12.append((variables[0])[flags])
+    accepted_m34.append((variables[1])[flags])
+    accepted_c12.append((variables[2])[flags])
+    accepted_c34.append((variables[3])[flags])
+    accepted_phi.append((variables[4])[flags])
+    accepted_dtime.append((variables[4])[flags])
+    print(accepted_m12[-1:-5])
     accepted = int(np.sum(flags))
-    print("would leave you with", accepted, "out of", numEvents, "events")
+    print("would leave you with", len(accepted_m12[0]), "out of", numEvents, "events")
+
+print(accepted_m12[0])
+plt.figure()
+plt.hist(accepted_m12[0], bins=100)
+# plt.savefig('amp4body_amplitude_plots/siggen_example_m12.png')
+plt.savefig("amp4body_td_amplitude_plots/siggen_example_m12.png")
+
+
+def plot_multi_body_resonance(amplitude, index):
+    accepted_m12_amp = []
+    accepted_m34_amp = []
+    accepted_c12_amp = []
+    accepted_c34_amp = []
+    accepted_phi_amp = []
+    accepted_dtime_amp = []
+    # DK3P_DI_amp = DecayInfo4()
+    # create a new Decay Info object
+
+    DK3P_DI_amp = DecayInfo4t(
+        Variable("tau", 0.4101, 0.001, 0.300, 0.500),
+        Variable("xmixing", 0.0),
+        Variable("ymixing", 0.0),
+        Variable("SqWStoRSrate", 1.0 / np.sqrt(300.0)),
+    )
+
+    DK3P_DI_amp.meson_radius = 1.5
+    DK3P_DI_amp.particle_masses = (_mD0, piPlusMass, piPlusMass, KmMass, piPlusMass)
+    DK3P_DI_amp.amplitudes = [(amplitude)]
+    # create an Amp4Body_TD with a single amplitude
+    mistag = None
+    res = TruthResolution()
+    # dp_amp = Amp4Body("test_amp", observables, DK3P_DI_amp, eff, 5)
+    dp_amp = Amp4Body_TD("test_amp", observables, DK3P_DI_amp, res, eff, mistag, 0, 1)
+    print("Generating toys with a single amplitude")
+    for k in range(4):
+        numEvents = 50000
+        dp_amp.setGenerationOffset(k * numEvents)
+        print("Using accept-reject method", end=" ")
+        particles, variables, weights, flags = dp_amp.GenerateSig(numEvents)
+        accepted = int(np.sum(flags))
+        print("would leave you with", accepted, "out of", numEvents, "events")
+        accepted_m12_amp.append((variables[0])[flags])
+        accepted_m34_amp.append((variables[1])[flags])
+        accepted_c12_amp.append((variables[2])[flags])
+        accepted_c34_amp.append((variables[3])[flags])
+        accepted_phi_amp.append((variables[4])[flags])
+        accepted_dtime_amp.append((variables[5])[flags])
+    # plot output
+    plt.figure()
+    plt.hist(accepted_m12_amp, bins=100)
+    # plt.savefig(f'amp4body_amplitude_plots/amplitude_{i}_accepted_m12.png')
+    plt.savefig(f"amp4body_td_amplitude_plots/amplitude_{index}_accepted_m12.png")
+
+
+for i in range(len(DK3P_DI.amplitudes)):
+    plot_multi_body_resonance(DK3P_DI.amplitudes[i], i)

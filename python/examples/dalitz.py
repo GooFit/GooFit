@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
-from __future__ import division, print_function
 
 import sys
 
@@ -36,7 +34,7 @@ def cpuGetM23(massPZ, massPM):
 
 
 def getToyData(toyFileName):
-    print("Reading {} ...".format(toyFileName))
+    print(f"Reading {toyFileName} ...")
     out = pd.read_csv(
         toyFileName,
         delim_whitespace=True,
@@ -72,10 +70,9 @@ def makeKzeroVeto(m12, m13, motherM, neutrlM, chargeM):
     kVetoInfo.minimum = Variable("veto_min", 0.475 * 0.475)
     kVetoInfo.maximum = Variable("veto_max", 0.505 * 0.505)
     vetos = kVetoInfo
-    kzero_veto = DalitzVetoPdf(
+    return DalitzVetoPdf(
         "kzero_veto", m12, m13, motherM, neutrlM, chargeM, chargeM, vetos
     )
-    return kzero_veto
 
 
 def makeSignalPdf(m12, m13, eventNumber, eff=None, fitMasses=False):
@@ -358,8 +355,7 @@ def makeSignalPdf(m12, m13, eventNumber, eff=None, fitMasses=False):
         coefficients = (constantOne,)
         eff = PolynomialPdf("constantEff", observables, coefficients, offsets, 0)
 
-    d = Amp3Body("signalPDF", m12, m13, eventNumber, dtop0pp, eff)
-    return d
+    return Amp3Body("signalPDF", m12, m13, eventNumber, dtop0pp, eff)
 
 
 def runToyFit(toyFileName):

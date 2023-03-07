@@ -133,11 +133,11 @@ configure_file("${GOOFIT_SOURCE_DIR}/include/goofit/detail/ThrustOverrideConfig.
                "${GOOFIT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h")
 
 set(CMAKE_CXX_STANDARD
-    "11"
+    "14"
     CACHE STRING
           "Set a version of C++ standerd (11,14,...) to use. Must match ROOT if using ROOT.")
 set(CMAKE_CUDA_STANDARD
-    "11"
+    "14"
     CACHE STRING "Set a version of C++ standerd (11,14,...) to use in CUDA.")
 
 ### C++ settings ###
@@ -393,9 +393,7 @@ if(NOT THRUST_FOUND)
   find_package(Thrust REQUIRED)
 endif()
 
-option(GOOFIT_FORCE_LOCAL_THRUST
-       "GooFit will use the GitHub version of Thrust by default (CUDA 9 and 10's Thrust is buggy)"
-       ON)
+option(GOOFIT_FORCE_LOCAL_THRUST "GooFit can force a local thrust" OFF)
 if(GOOFIT_FORCE_LOCAL_THRUST)
   message(
     STATUS "Forcing local thrust. GOOFIT_FORCE_LOCAL_THRUST=OFF to disable. Requires CUDA < 10.1")

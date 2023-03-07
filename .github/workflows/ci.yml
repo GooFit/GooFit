@@ -62,9 +62,7 @@ jobs:
       fail-fast: false
       matrix:
         cuda:
-          - 8.0-devel-ubuntu16.04
-          - 9.2-devel-ubuntu18.04
-          # - 11.2.2-devel-ubuntu18.04 - needs built-in thrust support
+          - 11.2.2-devel-ubuntu18.04
 
     container: "nvidia/cuda:${{matrix.cuda}}"
     steps:

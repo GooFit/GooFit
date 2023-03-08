@@ -18,7 +18,7 @@ getAmplitudeCoefficients(fpcomplex a1, fpcomplex a2, fptype &a1sq, fptype &a2sq,
 
 
 template <int I>
-__device__ auto flatte(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
+__device__ auto flatte(fptype m13, fptype m23, fptype m12, ParameterContainer &pc) -> fpcomplex {
     // indices[1] is unused constant index, for consistency with other function types.
     fptype resmass            = pc.getParameter(0);
     fptype g1                 = pc.getParameter(1);
@@ -109,9 +109,9 @@ __device__ auto flatte(fptype m12, fptype m13, fptype m23, ParameterContainer &p
         ret += resAmplitude;
        
         if(I!=0) {
-            fptype swpmass = m12;
-            m12            = m13;
-            m13            = swpmass;
+            fptype swpmass = m13;
+            m13           = m23;
+            m23            = swpmass;
         }
     }
     pc.incrementIndex(1, 3, 2, 0, 1);

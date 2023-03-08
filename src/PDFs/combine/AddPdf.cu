@@ -39,7 +39,7 @@ __device__ auto device_AddPdfs(fptype *evt, ParameterContainer &pc) -> fptype {
 
         // call the first function to add in our PDF.
         fptype curr = callFunction(evt, pc);
-
+        // printf("norm0=%f val0=%f ",norm, curr);
         ret += weight * curr * norm;
     }
 
@@ -48,6 +48,7 @@ __device__ auto device_AddPdfs(fptype *evt, ParameterContainer &pc) -> fptype {
     fptype normFactor = pc.getNormalization(0);
 
     fptype last = callFunction(evt, pc);
+    //  printf("norm1=%f val1=%f \n",normFactor, last);
     ret += (1 - totalWeight) * last * normFactor;
 
     return ret;
@@ -75,8 +76,8 @@ __device__ auto device_AddPdfsExt(fptype *evt, ParameterContainer &pc) -> fptype
         fptype weight = local_pc.getParameter(i);
         //  Grab the normalization for the specific component
         fptype normFactor = pc.getNormalization(0);
-
         fptype curr = callFunction(evt, pc);
+        // printf("norm%d=%e val%d=%e \n",i,normFactor,i, curr);
         ret += weight * curr * normFactor;
 
         totalWeight += weight;
@@ -160,12 +161,15 @@ __host__ auto AddPdf::normalize() -> fptype {
         totalWeight += weight;
         fptype curr = components[i]->normalize();
         ret += curr * weight;
+        // printf("norm%d=%f w0=%f ",i,curr,weight);
     }
 
     fptype last = components.back()->normalize();
+      
 
     if(extended) {
         fptype lastWeight = parametersList[components.size() - 1];
+        // printf("norm1=%f w1=%f \n",last,lastWeight);
         totalWeight += lastWeight;
         ret += last * lastWeight;
         ret /= totalWeight;
@@ -181,7 +185,7 @@ __host__ auto AddPdf::normalize() -> fptype {
         // (f1 A + (1-f1) B) / int (f1 A + (1-f1) B)
         // instead of default
         // (f1 A / int A) + ((1-f1) B / int B).
-
+        // printf("commonNorm \n");
         for(auto component : components) {
             // host_normalizations[component->getParameterIndex()] = (1.0 / ret);
             component->setNormalization(1.0 / ret);
@@ -202,10 +206,10 @@ __host__ auto AddPdf::calculateNLL() -> double {
             // expEvents += host_parameters[parametersIdx + 3 * (i + 1)];
             expEvents += parametersList[i].getValue();
         }
-
+        //printf("nll=%f  expEv=%f \n",ret,expEvents);
         // Log-likelihood of numEvents with expectation of exp is (-exp + numEvents*ln(exp) - ln(numEvents!)).
         // The last is constant, so we drop it; and then multiply by minus one to get the negative log-likelihood.
-        ret += (expEvents - numEvents * log(expEvents));
+        ret += (expEvents - numEvents * log(expEvents) );
     }
 
     return ret;

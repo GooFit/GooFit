@@ -79,7 +79,7 @@ enum DP4Pair {
 
 std::ostream &operator<<(std::ostream &out, const DP4Pair &obj);
 
-enum DaughterPair { PAIR_23 = 1, PAIR_13=2, PAIR_12=3 };
+enum DaughterPair { PAIR_13 = 1, PAIR_23=2, PAIR_12=3 };
 
 const int resonanceSize = 4; // Number of parameters to describe one resonance.
 // Why not make this a static const member of ResonancePdf? Because the 'static'
@@ -93,7 +93,7 @@ struct DecayInfo3 {
     fptype daug3Mass;
     fptype meson_radius;
     fptype mother_meson_radius;
-
+    fptype SetSizeNormSample = 1000000;
     std::vector<ResonancePdf *> resonances;
 };
 

@@ -49,6 +49,7 @@ auto FitManagerMinuit2::fit() -> Minuit2::FunctionMinimum {
     CLI::Timer timer{"The minimization took"};
 
     Minuit2::MnMigrad migrad{fcn_, upar_, strategy};
+    // migrad.SetPrecision(1.e-30); 
    
     // Do the minimization
     if(verbosity > 0)

@@ -28,6 +28,9 @@ __device__ auto SpecialSqDpResonanceCalculator::operator()(thrust::tuple<int, fp
     fptype mprime = RO_CACHE(evt[id_mprime]);
     fptype thetaprime = RO_CACHE(evt[id_thetaprime]);
 
+    // if(thetaprime>0.5)
+    //     thetaprime = 1.0-thetaprime;
+
     if(!inSqDalitz(mprime, thetaprime))
         return ret;
 
@@ -39,7 +42,7 @@ __device__ auto SpecialSqDpResonanceCalculator::operator()(thrust::tuple<int, fp
     fptype s13 = m13*m13;
     fptype s23 = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass
                  + c_daug3Mass * c_daug3Mass - s12 - s13;
-    // fptype m23 = sqrt(s23);
+  
 
      if(!inDalitz2(s13, s23,c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass ))
         return ret;
@@ -49,10 +52,10 @@ __device__ auto SpecialSqDpResonanceCalculator::operator()(thrust::tuple<int, fp
 
     ret = getResonanceAmplitude(s13, s23 , s12 ,  pc);
 
-    //fptype jacobian = calc_SqDp_Jacobian(mprime, thetaprime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
+    // fptype jacobian = calc_SqDp_Jacobian(mprime, thetaprime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
     // fptype invjacobian = calc_SqDp_InvJacobian(m13 ,m23, m12, c_daug1Mass, c_daug2Mass, c_daug3Mass);
    
-    //ret*=jacobian;
+    //  ret/=jacobian;
     //ret*=invjacobian;
 
     return ret;

@@ -98,8 +98,8 @@ class SqDalitzPlotter {
             fptype _mprime = random(gen);
             fptype _thetaprime = random(gen);
            
-            // if(_thetaprime>0.5)
-            //     _thetaprime = 1.0-_thetaprime;
+            if(_thetaprime>0.5)
+                _thetaprime = 1.0-_thetaprime;
             
             mprime.setValue(_mprime);
             thetaprime.setValue(_thetaprime);
@@ -124,12 +124,13 @@ class SqDalitzPlotter {
         auto old = overallSignal->getData();
         overallSignal->setData(&data);
         signalDalitz->setDataSize(data.getNumEvents());
+        signalDalitz->normalise();
         pdfValues = overallSignal->getCompProbsAtDataPoints();
 
         for(int i =0; i<pdfValues[0].size();i++){
             data.loadEvent(i);
             auto jac = calc_SqDp_Jacobian(mprime.getValue(), thetaprime.getValue(), mother_mass, d1_mass, d2_mass, d3_mass);
-            pdfValues.at(0).at(i) *= jac;
+           // pdfValues.at(0).at(i) *= jac;
         }
 
         overallSignal->setData(old);

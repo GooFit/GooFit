@@ -8,6 +8,8 @@
 #include <goofit/Variable.h>
 #include <goofit/Version.h>
 
+#include<random>
+
 #ifdef GOOFIT_MPI
 #include <mpi.h>
 #endif
@@ -127,6 +129,7 @@ __host__ void PdfBase::updateVariable(Variable var, fptype newValue) {
     for(auto &component : components)
         component->updateVariable(var, newValue);
 }
+
 
 __host__ void PdfBase::updateParameters() {
     for(int i = 0; i < parametersList.size(); i++)

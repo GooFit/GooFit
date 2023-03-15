@@ -45,8 +45,8 @@ __device__ auto device_DalitzVeto(fptype *evt, ParameterContainer &pc) -> fptype
     }
 
     // TODO: Prefer this function, not incrementIndex();
-    // pc.incrementIndex(1, numParams, numVetos, numObs, numNorms);
-    pc.incrementIndex();
+    pc.incrementIndex(1, numVetos*2 + 4, numCons, numObs, 1);
+    // pc.incrementIndex();
     return ret;
 }
 

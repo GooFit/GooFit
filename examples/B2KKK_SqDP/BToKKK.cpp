@@ -119,8 +119,8 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
     double f2p_1525_amp   = 123.;
     double f2p_1525_img   = -12.;
 
-    Variable v_f2p_1525_Mass("f2p_1525_MASS", f2p_1525_MASS, 0.01, 0., 0.);
-    Variable v_f2p_1525_Width("f2p_1525_WIDTH", f2p_1525_WIDTH, 0.01, 0., 0.);
+    Variable v_f2p_1525_Mass("f2p_1525_MASS", f2p_1525_MASS);
+    Variable v_f2p_1525_Width("f2p_1525_WIDTH", f2p_1525_WIDTH);
     Variable v_f2p_1525_real("f2p_1525_REAL", f2p_1525_amp, 0.01, 0, 0);
     Variable v_f2p_1525_img("f2p_1525_IMAG", f2p_1525_img, 0.01, 0, 0);
 

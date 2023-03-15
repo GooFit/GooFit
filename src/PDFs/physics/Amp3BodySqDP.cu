@@ -149,7 +149,7 @@ struct prg
     __host__ __device__
         fptype operator()(const unsigned int n) const
         {
-            thrust::minstd_rand rng;
+            thrust::default_random_engine rng(n);
             thrust::uniform_real_distribution<fptype> dist(a, b);
             rng.discard(n);
 
@@ -171,11 +171,11 @@ __host__  void genNormFakeEvents(size_t n){
             mprime.begin(),
             prg(0.,1.));
 
-    thrust::counting_iterator<unsigned int> index_sequence2(2023);
+    thrust::counting_iterator<unsigned int> index_sequence2(324234234);
     thrust::transform(index_sequence2,
             index_sequence2 + n,
             thprime.begin(),
-            prg(0.,1));
+            prg(0.,1.));
 
     mcbooster::VariableSet_d GooVarSet_d(2);
     GooVarSet_d[0] = &mprime;

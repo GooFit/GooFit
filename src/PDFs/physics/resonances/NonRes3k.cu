@@ -5,21 +5,21 @@
 
 namespace GooFit {
 
-__device__ auto nonres3k(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
+__device__ auto nonres3k(fptype m13, fptype m23, fptype m12, ParameterContainer &pc) -> fpcomplex {
     fptype alpha = pc.getParameter(0);
     fptype beta = pc.getParameter(1);
 
     pc.incrementIndex(1, 2, 0, 0, 1);
 
-    //if(sqrt(m12) > 2.0 || sqrt(m13) > 2.0) {
-        fptype exp12 = exp(-alpha * m12);
-        fptype exp13 = exp(-alpha * m13);
-        fpcomplex amp_m12 = exp12*fpcomplex(cos(-beta*m12),sin(-beta*m12));
+    if(m23 > 4.0 && m13> 4.0 ) {
+        fptype exp13= exp(-alpha * m13);
+        fptype exp23 = exp(-alpha * m23);
         fpcomplex amp_m13 = exp13*fpcomplex(cos(-beta*m13),sin(-beta*m13));
-        return amp_m12+amp_m13;
-    //} else {
-    //    return fpcomplex(0.0, 0.0);
-    //}
+        fpcomplex amp_m23 = exp23*fpcomplex(cos(-beta*m23),sin(-beta*m23));
+        return amp_m13+amp_m23;
+    } else {
+       return fpcomplex(0.0, 0.0);
+    }
 }
 
 __device__ resonance_function_ptr ptr_to_NONRES3k = nonres3k;

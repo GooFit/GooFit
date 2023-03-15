@@ -123,7 +123,7 @@ class Amp3BodySqDP : public Amp3BodyBase {
     SpecialSqDpResonanceCalculator **calculators;
     unsigned int efficiencyFunction;
     fptype totalFF_integral;
-    int NumNormEvents=1000000;
+    fptype NumNormEvents;
 };
 
 } // namespace GooFit

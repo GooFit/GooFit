@@ -74,13 +74,14 @@ __device__ auto device_AddPdfsExt(fptype *evt, ParameterContainer &pc) -> fptype
     for(int i = 0; i < numParameters; i++) {
         // grab the weight parameter from addPdf
         fptype weight = local_pc.getParameter(i);
+        totalWeight += weight;
         //  Grab the normalization for the specific component
         fptype normFactor = pc.getNormalization(0);
         fptype curr = callFunction(evt, pc);
-        // printf("norm%d=%e val%d=%e \n",i,normFactor,i, curr);
+        //printf("norm%d=%e val%d=%e \n",i,normFactor,i, curr);
         ret += weight * curr * normFactor;
 
-        totalWeight += weight;
+        
     }
 
     ret /= totalWeight;
@@ -172,7 +173,7 @@ __host__ auto AddPdf::normalize() -> fptype {
         // printf("norm1=%f w1=%f \n",last,lastWeight);
         totalWeight += lastWeight;
         ret += last * lastWeight;
-        ret /= totalWeight;
+       ret /= totalWeight;
     } else {
         ret += (1 - totalWeight) * last;
     }
@@ -206,7 +207,7 @@ __host__ auto AddPdf::calculateNLL() -> double {
             // expEvents += host_parameters[parametersIdx + 3 * (i + 1)];
             expEvents += parametersList[i].getValue();
         }
-        //printf("nll=%f  expEv=%f \n",ret,expEvents);
+        // printf("nll=%f  expEv=%f \n",ret,expEvents);
         // Log-likelihood of numEvents with expectation of exp is (-exp + numEvents*ln(exp) - ln(numEvents!)).
         // The last is constant, so we drop it; and then multiply by minus one to get the negative log-likelihood.
         ret += (expEvents - numEvents * log(expEvents) );

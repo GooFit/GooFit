@@ -402,7 +402,7 @@ __device__ void mygaussian_high(fptype &_P1,
     fptype preConst  = C * exp(selbias * Tthres);
     fptype _1oSqrtA  = adjSigma * M_SQRT2; // 1/sqrt(r)
     fptype _1oSigma  = 1. / adjSigma;
-    fptype _1o2SqrtA = 0.5 * _1oSqrtA; // 1/(2 sqrt(r))
+    fptype _1o2SqrtA = 0.5 * _1oSqrtA;     // 1/(2 sqrt(r))
     fptype _1oSigma2 = _1oSigma * _1oSigma;
     fptype _NormG    = SQRT1o2PI * _1oSigma;
 

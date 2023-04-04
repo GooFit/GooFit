@@ -85,8 +85,8 @@ class ZTspin1 : public gpuLVec {
 
 class SpinSumV { // spin sum for Vector->PP
   protected:
-    gpuLVec _p; // pA + pB (pA, pB are the 4-mom of dgtrs)
-    fptype _mR; // nominal mass of resonance.
+    gpuLVec _p;  // pA + pB (pA, pB are the 4-mom of dgtrs)
+    fptype _mR;  // nominal mass of resonance.
   public:
     __device__ SpinSumV(const gpuLVec &p, fptype mR)
         : _p(p)

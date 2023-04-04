@@ -21,11 +21,16 @@
 #include <thrust/transform.h>
 #include <thrust/iterator/counting_iterator.h>
 #include <thrust/random/linear_congruential_engine.h>
-
+#include <thrust/system/omp/execution_policy.h>
+#include <thrust/system/cpp/execution_policy.h>
+#include <thrust/system/cuda/execution_policy.h>
 #include <array>
 #include <vector>
 
+
+
 namespace GooFit {
+
 
 __host__ __device__   auto inSqDalitz(const fptype &mprime,const fptype &thetaprime) -> bool{
     return (mprime>0.0 && mprime<1.0)&&(thetaprime>0.0 && thetaprime<1.0);
@@ -230,7 +235,7 @@ constexpr int resonanceOffset_DP = 4; // Offset of the first resonance into the 
 // NOTE: This is does not support ten instances (ten threads) of resoncances now, only one set of resonances.
 // this needs to be large enough to hold all samples
 __device__ fpcomplex *cSqDpResonances[16 * 20];
-
+fptype cResonancesIntegrals[20][16];
 
 __device__ inline auto parIndexFromResIndex_DP(int resIndex) -> int {
     return resonanceOffset_DP + resIndex * resonanceSize;
@@ -267,26 +272,26 @@ __device__ auto device_SqDalitzPlot(fptype *evt, ParameterContainer &pc) -> fpty
 
     fpcomplex totalAmp(0, 0);
 
-    // for(int i = 0; i < numResonances; ++i) {
-    //     for(int j = 0; j < numResonances; ++j) {
-    //         fpcomplex amp_i = fpcomplex(pc.getParameter(i * 2), pc.getParameter(i * 2 + 1));
-    //         fpcomplex me_i = RO_CACHE(cSqDpResonances[i + (16 * cacheToUse)][evtNum]);
-    //         fpcomplex amp_j = fpcomplex(pc.getParameter(j * 2), -pc.getParameter(j * 2 + 1));
-    //         fpcomplex me_j = RO_CACHE(cSqDpResonances[j + (16 * cacheToUse)][evtNum]);
-    //         totalAmp += amp_i*amp_j*me_i*conj(me_j);
-    //     }
-    // }
-
-    // fptype ret = thrust::abs(totalAmp);
-
-
     for(int i = 0; i < numResonances; ++i) {
+        for(int j = 0; j < numResonances; ++j) {
             fpcomplex amp_i = fpcomplex(pc.getParameter(i * 2), pc.getParameter(i * 2 + 1));
             fpcomplex me_i = RO_CACHE(cSqDpResonances[i + (16 * cacheToUse)][evtNum]);
-            totalAmp += amp_i*me_i;
+            fpcomplex amp_j = fpcomplex(pc.getParameter(j * 2), -pc.getParameter(j * 2 + 1));
+            fpcomplex me_j = RO_CACHE(cSqDpResonances[j + (16 * cacheToUse)][evtNum]);
+            totalAmp += amp_i*amp_j*me_i*conj(me_j);
+        }
     }
 
-    fptype ret = thrust::norm(totalAmp);
+    fptype ret = thrust::abs(totalAmp);
+
+
+    // for(int i = 0; i < numResonances; ++i) {
+    //         fpcomplex amp_i = fpcomplex(pc.getParameter(i * 2), pc.getParameter(i * 2 + 1));
+    //         fpcomplex me_i = RO_CACHE(cSqDpResonances[i + (16 * cacheToUse)][evtNum]);
+    //         totalAmp += amp_i*me_i;
+    // }
+
+    // fptype ret = thrust::norm(totalAmp);
    
     pc.incrementIndex(1, numResonances * 2, 2, num_obs, 1);
 
@@ -296,7 +301,7 @@ __device__ auto device_SqDalitzPlot(fptype *evt, ParameterContainer &pc) -> fpty
 
     fptype eff = callFunction(evt, pc);
   
-    fptype jacobian = calc_SqDp_Jacobian(mprime, thetaprime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
+    //fptype jacobian = calc_SqDp_Jacobian(mprime, thetaprime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
     ret *= eff;
 
     // printf("likelihood=%f eff=%f \n",ret, eff);
@@ -387,14 +392,9 @@ __host__ Amp3BodySqDP::Amp3BodySqDP(
         }
     }
 
-      
-    if(dev_fake_event_array==nullptr){
-        std::cout << "START: Fill normalization data array with " << NumNormEvents << " events. \n";
-        genNormFakeEvents(NumNormEvents);
-        cudaDeviceSynchronize();
-        std::cout << "END: Done! \n";
-    }
+ 
 
+    
     setSeparateNorm();
     
 }
@@ -435,12 +435,17 @@ __host__ void Amp3BodySqDP::setDataSize(unsigned int dataSize, unsigned int evtS
                          ((16 * cacheToUse) + i) * sizeof(fpcomplex *),
                          cudaMemcpyHostToDevice);
     }
+  
 
-  
-   
-  
     setForceIntegrals();
-   
+
+    if(dev_fake_event_array==nullptr){
+        std::cout << "START: Fill normalization data array with " << NumNormEvents << " events. \n";
+        genNormFakeEvents(NumNormEvents);
+        cudaDeviceSynchronize();
+        std::cout << "END: Done! \n";
+    }
+
 }
 
 __host__ auto Amp3BodySqDP::normalize() -> fptype {
@@ -496,12 +501,10 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
     thrust::constant_iterator<int> eventSize(totalEventSize);
     thrust::counting_iterator<int> eventIndex(eventOffset);
 
-    //Calculate Resonances integrals
+    //Calculate Resonances integrals without multiply by eff and calculate cache
+    //These intergrals are used to normalize the RBWs
     size_t n_res=decayInfo.resonances.size();
-
-   
     thrust::device_vector<fptype> device_integrals(n_res);
-
     for(int i = 0; i < n_res; ++i) {
                 if((!redoIntegral[i]))
                     continue;
@@ -518,54 +521,43 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
                     thrust::make_zip_iterator(thrust::make_tuple(fakeEvtIndex + NumNormEvents, arrayAddress, fakeeventSize, effFunc)),
                     *(integrators[i][i]),
                     dummy,
-                    complexSum);  
+                    complexSum); 
+
+                //Check if integral is 0.
+                fptype integral = ((*(integrals[i][i])).real()/NumNormEvents);
+                
+                if(integral<=0.)
+                    GOOFIT_ERROR("ERROR: Integral %d = %f.2f", i, integral); 
               
-                fptype totalIntegral = 1./sqrt((*(integrals[i][i])).real()/NumNormEvents);
-                device_integrals[i] =  totalIntegral;
-                // device_integrals.push_back(totalIntegral);
-                // printf("integral %d = %f \n",i,(*(integrals[i][i])).real()/NumNormEvents);
-                // printf("norm %d = %f \n",i,totalIntegral);
-         
+                fptype norm = 1./integral;
+
+                cResonancesIntegrals[cacheToUse][i] = norm;
+                //printf("Res  %d -  norm = %f \n",i,1./norm);
+
+                calculators[i]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
+                calculators[i]->setDalitzIndex(getFunctionIndex());
+            
+                thrust::transform(
+                    thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
+                    thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
+                    strided_range<thrust::device_vector<fpcomplex>::iterator>(cachedWaves[i]->begin(), cachedWaves[i]->end(), 1).begin(),
+                    *(calculators[i])
+                );
+
+                
+                thrust::transform(
+                    cachedWaves[i]->begin(),
+                    cachedWaves[i]->end(), 
+                    thrust::make_constant_iterator(sqrt(norm)),
+                    cachedWaves[i]->begin(),
+                    thrust::multiplies<fpcomplex>());
+               
+                  
     }
-
-    //device_integrals=host_integrals;
     
-    for(int i = 0; i < decayInfo.resonances.size(); ++i) {
-        // grab the index for this resonance.
-        calculators[i]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
-        calculators[i]->setDalitzIndex(getFunctionIndex());
-        if(redoIntegral[i]) {
-            
-#ifdef GOOFIT_MPI
-            thrust::transform(
-                thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
-                thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, dataArray, eventSize)),
-                strided_range<thrust::device_vector<fpcomplex>::iterator>(
-                    cachedWaves[i]->begin(), cachedWaves[i]->end(), 1)
-                    .begin(),
-                *(calculators[i]));
-#else
-            thrust::transform(
-                thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
-                thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
-                strided_range<thrust::device_vector<fpcomplex>::iterator>(
-                    cachedWaves[i]->begin(), cachedWaves[i]->end(), 1)
-                    .begin(),
-                *(calculators[i]));
-
-            fptype fNorm = device_integrals[i];
-           
-            thrust::transform(cachedWaves[i]->begin(),
-                  cachedWaves[i]->end(), 
-                  thrust::make_constant_iterator(fNorm),
-                  cachedWaves[i]->begin(),
-                  thrust::multiplies<fpcomplex>());
-            
-#endif
-        }
-
-        // Possibly this can be done more efficiently by exploiting symmetry?
-        for(int j = 0; j <= i; ++j) {
+    //Calculate All Integrals with Eff
+    for(int i = 0; i < n_res; ++i) {
+        for(int j = 0; j < n_res; ++j) {
             if((!redoIntegral[i]) && (!redoIntegral[j]))
                 continue;
         
@@ -576,41 +568,28 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
             fpcomplex dummy(0, 0);
             thrust::plus<fpcomplex> complexSum;
             (*(integrals[i][j])) = thrust::transform_reduce(
+                thrust::system::cuda::par,
                 thrust::make_zip_iterator(thrust::make_tuple(fakeEvtIndex, fakedataArray, fakeeventSize, effFunc)),
                 thrust::make_zip_iterator(thrust::make_tuple(fakeEvtIndex + NumNormEvents, arrayAddress, fakeeventSize, effFunc)),
                 *(integrators[i][j]),
                 dummy,
                 complexSum);
-
-            if(j<i)
-                (*(integrals[j][i])) = (*(integrals[i][j]));
-
-            // if(i==j)
-            //     printf("integral %d = %f \n",i,1./sqrt((*(integrals[i][i])).real()/NumNormEvents));
         }
     }
 
-    // End of time-consuming integrals.
     fpcomplex sumIntegral(0, 0);
-
-    for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
-        // int param_i = parameters + resonanceOffset_DP + resonanceSize * i;
+    for(unsigned int i = 0; i < n_res; ++i) {
         fpcomplex amplitude_i(host_parameters[parametersIdx + i * 2 + 1], host_parameters[parametersIdx + i * 2 + 2]);
-
-        for(unsigned int j = 0; j<=i ; ++j) {
-            // int param_j = parameters + resonanceOffset_DP + resonanceSize * j;
+        for(unsigned int j = 0; j < n_res ; ++j) {
             fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 1],
                                   -host_parameters[parametersIdx + j * 2 + 2]);
 
-            fptype fNorm_i = 1./((*(integrals[i][i])).real()/NumNormEvents);
-            fptype fNorm_j = 1./((*(integrals[j][j])).real()/NumNormEvents);
+            fptype fNorm_i = cResonancesIntegrals[cacheToUse][i];
+            fptype fNorm_j = cResonancesIntegrals[cacheToUse][j];
 
-            if(j<i)
-                sumIntegral += 2.0*amplitude_i * amplitude_j * ((*(integrals[i][j]))/NumNormEvents)*sqrt(fNorm_i)*sqrt(fNorm_j);
-            else if(i==j)
-                sumIntegral += amplitude_i * amplitude_j * ((*(integrals[i][j]))/NumNormEvents)*fNorm_i;
-            else
-                sumIntegral += 0.0;
+            sumIntegral += amplitude_i * amplitude_j * ((*(integrals[i][j]))/NumNormEvents)*sqrt(fNorm_i)*sqrt(fNorm_j);
+            
+       
         }
     }
 
@@ -687,7 +666,8 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
     thrust::constant_iterator<int> fakeeventSize(totalEventSize);
 
     for(int i = 0; i < n_res; ++i) {
-        for(int j = 0; j <=i ; ++j) {
+        for(int j = 0; j < n_res ; ++j) {
+
             integrators_ff[i][j]->setDalitzIndex(getFunctionIndex());
             integrators_ff[i][j]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
             integrators_ff[i][j]->setEfficiencyIndex(decayInfo.resonances[j]->getFunctionIndex());
@@ -702,9 +682,6 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
                 dummy_ff,
                 complexSum_ff);
             
-            if(j<i)
-                (*(integrals_ff[j][i]))=(*(integrals_ff[i][j]));
-            
         }
 
     }
@@ -717,20 +694,15 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
         fpcomplex amplitude_i(host_parameters[parametersIdx + i * 2 + 1], host_parameters[parametersIdx + i * 2 + 2]);
         fpcomplex buffer(0., 0.);
 
-        for(unsigned int j = 0; j <= i; ++j) {
+        for(unsigned int j = 0; j < n_res; ++j) {
             fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 1],
                                   -host_parameters[parametersIdx + j * 2 + 2]);
 
-            fptype fNorm_i = 1./((*(integrals[i][i])).real()/NumNormEvents);
-            fptype fNorm_j = 1./((*(integrals[j][j])).real()/NumNormEvents);
-
-            if(i==j)
-                buffer = amplitude_i * amplitude_j * ((*(integrals[i][j]))/NumNormEvents)*fNorm_i;
-            else if(j<i)
-                buffer = 2.*amplitude_i * amplitude_j * ((*(integrals[i][j]))/NumNormEvents)*sqrt(fNorm_i)*sqrt(fNorm_j);
-            else
-                buffer = 0.0;
-
+            fptype norm_i = 1./((*(integrals[i][i])).real()/NumNormEvents);
+            fptype norm_j = 1./((*(integrals[j][j])).real()/NumNormEvents);
+            
+            buffer = amplitude_i * amplitude_j * ((*(integrals[i][j]))/NumNormEvents)*sqrt(norm_i)*sqrt(norm_j);
+    
             AmpIntegral[i][j] = buffer.real();
             sumIntegral += buffer;
         }

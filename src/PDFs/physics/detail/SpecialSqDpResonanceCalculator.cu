@@ -31,8 +31,10 @@ __device__ auto SpecialSqDpResonanceCalculator::operator()(thrust::tuple<int, fp
     // if(thetaprime>0.5)
     //     thetaprime = 1.0-thetaprime;
 
-    if(!inSqDalitz(mprime, thetaprime))
+    if(!inSqDalitz(mprime, thetaprime)){
+        //printf("Not in Sq DP! \n");
         return ret;
+    }
 
     // mprime, m23 and thetaprime stand for the squared invariant masses.
     // Now fixed.

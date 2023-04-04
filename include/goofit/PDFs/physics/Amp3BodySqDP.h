@@ -124,6 +124,7 @@ class Amp3BodySqDP : public Amp3BodyBase {
     unsigned int efficiencyFunction;
     fptype totalFF_integral;
     fptype NumNormEvents;
+    
 };
 
 } // namespace GooFit

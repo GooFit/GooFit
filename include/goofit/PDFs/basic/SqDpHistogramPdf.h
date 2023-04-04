@@ -40,9 +40,10 @@ class SqDpHistogramPdf : public GooPdf {
 
   private:
    
-    thrust::device_vector<fptype> *dev_base_histogram;
+    thrust::device_vector<fptype> *dev_base_sqdp_histogram;
     std::vector<Variable> Vetos;
     fptype totalEvents;
     static unsigned int totalHistograms;
+    
 };
 } // namespace GooFit

@@ -67,7 +67,7 @@ __device__ auto SpecialSqDpResonanceIntegrator::operator()(thrust::tuple<int, fp
 
     ParameterContainer pc;
 
-    fptype events[10];
+    fptype events[20];
 
     while(pc.funcIdx < dalitz_i)
         pc.incrementIndex();

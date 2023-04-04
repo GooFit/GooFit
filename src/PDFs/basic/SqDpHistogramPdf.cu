@@ -7,11 +7,11 @@
 
 namespace GooFit {
 
-__constant__ fptype *dev_base_histograms[100]; // Multiple histograms for the case of multiple PDFs
+__constant__ fptype *dev_base_sqdp_histograms[100]; // Multiple histograms for the case of multiple PDFs
 
 unsigned int SqDpHistogramPdf::totalHistograms = 0;
 
-__device__ auto device_EvalHistogram(fptype *evt, ParameterContainer &pc) -> fptype {
+__device__ auto device_EvalSqDPHistogram(fptype *evt, ParameterContainer &pc) -> fptype {
     // Structure is
     // nP smoothingIndex totalHistograms (limit1 step1 bins1) (limit2 step2 bins2) nO o1 o2
     // where limit and step are indices into functorConstants.
@@ -58,8 +58,9 @@ __device__ auto device_EvalHistogram(fptype *evt, ParameterContainer &pc) -> fpt
         int offset = pc.getConstant(lowerBoundIdx);
         previous *= offset;
     }
-
-    fptype *myHistogram = dev_base_histograms[myHistogramIndex];
+    // printf("histIndex = %d \n",myHistogramIndex);
+    
+    fptype *myHistogram = dev_base_sqdp_histograms[myHistogramIndex];
     fptype ret          = myHistogram[globalBinNumber];
 
     pc.incrementIndex(1, numParms, numCons, numObs, 1);
@@ -86,28 +87,28 @@ __device__ auto device_EvalHistogram(fptype *evt, ParameterContainer &pc) -> fpt
     auto s23 = motherMass*motherMass + d1Mass*d1Mass +  d2Mass*d2Mass + d3Mass*d3Mass - m12*m12 - m13*m13;
     auto s13 = m13*m13;
 
-    if((s13<D0veto_min || s13>D0veto_max) && (s23<D0veto_min || s23>D0veto_max))
+    if((s13<D0veto_min || s13>D0veto_max) && (s23<D0veto_min || s23>D0veto_max)){
         if(isEffHist)
             return ret*=jac;
         else 
             return ret;
-    else
+    }else{
         return 0.0;
-
+    }
    
 }
 
-__device__ device_function_ptr ptr_to_EvalHistogram = device_EvalHistogram;
+__device__ device_function_ptr ptr_to_EvalSqDPHistogram = device_EvalSqDPHistogram;
 
 __host__ SqDpHistogramPdf::SqDpHistogramPdf(std::string n, TH2* hist, Observable &mPrime, Observable &thPrime, Variable motherMass, Variable d1Mass, Variable d2Mass, Variable d3Mass, bool upperHalfOnly, bool eff)
     : GooPdf("SqDpHistogramPdf", n, mPrime, thPrime, motherMass, d1Mass, d2Mass, d3Mass) {
     
     mPrime.setNumBins(hist->GetNbinsX());
-    thPrime.setNumBins(hist->GetNbinsX());
+    thPrime.setNumBins(hist->GetNbinsY());
 
-    auto binDataSet     = new BinnedDataSet({mPrime,thPrime});
+    BinnedDataSet *binDataSet     = new BinnedDataSet({mPrime,thPrime});
 
-   fptype dx = abs(mPrime.getLowerLimit()-mPrime.getUpperLimit())/mPrime.getNumBins();
+    fptype dx = abs(mPrime.getLowerLimit()-mPrime.getUpperLimit())/mPrime.getNumBins();
     fptype dy = abs(thPrime.getLowerLimit()-thPrime.getUpperLimit())/thPrime.getNumBins();
 
     // //fill binDataSet
@@ -126,17 +127,19 @@ __host__ SqDpHistogramPdf::SqDpHistogramPdf(std::string n, TH2* hist, Observable
             }
 
             auto currBin = hist->FindBin(mp,thp);
-            //fptype currVal = hist->GetBinContent(currBin);
+            // fptype currVal = hist->GetBinContent(currBin);
             fptype currVal = hist->Interpolate(mp,thp);
             if(currVal<0.)
-                currVal = 0.;
+                continue;
                 
-            if(eff)
-                currVal = currVal>1. ? 1.: currVal; //protect > 1 eff
-            //     printf("eff %d = %f \n",currBin,currVal);
+            // if(eff)
+            //     currVal = currVal>1. ? 1.: currVal; //protect > 1 eff
+               
             binDataSet->addWeightedEvent(currVal);
         }                
     }
+
+    std::cout << "BinDataSet filled with " << binDataSet->getNumEvents() << std::endl;
 
     int numVars = binDataSet->numVariables();
     int varIndex = 0;
@@ -163,13 +166,17 @@ __host__ SqDpHistogramPdf::SqDpHistogramPdf(std::string n, TH2* hist, Observable
     unsigned int numbins = binDataSet->getNumBins();
     thrust::host_vector<fptype> host_histogram;
 
+    fptype integral = 0.;
+
     for(unsigned int i = 0; i < numbins; ++i) {
         fptype curr = binDataSet->getBinContent(i);
         host_histogram.push_back(curr);
-        totalEvents+=curr;
+        integral+=curr;
     }
 
-    totalEvents*=dx*dy;
+    std::cout << "host_histogram filled with " << host_histogram.size() << std::endl;
+
+    integral*=dx*dy;
    
     // printf("Integral*dx*dy %f \n",totalEvents);
 //    if(!eff){
@@ -180,23 +187,22 @@ __host__ SqDpHistogramPdf::SqDpHistogramPdf(std::string n, TH2* hist, Observable
 //                     thrust::multiplies<fptype>());
 //     }
 
-   
+    std::cout << "total " << getName() << " " << integral << std::endl;
 
-    if(totalEvents > 0){
-      
+    if(integral > 0){
         copyHistogramToDevice(host_histogram);
     }else{
         std::cout << "Warning: Empty histogram supplied to " << getName()
                   << " not copied to device. Expect copyHistogramToDevice call later.\n";
     }
-    registerFunction("ptr_to_EvalHistogram", ptr_to_EvalHistogram);
+    registerFunction("ptr_to_EvalSqDPHistogram", ptr_to_EvalSqDPHistogram);
 
     initialize();
 }
 
-auto pointerToFirst(thrust::device_vector<fptype> *hist) -> fptype * { return (&((*hist)[0])).get(); }
+auto pointerToFirstHist(thrust::device_vector<fptype> *hist) -> fptype * { return (&((*hist)[0])).get(); }
 
-auto pointerToFirst(thrust::host_vector<fptype> *hist) -> fptype * {
+auto pointerToFirstHist(thrust::host_vector<fptype> *hist) -> fptype * {
     // (*hist) is the host_vector.
     // (*hist)[0] is a 'reference' - Thrust class, not ordinary C++ reference -
     // to the first element of the vector.
@@ -207,17 +213,18 @@ auto pointerToFirst(thrust::host_vector<fptype> *hist) -> fptype * {
 
 __host__ void SqDpHistogramPdf::copyHistogramToDevice(thrust::host_vector<fptype> &host_histogram) {
 
-   
-
-    dev_base_histogram     = new thrust::device_vector<fptype>(host_histogram);
+    dev_base_sqdp_histogram     = new thrust::device_vector<fptype>(host_histogram);
   
-    static fptype *dev_address[1];
-    dev_address[0] = pointerToFirst(dev_base_histogram);
+    static fptype *dev_address[1] ;
+    dev_address[0]= pointerToFirstHist(dev_base_sqdp_histogram);
+
     MEMCPY_TO_SYMBOL(
-        dev_base_histograms, dev_address, sizeof(fptype *), totalHistograms * sizeof(fptype *), cudaMemcpyHostToDevice);
+        dev_base_sqdp_histograms, dev_address, sizeof(fptype *), totalHistograms * sizeof(fptype *), cudaMemcpyHostToDevice);
   
 
     totalHistograms++;
+
+     std::cout << "totalHistograms = " << totalHistograms << std::endl;
 
     int expectedBins = 1;
 
@@ -226,7 +233,7 @@ __host__ void SqDpHistogramPdf::copyHistogramToDevice(thrust::host_vector<fptype
     }
 
     if(expectedBins != host_histogram.size()) {
-        std::cout << "Warning: Histogram supplied to " << getName() << " has " << host_histogram.size()
+        std::cout << "Warning: Host Histogram supplied to " << getName() << " has " << host_histogram.size()
                   << " bins, expected " << expectedBins << " - may indicate a problem.\n";
     }
 
@@ -238,7 +245,7 @@ __host__ auto SqDpHistogramPdf::normalize() -> fptype {
 
     //return totalEvents;
   
-    fptype ret = thrust::reduce(dev_base_histogram->begin(), dev_base_histogram->end()); 
+    fptype ret = thrust::reduce(dev_base_sqdp_histogram->begin(), dev_base_sqdp_histogram->end()); 
 
      for(unsigned int varIndex = 0; varIndex < observablesList.size(); ++varIndex) {
         fptype binSize = constantsList[3 + 3 * varIndex + 2];

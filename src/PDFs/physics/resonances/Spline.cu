@@ -9,7 +9,7 @@ namespace GooFit {
 
 __device__ fptype cDeriatives[2 * 100];
 
-__device__ auto cubicspline(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
+__device__ auto cubicspline(fptype m13, fptype m23, fptype m12, ParameterContainer &pc) -> fpcomplex {
     fpcomplex ret(0, 0);
     unsigned int cyclic_index        = pc.getConstant(0);
     unsigned int doSwap              = pc.getConstant(1);
@@ -19,67 +19,67 @@ __device__ auto cubicspline(fptype m12, fptype m13, fptype m23, ParameterContain
     unsigned int idx                 = 4; // Next index
     unsigned int i                   = 0;
     idx += 2 * nKnobs;
-    fptype mAB = m12, mAC = m13;
-    switch(cyclic_index) {
-    case PAIR_13:
-        mAB = m13;
-        mAC = m12;
-        break;
-    case PAIR_23:
-        mAB = m23;
-        mAC = m12;
-        break;
-    }
+    fptype mAC = m13, mBC = m23;
+    // switch(cyclic_index) {
+    // case PAIR_13:
+    //     mAB = m13;
+    //     mAC = m12;
+    //     break;
+    // case PAIR_23:
+    //     mAB = m23;
+    //     mAC = m12;
+    //     break;
+    // }
 
-    int khiAB = 0, khiAC = 0;
+    int khiAC = 0, khiBC = 0;
     fptype dmKK, aa, bb, aa3, bb3;
     unsigned int timestorun = 1 + doSwap;
 
     // Run 0 and/or 1
     for(i = 0; i < timestorun; i++) {
         // Find the knots we are between
-        while(khiAB < nKnobs) {
-            if(mAB < pc.getConstant(swave_const_idx + khiAB))
+        while(khiAC < nKnobs) {
+            if(mAC < pc.getConstant(swave_const_idx + khiAC))
                 break;
-            khiAB++;
+            khiAC++;
         }
 
         // Quit this iteration if outside
-        if(khiAB > 0 && khiAB < nKnobs) {
-            unsigned int kloAB          = khiAB - 1; //, kloAC = khiAC -1;
-            unsigned int twokloAB       = kloAB + kloAB;
-            unsigned int twokhiAB       = khiAB + khiAB;
-            fptype pwa_coefs_real_kloAB = pc.getParameter(twokloAB);
-            fptype pwa_coefs_real_khiAB = pc.getParameter(twokhiAB);
-            fptype pwa_coefs_imag_kloAB = pc.getParameter(twokloAB + 1);
-            fptype pwa_coefs_imag_khiAB = pc.getParameter(twokhiAB + 1);
+        if(khiAC > 0 && khiAC < nKnobs) {
+            unsigned int kloAC          = khiAC - 1; //, kloAC = khiAC -1;
+            unsigned int twokloAC       = kloAC + kloAC;
+            unsigned int twokhiAC       = khiAC + khiAC;
+            fptype pwa_coefs_real_kloAC = pc.getParameter(twokloAC);
+            fptype pwa_coefs_real_khiAC = pc.getParameter(twokhiAC);
+            fptype pwa_coefs_imag_kloAC = pc.getParameter(twokloAC + 1);
+            fptype pwa_coefs_imag_khiAC = pc.getParameter(twokhiAC + 1);
 
-            fptype pwa_coefs_prime_real_kloAB = cDeriatives[twokloAB];
-            fptype pwa_coefs_prime_real_khiAB = cDeriatives[twokhiAB];
-            fptype pwa_coefs_prime_imag_kloAB = cDeriatives[twokloAB + 1];
-            fptype pwa_coefs_prime_imag_khiAB = cDeriatives[twokhiAB + 1];
+            fptype pwa_coefs_prime_real_kloAC = cDeriatives[twokloAC];
+            fptype pwa_coefs_prime_real_khiAC = cDeriatives[twokhiAC];
+            fptype pwa_coefs_prime_imag_kloAC = cDeriatives[twokloAC + 1];
+            fptype pwa_coefs_prime_imag_khiAC = cDeriatives[twokhiAC + 1];
 
-            dmKK = pc.getConstant(swave_const_idx + khiAB) - pc.getConstant(swave_const_idx + kloAB);
-            aa   = (pc.getConstant(swave_const_idx+khiAB) - mAB) / dmKK;
+            dmKK = pc.getConstant(swave_const_idx + khiAC) - pc.getConstant(swave_const_idx + kloAC);
+            aa   = (pc.getConstant(swave_const_idx+khiAC) - mAC) / dmKK;
             bb   = 1 - aa;
             aa3  = aa * aa * aa;
             bb3  = bb * bb * bb;
             
             if(linear){
-                ret.real(ret.real() + aa * pwa_coefs_real_kloAB + bb * pwa_coefs_real_khiAB);
-                ret.imag(ret.imag() + aa * pwa_coefs_imag_kloAB + bb * pwa_coefs_imag_khiAB);
+                ret.real(ret.real() + aa * pwa_coefs_real_kloAC + bb * pwa_coefs_real_khiAC);
+                ret.imag(ret.imag() + aa * pwa_coefs_imag_kloAC + bb * pwa_coefs_imag_khiAC);
             }else{
-                 ret.real(ret.real() + aa * pwa_coefs_real_kloAB + bb * pwa_coefs_real_khiAB
-                     + ((aa3 - aa) * pwa_coefs_prime_real_kloAB + (bb3 - bb) * pwa_coefs_prime_real_khiAB)
+                 ret.real(ret.real() + aa * pwa_coefs_real_kloAC + bb * pwa_coefs_real_khiAC
+                     + ((aa3 - aa) * pwa_coefs_prime_real_kloAC + (bb3 - bb) * pwa_coefs_prime_real_khiAC)
                            * (dmKK * dmKK) / 6.0);
-                 ret.imag(ret.imag() + aa * pwa_coefs_imag_kloAB + bb * pwa_coefs_imag_khiAB
-                     + ((aa3 - aa) * pwa_coefs_prime_imag_kloAB + (bb3 - bb) * pwa_coefs_prime_imag_khiAB)
+                 ret.imag(ret.imag() + aa * pwa_coefs_imag_kloAC + bb * pwa_coefs_imag_khiAC
+                     + ((aa3 - aa) * pwa_coefs_prime_imag_kloAC + (bb3 - bb) * pwa_coefs_prime_imag_khiAC)
                            * (dmKK * dmKK) / 6.0);
             }
         }
 
-        khiAB = khiAC;
-        mAB   = mAC;
+        khiAC = khiBC;
+        mAC   = mBC;
     }
     return ret;
 }

@@ -180,6 +180,8 @@ __host__ void SmoothHistogramPdf::copyHistogramToDevice(thrust::host_vector<fpty
 
     totalHistograms++;
 
+    std::cout << "totalHistograms " << totalHistograms << std::endl;
+
     int expectedBins = 1;
 
     for(Observable &observable : observablesList) {

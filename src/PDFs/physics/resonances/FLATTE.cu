@@ -26,6 +26,8 @@ __device__ auto flatte(fptype m13, fptype m23, fptype m12, ParameterContainer &p
     unsigned int particle     = pc.getConstant(0);
     unsigned int cyclic_index = pc.getConstant(1);
 
+    
+
 
     const fptype pipmass = 0.13957018;
     const fptype pi0mass = 0.1349766;

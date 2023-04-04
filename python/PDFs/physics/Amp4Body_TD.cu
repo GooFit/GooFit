@@ -47,7 +47,7 @@ void init_Amp4Body_TD(py::module &m) {
 
                  std::tie(particles, variables, weights, flags) = self.GenerateSig(numEvents);
 
-                size_t nAcc = weights.size();
+                 size_t nAcc = weights.size();
 
                  py::array_t<fptype> pyparticles{{(size_t)4, nAcc, (size_t)4}};
                  py::array_t<fptype> pyvariables{{(size_t)6, nAcc}};

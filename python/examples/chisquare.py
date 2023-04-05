@@ -22,7 +22,9 @@ try:
     from uncertainties import unumpy
 except ImportError:
     unc = None
-    warnings.warn("uncertainties not found, no unc on plot", RuntimeWarning)
+    warnings.warn(
+        "uncertainties not found, no unc on plot", RuntimeWarning, stacklevel=1
+    )
 
 # Optional import of numba, if available
 # Make code much faster if found!
@@ -39,6 +41,7 @@ except ImportError:
     warnings.warn(
         "Numba not found, will be 100x slower. Try `pip install numba` to install.",
         RuntimeWarning,
+        stacklevel=1,
     )
 
 

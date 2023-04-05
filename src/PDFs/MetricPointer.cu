@@ -65,7 +65,7 @@ __device__ device_metric_ptr ptr_to_BinWithError = calculateBinWithError;
 __device__ device_metric_ptr ptr_to_Chisq        = calculateChisq;
 
 // 211222 mds functionPtrToNameMap is declared in Globals.cpp
-// it is a map of the device pointer vaues to the names of the methods;
+// it is a map of the device pointer values to the names of the methods;
 // meant to be used for debugging/tracking logic; it is not used
 // in any calculations.
 

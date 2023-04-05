@@ -38,8 +38,10 @@ jobs:
 
   clang-tidy:
     runs-on: ubuntu-latest
-    container: silkeh/clang:12
+    container: silkeh/clang:15
     steps:
+    - name: Get Git
+      run: apt update && apt install -y git
     - uses: actions/checkout@v3
       with:
         submodules: true

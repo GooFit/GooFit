@@ -29,7 +29,7 @@ except ImportError:
 
         return copyf
 
-    warnings.warn("Numba not found, will be 100x slower", RuntimeWarning)
+    warnings.warn("Numba not found, will be 100x slower", RuntimeWarning, stacklevel=1)
 
 
 # Quick decorator to add a message and timer

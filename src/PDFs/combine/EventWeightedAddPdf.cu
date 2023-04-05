@@ -124,7 +124,7 @@ EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Observable> 
 
     if(weights.size() < components.size()) {
         extended = false;
-        // TODO:adding componenents as parameters to get them to be used (for now)
+        // TODO:adding components as parameters to get them to be used (for now)
         // parametersList.push_back(0);
     }
 

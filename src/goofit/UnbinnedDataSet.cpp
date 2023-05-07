@@ -104,8 +104,6 @@ void UnbinnedDataSet::fillWithGrid() {
     make_a_grid(ret, this, evt_num);
 }
 
-size_t UnbinnedDataSet::numberOfEvents() {
-    return data.at(0).size();
-}
+size_t UnbinnedDataSet::numberOfEvents() { return data.at(0).size(); }
 
 } // namespace GooFit

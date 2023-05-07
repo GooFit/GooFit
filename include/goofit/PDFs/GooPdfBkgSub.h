@@ -4,8 +4,7 @@
 
 namespace GooFit {
 
-  class GooPdfBkgSub : public GooPdf {
-
+class GooPdfBkgSub : public GooPdf {
     /**
     This class implements a version of GooPdf that includes a sample of
     background events that are used to statistically subtract the background
@@ -15,14 +14,13 @@ namespace GooFit {
     **/
 
   public:
-    GooPdfBkgSub(GooPdf basePdf, UnbinnedDataSet* bkgEvents, Variable bkgFraction);
+    GooPdfBkgSub(GooPdf basePdf, UnbinnedDataSet *bkgEvents, Variable bkgFraction);
 
   protected:
     __host__ double calculateNLL() override;
 
   private:
-    UnbinnedDataSet* m_bkgEvents;
-
-  };
+    UnbinnedDataSet *m_bkgEvents;
+};
 
 } // namespace GooFit

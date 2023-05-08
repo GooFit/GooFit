@@ -9,7 +9,7 @@ using namespace GooFit;
 
 void init_GooPdfBkgSub(py::module &m) {
     py::class_<GooPdfBkgSub, GooPdf>(m, "GooPdfBkgSub")
-        .def(py::init<GooPdf, UnbinnedDataSet*, Variable>(),
+        .def(py::init<GooPdf, UnbinnedDataSet *, Variable>(),
              "", // Not sure how to deal with generating this. Will ignore for now.
              "basePdf"_a,
              "bkgEvents"_a,

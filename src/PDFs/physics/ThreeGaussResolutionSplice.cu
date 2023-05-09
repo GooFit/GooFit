@@ -489,7 +489,7 @@ __device__ fptype device_threegauss_resolutionSplice(fptype coshterm,
     }
     knots[0] = 0.;
     for(int i = 0; i < nSplines; i++) {
-        int offset  = 8 + nKnots + i;
+        int offset  = 10 + nKnots + i;
         spline_0[i] = pc.getParameter(offset);
         spline_1[i] = pc.getParameter(offset + nSplines);
         spline_2[i] = pc.getParameter(offset + 2 * nSplines);

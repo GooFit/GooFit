@@ -465,6 +465,15 @@ __device__ fptype device_threegauss_resolutionSplice(fptype coshterm,
     fptype tailScaleFactor = pc.getParameter(5);
     fptype outlBias        = pc.getParameter(6);
     fptype outlScaleFactor = pc.getParameter(7);
+    fptype common_bias_offset = pc.getParameter(8);
+    fptype common_width_scale = pc.getParameter(9);
+    coreBias += common_bias_offset;
+    tailBias += common_bias_offset;
+    outlBias += common_bias_offset;
+    coreScaleFactor *= common_width_scale;
+    tailScaleFactor *= common_width_scale;
+    outlScaleFactor *= common_width_scale;
+
 
     int nKnots   = pc.getConstant(0);
     int nSplines = nKnots - 1;
@@ -476,7 +485,7 @@ __device__ fptype device_threegauss_resolutionSplice(fptype coshterm,
     fptype spline_2[7];
     fptype spline_3[7];
     for(int i = 0; i < nKnots; i++) {
-        knots[i] = pc.getParameter(8 + i);
+        knots[i] = pc.getParameter(10 + i);
     }
     knots[0] = 0.;
     for(int i = 0; i < nSplines; i++) {
@@ -645,7 +654,9 @@ ThreeGaussResolutionSplice::ThreeGaussResolutionSplice(Variable cf,
                                                        std::vector<Variable> a0,
                                                        std::vector<Variable> a1,
                                                        std::vector<Variable> a2,
-                                                       std::vector<Variable> a3)
+                                                       std::vector<Variable> a3,
+                                                       Variable common_bias_offset,
+                                                       Variable common_width_scale)
     : MixingTimeResolution("ThreeGaussResolutionSplice", cf, tf, cb, cs, tb, ts, ob, os)
     , m_knots(knots)
     , m_a0(a0)
@@ -654,6 +665,8 @@ ThreeGaussResolutionSplice::ThreeGaussResolutionSplice(Variable cf,
     , m_a3(a3) {
     initIndex();
     registerConstant(knots.size());
+    registerParameter(common_bias_offset);
+    registerParameter(common_width_scale);
     for(auto knot : knots)
         registerParameter(knot);
     for(auto i : a0)

@@ -22,7 +22,9 @@ void init_ThreeGaussResolutionSplice(py::module &m) {
                       std::vector<Variable>,
                       std::vector<Variable>,
                       std::vector<Variable>,
-                      std::vector<Variable>>(),
+                      std::vector<Variable>,
+                      Variable,
+                      Variable>(),
              "cf"_a,
              "tf"_a,
              "cb"_a,
@@ -35,6 +37,8 @@ void init_ThreeGaussResolutionSplice(py::module &m) {
              "a0"_a,
              "a1"_a,
              "a2"_a,
-             "a3"_a)
+             "a3"_a,
+             "common_bias_offset"_a,
+             "common_width_scale"_a)
         .def_static("help", []() { return HelpPrinter(ThreeGaussResolutionSplice_docs); });
 }

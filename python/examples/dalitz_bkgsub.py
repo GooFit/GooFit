@@ -3,14 +3,11 @@
 import sys
 
 import matplotlib
-import pandas as pd
 import numpy as np
-from copy import deepcopy
 
 from goofit import *
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 
 # This is really unnecessary...
 from dalitz import getToyData
@@ -22,6 +19,7 @@ _mD02 = _mD0 * _mD0
 _mD02inv = 1.0 / _mD02
 piPlusMass = 0.13957018
 piZeroMass = 0.1349766
+
 
 def make_sig_pdf(m12, m13, eventNumber, eff=None, fitMasses=False, fixAmps=False):
     # Constants used in more than one PDF component.
@@ -302,7 +300,9 @@ def make_bkg_pdf(m12, m13, eventNumber):
     bkg_di.meson_radius = 1.5
 
     # Define the amplitude (just phasespace).
-    nonr = Resonances.NonRes("bkg_nonr", Variable("nrConstantOne", 1), Variable("nrConstantZero", 0))
+    nonr = Resonances.NonRes(
+        "bkg_nonr", Variable("nrConstantOne", 1), Variable("nrConstantZero", 0)
+    )
     bkg_di.resonances = (nonr,)
 
     # Define the efficiency (constant).
@@ -320,16 +320,27 @@ def main():
 
     signal_pdf = make_sig_pdf(m12, m13, eventNumber, fixAmps=True)
     bkg_pdf = make_bkg_pdf(m12, m13, eventNumber)
-    bkg_fit_pdf = PolynomialPdf("bkgFitPDF", (m12, m13), (Variable("one", 1),), (Variable("zero1", 0), Variable("zero2", 0)), 0)
+    PolynomialPdf(
+        "bkgFitPDF",
+        (m12, m13),
+        (Variable("one", 1),),
+        (Variable("zero1", 0), Variable("zero2", 0)),
+        0,
+    )
 
     nSig = 1000000
-    nBkg = 25000
-    print('Generating signal...')
+    print("Generating signal...")
     sig_particles, sig_variables, sig_weights, sig_flags = signal_pdf.GenerateSig(nSig)
     signal_pdf.setGenerationOffset(nSig)
     acc_sig = int(np.sum(sig_flags))
-    sig_data = np.vstack([sig_variables[0][sig_flags], sig_variables[2][sig_flags], np.arange(acc_sig, dtype='uint32')])
-    print(f'Accepted {acc_sig} out of {nSig} events')
+    sig_data = np.vstack(
+        [
+            sig_variables[0][sig_flags],
+            sig_variables[2][sig_flags],
+            np.arange(acc_sig, dtype="uint32"),
+        ]
+    )
+    print(f"Accepted {acc_sig} out of {nSig} events")
 
     # print('Generating background...')
     # bkg_pdf.setGenerationOffset(nSig)
@@ -339,21 +350,22 @@ def main():
     # bkg_data = np.vstack([bkg_variables[0][bkg_flags], bkg_variables[2][bkg_flags], np.arange(acc_bkg, dtype='uint32') + acc_sig])
     # print(f'Accepted {acc_bkg} out of {nBkg} events')
 
-    print('Creating dataset with signal and background...')
+    print("Creating dataset with signal and background...")
     data = UnbinnedDataSet(m12, m13, eventNumber)
     data.from_matrix(sig_data)
     # For now, fit a sample with 0 background.
     # data.from_matrix(bkg_data)
 
-    print('Creating total PDF...')
+    print("Creating total PDF...")
     # signal_fraction = Variable("signal_fraction", 1.*acc_sig/(acc_sig + acc_bkg), 0., 1.)
-    signal_fraction = Variable("signal_fraction", 1., 0., 1.)
+    signal_fraction = Variable("signal_fraction", 1.0, 0.0, 1.0)
     total_pdf = AddPdf("totalPDF", signal_fraction, signal_pdf, bkg_pdf)
 
-    print('Fitting the total PDF...')
+    print("Fitting the total PDF...")
     total_pdf.setData(data)
     fitman = FitManager(total_pdf)
     fitman.fit()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     sys.exit(main())

@@ -24,7 +24,7 @@
 #include <cmath>
 #include <limits>
 
-const double invsq2pi = 0.3989422804014; // (2 pi)^(-1/2)
+const double invsq2pi = 0.3989422804014;                                     // (2 pi)^(-1/2)
 
 inline double landauPDF(const double &x, const double &x0, const double &xi) // same algorithm is used in GSL
 {

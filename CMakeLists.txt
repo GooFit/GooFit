@@ -331,7 +331,7 @@ macro(GOOFIT_OPTIONAL_CUDA)
     set(CMAKE_CUDA_EXTENSIONS OFF)
 
     string(APPEND CMAKE_CUDA_FLAGS " --expt-relaxed-constexpr")
-    string(APPEND CMAKE_CUDA_FLAGS " -Wno-deprecated-gpu-targets")
+    #string(APPEND CMAKE_CUDA_FLAGS " -Wno-deprecated-gpu-targets")
     string(APPEND CMAKE_CUDA_FLAGS " --expt-extended-lambda")
 
   endif()
@@ -359,7 +359,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
   # Note that this should be the only nvlink command
   string(APPEND CMAKE_CUDA_FLAGS " -Xnvlink=--disable-warnings")
   string(APPEND CMAKE_CUDA_FLAGS " -Xcompiler=-Wno-attributes")
-  string(APPEND CMAKE_CUDA_FLAGS " -Xcompiler=-Wno-deprecated-gpu-targets")
+  #string(APPEND CMAKE_CUDA_FLAGS " -Xcompiler=-Wno-deprecated-gpu-targets")
  
 
   

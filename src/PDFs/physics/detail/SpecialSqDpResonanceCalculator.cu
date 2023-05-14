@@ -59,8 +59,8 @@ __device__ auto SpecialSqDpResonanceCalculator::operator()(thrust::tuple<int, fp
    
     //  ret/=jacobian;
     //ret*=invjacobian;
-
-    return ret;
+    
+    return ret/sqrt(norm);
 }
 
 } // namespace GooFit

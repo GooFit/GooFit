@@ -60,14 +60,14 @@ SpecialSqDpResonanceIntegrator::SpecialSqDpResonanceIntegrator(int pIdx, unsigne
     , resonance_j(rj)
     , parameters(pIdx) {}
 
-__device__ auto SpecialSqDpResonanceIntegrator::operator()(thrust::tuple<int, fptype *, int, int> t) const -> fpcomplex {
+__device__ auto SpecialSqDpResonanceIntegrator::operator()(thrust::tuple<int, fptype *, int, int> t) const -> thrust::tuple<fpcomplex, fpcomplex> {
    
     int evtNum  = thrust::get<0>(t);
     fptype *evt = thrust::get<1>(t) + (evtNum * thrust::get<2>(t));
 
     ParameterContainer pc;
 
-    fptype events[20];
+    fptype events[10];
 
     while(pc.funcIdx < dalitz_i)
         pc.incrementIndex();
@@ -114,10 +114,12 @@ __device__ auto SpecialSqDpResonanceIntegrator::operator()(thrust::tuple<int, fp
     // go into the integrals. They've been squared already,
     // as it were.
     fptype jacobian = calc_SqDp_Jacobian(mprime, thetaprime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
-    if(m_no_eff)
-        return ret*jacobian;
-    else
-        return ret*eff;
+    // if(m_no_eff)
+    //     return ret*jacobian;
+    // else
+    //     return ret*eff;
+
+    return thrust::make_tuple(ret*jacobian,ret*eff);
 
    
     // printf("ret %f %f %f %f %f\n",binCenterMPrime, binCenterThetaPrime, ret.real, ret.imag, eff );

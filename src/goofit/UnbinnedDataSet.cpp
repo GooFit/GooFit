@@ -75,7 +75,7 @@ void make_a_grid(std::vector<Observable> ret, UnbinnedDataSet *grid, Observable 
     }
 
     Observable var = ret.back();
-    ret.pop_back();           // safe because this is a copy
+    ret.pop_back(); // safe because this is a copy
 
     if(var.isEventNumber()) { // Skip
         make_a_grid(ret, grid, eventNum);

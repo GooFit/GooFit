@@ -223,6 +223,13 @@ class Variable : public Indexable {
         return *this;
     }
 
+    static Variable mkvar(std::string name, bool fix, fptype val, fptype step) {
+        if(fix)
+            return Variable(name, val);
+        else
+            return Variable(name, val, step, 0., 1000.);
+    }
+
   protected:
     /// The error
     std::shared_ptr<fptype> error;

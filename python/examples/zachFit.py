@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
-from __future__ import division, print_function
 
 import argparse
 
@@ -23,11 +21,10 @@ def getData(data, dm, filename, mode, reduce=1, keyw="data_hist"):
             if dm:
                 data.addEvent()
 
-    print("Read in events:", data.getNumEvents())
+    print(f"Read in {keyw} events:", data.getNumEvents())
 
 
 def main(mode=0, data=0, reduce=10):
-
     # Get the name of the files to use
     if data == 0:
         mcfile = (
@@ -152,7 +149,7 @@ def main(mode=0, data=0, reduce=10):
     total.setData(data_dataset)
 
     chi_control = ()
-    if 2 == mode:
+    if mode == 2:
         chi_control.reset(BinnedChisqFit)
         total.setFitControl(chi_control.get())
 

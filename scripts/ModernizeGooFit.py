@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
-from __future__ import print_function
 
 import re
 
@@ -15,7 +13,7 @@ except ImportError:
 
 DIR = local.path(__file__).dirname
 
-conversion = dict()
+conversion = {}
 conversion["brackets"] = [
     (r'^#include\s+"(\S+)"', r"#include <\1>"),
 ]
@@ -269,7 +267,7 @@ def fix_text(contents, version="2.0"):
         after = r[1]
         before = re.compile(r[0], re.MULTILINE | re.VERBOSE)
         if before.search(contents):
-            print("  Converting {} -> {}".format(r[0], after))
+            print(f"  Converting {r[0]} -> {after}")
             contents = before.sub(after, contents)
     return contents
 
@@ -280,7 +278,7 @@ def fix_files(src, version):
             contents = f.read()
         new_contents = fix_text(contents, version)
         if contents != new_contents:
-            print("Converted: {}".format(name))
+            print(f"Converted: {name}")
             with name.open("w") as f:
                 f.write(new_contents)
 

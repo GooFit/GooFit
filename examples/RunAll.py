@@ -1,10 +1,8 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 # This is a python script to test the output of the files.
 # It requires plumbum (pip install plumbum or conda install -c conda-forge plumbum)
 
-from __future__ import print_function
 
 import re
 
@@ -45,13 +43,13 @@ def test(filename, *args):
             colors.success.print(filename, "Successful")
         else:
             colors.fatal.print(filename, "Failed with status code:", code)
-    return dict(
-        name=filename + " " + " ".join(map(str, args)),
-        code=code,
-        time=t.interval,
-        stdout=stdout,
-        stderr=stderr,
-    )
+    return {
+        "name": filename + " " + " ".join(map(str, args)),
+        "code": code,
+        "time": t.interval,
+        "stdout": stdout,
+        "stderr": stderr,
+    }
 
 
 def make_results(profile=False):

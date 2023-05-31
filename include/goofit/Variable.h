@@ -16,8 +16,8 @@ namespace GooFit {
 class Params;
 class Minuit1;
 
-/// This class is specifically for any indexable quanity: Observables or Variables.
-/// It contains the idea of a limited quanity (min==max means no limit).
+/// This class is specifically for any indexable quantity: Observables or Variables.
+/// It contains the idea of a limited quantity (min==max means no limit).
 /// It can also take a value.
 class Indexable {
   protected:

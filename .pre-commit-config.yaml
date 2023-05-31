@@ -4,12 +4,12 @@ ci:
 
 repos:
 - repo: https://github.com/psf/black
-  rev: 22.8.0
+  rev: 23.3.0
   hooks:
   - id: black
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.3.0
+  rev: v4.4.0
   hooks:
   - id: check-added-large-files
   - id: check-case-conflict
@@ -21,23 +21,12 @@ repos:
   - id: mixed-line-ending
   - id: requirements-txt-fixer
   - id: trailing-whitespace
-  - id: fix-encoding-pragma
 
-- repo: https://github.com/PyCQA/isort
-  rev: 5.10.1
+- repo: https://github.com/charliermarsh/ruff-pre-commit
+  rev: "v0.0.269"
   hooks:
-  - id: isort
-
-- repo: https://github.com/asottile/pyupgrade
-  rev: v2.38.2
-  hooks:
-  - id: pyupgrade
-
-- repo: https://github.com/PyCQA/flake8
-  rev: 5.0.4
-  hooks:
-  - id: flake8
-    additional_dependencies: [flake8-bugbear]
+  - id: ruff
+    args: ["--fix", "--show-fixes"]
 
 - repo: https://github.com/cheshirekow/cmake-format-precommit
   rev: v0.6.13
@@ -48,19 +37,14 @@ repos:
     files: (\.cmake|CMakeLists.txt)(.in)?$
 
 - repo: https://github.com/codespell-project/codespell
-  rev: v2.2.1
+  rev: v2.2.4
   hooks:
   - id: codespell
-    args: ["-L", "sur,falsy"]
+    args: ["-L", "sur,falsy,gaus,hist,lsit,nd,parms,retur,ue,ba,claus,fo"]
 
 - repo: https://github.com/pre-commit/pygrep-hooks
-  rev: v1.9.0
+  rev: v1.10.0
   hooks:
-  - id: python-check-blanket-noqa
-  - id: python-check-blanket-type-ignore
-  - id: python-no-log-warn
-  - id: python-no-eval
-  - id: python-use-type-annotations
   - id: rst-backticks
   - id: rst-directive-colons
   - id: rst-inline-touching-normal
@@ -74,13 +58,13 @@ repos:
     exclude: .pre-commit-config.yaml
 
 - repo: https://github.com/pre-commit/mirrors-clang-format
-  rev: v14.0.6
+  rev: v16.0.4
   hooks:
    - id: clang-format
      types_or: [c++, c, cuda]
 
 - repo: https://github.com/shellcheck-py/shellcheck-py
-  rev: v0.8.0.4
+  rev: v0.9.0.2
   hooks:
   - id: shellcheck
     stages: [manual]

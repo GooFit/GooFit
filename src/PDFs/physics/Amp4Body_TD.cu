@@ -503,10 +503,10 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
         // std::cout << std::endl;
     }
 
-    registerConstant(_LineShapes.size());  //#LS
-    registerConstant(_SpinFactors.size()); //#SF
+    registerConstant(_LineShapes.size());  // #LS
+    registerConstant(_SpinFactors.size()); // #SF
     _NUM_AMPLITUDES = components.size();
-    registerConstant(_NUM_AMPLITUDES); //# AMP
+    registerConstant(_NUM_AMPLITUDES); // # AMP
     registerConstant(coeff_counter); // Number of coefficients, because its not necessary to be equal to number of Amps.
     registerConstant(total_lineshapes_spinfactors);
 
@@ -732,6 +732,14 @@ __host__ int Amp4Body_TD::getNumAccNormEvents() const {
     return totNumAccNormEvents;
 }
 
+__host__ fptype Amp4Body_TD::getSumInitNormEventWeights() const {
+    fptype sumWeights = 0;
+    for(auto const &n : _normEvents) {
+        sumWeights += n->getSumInitWeights();
+    }
+    return sumWeights;
+}
+
 // this is where the actual magic happens. This function does all the calculations!
 __host__ auto Amp4Body_TD::normalize() -> fptype {
     if(_cachedResSF == nullptr)
@@ -777,7 +785,7 @@ __host__ auto Amp4Body_TD::normalize() -> fptype {
                                                             getLSFunctionIndices());
         }
         fptype normResultsSum = MathUtils::doNeumaierSummation(normResults);
-        ret                   = normResultsSum / getNumAccNormEvents();
+        ret                   = normResultsSum / getSumInitNormEventWeights();
     }
 
     _SpinsCalculated = true;

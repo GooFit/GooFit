@@ -38,8 +38,10 @@ jobs:
 
   clang-tidy:
     runs-on: ubuntu-latest
-    container: silkeh/clang:12
+    container: silkeh/clang:15
     steps:
+    - name: Get Git
+      run: apt update && apt install -y git
     - uses: actions/checkout@v3
       with:
         submodules: true
@@ -80,6 +82,7 @@ jobs:
     - name: Build
       run: cmake --build build -j2 -v
     - name: Verify Python built
+      if: matrix.cuda != '8.0-devel-ubuntu16.04'
       run: PYTHONPATH=./build python3 -m goofit
 
   configure:

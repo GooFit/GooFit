@@ -7,7 +7,7 @@
 namespace GooFit {
 
 #define M_2PI 6.28318530717958
-//#define ROOT2 1.41421356
+// #define ROOT2 1.41421356
 
 // tables for Pade approximation
 __constant__ fptype C[7]
@@ -15,7 +15,7 @@ __constant__ fptype C[7]
 __constant__ fptype D[7]
     = {192192.0, 8648640.0, 183783600.0, 2329725600.0, 18332414100.0, 84329104860.0, 175685635125.0};
 
-//#define UNROLL_LOOP 1
+// #define UNROLL_LOOP 1
 
 #ifndef UNROLL_LOOP
 __constant__ fptype n1[12] = {0.25, 1.0, 2.25, 4.0, 6.25, 9.0, 12.25, 16.0, 20.25, 25.0, 30.25, 36.0};

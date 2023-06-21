@@ -5,7 +5,9 @@
 
 namespace GooFit {
 
-extern __constant__ unsigned int AmpIndices[500];
+#define AMP_INDICES_SIZE (600)
+
+extern __constant__ unsigned int AmpIndices[AMP_INDICES_SIZE];
 extern __device__ fpcomplex *cResSF[10];
 extern __device__ fpcomplex *cResSF_TD[10];
 extern __device__ fpcomplex *Amps_DP[10];

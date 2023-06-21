@@ -89,10 +89,8 @@ class Amp4Body_TD final : public Amp4BodyBase {
 
     __host__ void setGenerationOffset(int off) { generation_offset = off; }
 
-    __host__ void setMaxWeight(fptype wmax) { maxWeight = wmax; }
-
     __host__ auto GenerateSig(unsigned int numEvents, int seed = 0) -> std::
-        tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::BoolVector_h>;
+        tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::BoolVector_h>;
 
     __host__ void populateArrays() override;
 

@@ -105,12 +105,13 @@ struct exp_functor {
         auto val_pdf_envelope = exp(-time * gammamin) * wmax;
         auto rand_uniform     = dist(rand);
         if(val_pdf_envelope < thrust::get<1>(t)) {
-            printf("ERROR: Amp4Body_TD::exp_functor: value of envelope function smaller than pdf to generate in "
-                   "accept-reject method! envelope: %f pdf: %f decay time: %f expo: %f\n",
-                   val_pdf_envelope,
-                   val_pdf_to_gen,
-                   time,
-                   exp(-time * gammamin));
+            printf("ERROR: Amp4Body_TD::exp_functor: You just encountered a higher maximum weight than observed in previous "
+                "iterations -- the value of envelope function smaller than pdf to generate in accept-reject method! "
+                "envelope: %f pdf: %f decay time: %f expo: %f\n",
+                val_pdf_envelope,
+                val_pdf_to_gen,
+                time,
+                exp(-time * gammamin));
         }
         return rand_uniform * val_pdf_envelope < val_pdf_to_gen;
     }
@@ -146,7 +147,7 @@ void Amp4Body_TD::printAmpMappings() const {
         std::vector<unsigned int> sfIndices = ampCalc->getSpinFactorIndices(_NUM_AMPLITUDES);
         printSelectedSFs(sfIndices);
 
-        std::cout << std::endl;
+        std::cout << std::endl << std::endl;
     } // end loop over amps
 }
 
@@ -155,13 +156,6 @@ void Amp4Body_TD::printAmpMappings() const {
 // changes. Note that in a multithread environment each thread needs its
 // own cache, hence the '10'. Ten threads should be enough for anyone!
 __device__ fpcomplex *Amps_TD[10];
-/*
-Constant memory array to hold specific info for amplitude calculation.
-First entries are the starting points in array, necessary, because number of Lineshapes(LS) or Spinfactors(SF) can vary
-|start of each Amplitude| #Linshapes | #Spinfactors | LS-indices | SF-indices|
-| 1 entry per Amplitude | 1 per Amp  | 1 per Amp    | #LS in Amp| #SF in Amp|
-*/
-// __constant__ unsigned int AmpIndices_TD[100];
 
 // This function gets called by the GooFit framework to get the value of the PDF.
 __device__ auto device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) -> fptype {
@@ -506,7 +500,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     registerConstant(_LineShapes.size());  // #LS
     registerConstant(_SpinFactors.size()); // #SF
     _NUM_AMPLITUDES = components.size();
-    registerConstant(_NUM_AMPLITUDES); // # AMP
+    registerConstant(_NUM_AMPLITUDES);     // # AMP
     registerConstant(coeff_counter); // Number of coefficients, because its not necessary to be equal to number of Amps.
     registerConstant(total_lineshapes_spinfactors);
 
@@ -556,8 +550,6 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     GOOFIT_INFO("Num. amp. calcs: {}", _AmpCalcs.size());
 
     setSeparateNorm();
-
-    printAmpMappings();
 }
 
 __host__ void Amp4Body_TD::populateArrays() {
@@ -823,9 +815,11 @@ __host__ std::vector<unsigned int> Amp4Body_TD::getLSFunctionIndices() const {
 }
 
 __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std::
-    tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::BoolVector_h> {
+    tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::BoolVector_h> {
     initialize();
     copyParams();
+
+    auto fc = fitControl;
 
     std::vector<mcbooster::GReal_t> masses(_DECAY_INFO.particle_masses.begin() + 1, _DECAY_INFO.particle_masses.end());
     mcbooster::PhaseSpace phsp(_DECAY_INFO.particle_masses[0], masses, numEvents, generation_offset);
@@ -892,6 +886,7 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
     auto h2 = new mcbooster::Particles_h(d2);
     auto h3 = new mcbooster::Particles_h(d3);
     auto h4 = new mcbooster::Particles_h(d4);
+    // FIXME possible memory leak. are these ever deleted?
 
     mcbooster::ParticlesSet_h ParSet(4);
     ParSet[0] = h1;
@@ -905,6 +900,7 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
     auto SigGen_CosTheta34_h = new mcbooster::RealVector_h(SigGen_CosTheta34_d);
     auto SigGen_phi_h        = new mcbooster::RealVector_h(SigGen_phi_d);
     auto dtime_h             = new mcbooster::RealVector_h(dtime_d);
+    // FIXME possible memory leak. are these ever deleted?
 
     mcbooster::VariableSet_h VarSet(6);
     VarSet[0] = SigGen_M12_h;
@@ -919,7 +915,7 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
     // ANSWER: _model_m12, _model_m34,         _model_cos12, _model_cos34,
     //   _model_phi, _model_eventNumber, _model_dtime, _model_sigmat
     // -> 8th parameter is decay-time resolution -> not important when generating with truth resolution
-    auto DS = new mcbooster::RealVector_d(8 * nAcc);
+    auto DS = new mcbooster::RealVector_d(8 * nAcc); // FIXME possible memory leak. is ever deleted?
     thrust::counting_iterator<int> eventNumber(0);
 
 #pragma unroll
@@ -946,31 +942,29 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
     setForceIntegrals();
     host_normalizations.sync(d_normalizations);
 
-    thrust::device_vector<fptype> weights(nAcc);
+    thrust::counting_iterator<int> eventIndex(0);
     thrust::constant_iterator<int> eventSize(8);
     thrust::constant_iterator<fptype *> arrayAddress(dev_event_array);
-    thrust::counting_iterator<int> eventIndex(0);
 
-    auto fc = fitControl;
     setFitControl(std::make_shared<ProbFit>());
-    thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
-                      thrust::make_zip_iterator(thrust::make_tuple(eventIndex + nAcc, arrayAddress, eventSize)),
-                      weights.begin(),
-                      *logger);
-    cudaDeviceSynchronize();
 
-    fptype wmax = 1.1 * (fptype)*thrust::max_element(weights.begin(), weights.end());
+    if(maxWeight == 0.0) // if max weight hasn't been set (i.e. this is first batch, determine an ideal value from the data)
+    {
+        GOOFIT_INFO("Determining ideal max weight value using this sample...");
 
-    if(wmax > maxWeight && maxWeight != 0) {
-        throw GooFit::GeneralError(
-            "WARNING: you just encountered a higher maximum weight than observed in previous iterations.\n"
-            "WARNING: Consider recalculating your AccRej flags and acceping based upon these.\n"
-            "WARNING: previous weight: {}, new weight: {}\n",
-            maxWeight,
-            wmax);
-    }
+        thrust::device_vector<fptype> weights(nAcc);
 
-    maxWeight = wmax > maxWeight ? wmax : maxWeight;
+        thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
+                          thrust::make_zip_iterator(thrust::make_tuple(eventIndex + nAcc, arrayAddress, eventSize)),
+                          weights.begin(),
+                          *logger);
+        cudaDeviceSynchronize();
+
+        maxWeight = 1.2 * (fptype)*thrust::max_element(weights.begin(), weights.end());
+        GOOFIT_INFO("Model max weight: {}", maxWeight);
+    } // end if maxWeight not yet determined
+
+    // this check for this being a valid max weight for this batch has been moved to exp_functor
 
     // QUESTION: why are we doing this? -> copying decay times, where we evaluate function for accept-reject
     thrust::copy(dtime_d.begin(), dtime_d.end(), sr2.begin());
@@ -993,13 +987,12 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
     // therefore perpare local copies to capture the variables we need
     unsigned int tmpoff   = generation_offset;
     unsigned int tmpparam = 6;
-    wmax                  = maxWeight;
 
     thrust::transform(
         thrust::make_zip_iterator(thrust::make_tuple(eventIndex, results.begin(), arrayAddress, eventSize)),
         thrust::make_zip_iterator(thrust::make_tuple(eventIndex + nAcc, results.end(), arrayAddress, eventSize)),
         flag2.begin(), // Should be weight2
-        exp_functor(tmpparam, tmpoff, gammamin, wmax));
+        exp_functor(tmpparam, tmpoff, gammamin, maxWeight));
 
     // set weights with weight2
 
@@ -1009,12 +1002,11 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
 
     gooFree(dev_event_array);
 
-    auto weights_h = mcbooster::RealVector_h(weights);
     auto results_h = mcbooster::RealVector_h(results);
     auto flags_h   = mcbooster::BoolVector_h(flag2);
     cudaDeviceSynchronize();
 
-    return std::make_tuple(ParSet, VarSet, weights_h, flags_h);
+    return std::make_tuple(ParSet, VarSet, flags_h);
 }
 
 } // namespace GooFit

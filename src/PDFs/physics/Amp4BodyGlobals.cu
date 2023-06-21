@@ -8,7 +8,7 @@ First entries are the starting points in array, necessary, because number of Lin
 |start of each Amplitude| #Linshapes | #Spinfactors | LS-indices | SF-indices|
 | 1 entry per Amplitude | 1 per Amp  | 1 per Amp    | #LS in Amp| #SF in Amp|
 */
-__constant__ unsigned int AmpIndices[500];
+__constant__ unsigned int AmpIndices[AMP_INDICES_SIZE];
 
 // The function of this array is to hold all the cached waves; specific
 // waves are recalculated when the corresponding resonance mass or width

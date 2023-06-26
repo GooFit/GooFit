@@ -57,6 +57,8 @@ target_link_libraries(PdfBase PUBLIC backtrace)
 # Safe to use ROOT::Minuit2 even if ROOT not found
 target_link_libraries(PdfBase PUBLIC ROOT::Minuit2)
 
+goofit_add_library(TD4BodyOutput TD4BodyOutput.cpp ${PROJECT_SOURCE_DIR}/include/goofit/TD4BodyOutput.h)
+
 # Note: order is important on Linux, derived classes first
 set(lib_list
     Application
@@ -66,7 +68,8 @@ set(lib_list
     FitManager2
     DataSet
     Variable
-    MathUtils)
+    MathUtils
+    TD4BodyOutput)
 
 if(ROOT_FOUND)
   list(INSERT lib_list 0 FitManager1)

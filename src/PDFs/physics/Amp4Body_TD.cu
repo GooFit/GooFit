@@ -105,13 +105,14 @@ struct exp_functor {
         auto val_pdf_envelope = exp(-time * gammamin) * wmax;
         auto rand_uniform     = dist(rand);
         if(val_pdf_envelope < thrust::get<1>(t)) {
-            printf("ERROR: Amp4Body_TD::exp_functor: You just encountered a higher maximum weight than observed in previous "
-                "iterations -- the value of envelope function smaller than pdf to generate in accept-reject method! "
-                "envelope: %f pdf: %f decay time: %f expo: %f\n",
-                val_pdf_envelope,
-                val_pdf_to_gen,
-                time,
-                exp(-time * gammamin));
+            printf("ERROR: Amp4Body_TD::exp_functor: You just encountered a higher maximum weight than observed in "
+                   "previous "
+                   "iterations -- the value of envelope function smaller than pdf to generate in accept-reject method! "
+                   "envelope: %f pdf: %f decay time: %f expo: %f\n",
+                   val_pdf_envelope,
+                   val_pdf_to_gen,
+                   time,
+                   exp(-time * gammamin));
         }
         return rand_uniform * val_pdf_envelope < val_pdf_to_gen;
     }
@@ -267,7 +268,8 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
                                   GooPdf *efficiency,
                                   Observable *mistag,
                                   const std::vector<long> &normSeeds,
-                                  unsigned int numNormEventsToGenPerBatch)
+                                  unsigned int numNormEventsToGenPerBatch,
+                                  double maxWeightMultiplier)
     : Amp4Body_TD(
         n,
         observables,
@@ -275,7 +277,8 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
         Tres,
         efficiency,
         mistag,
-        NormEvents_4Body_HostCached::buildBatches(normSeeds, numNormEventsToGenPerBatch, decay.particle_masses)) {
+        NormEvents_4Body_HostCached::buildBatches(normSeeds, numNormEventsToGenPerBatch, decay.particle_masses),
+        maxWeightMultiplier) {
     GOOFIT_INFO("Built Amp4Body_TD model where the MC events used for normalization are stored on the host side.");
     GOOFIT_INFO("This may result in much longer computation times!");
     GOOFIT_INFO("Use the alternate Amp4Body_TD constructor for maximum speed!");
@@ -291,14 +294,16 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
                                   GooPdf *efficiency,
                                   Observable *mistag,
                                   long normSeed,
-                                  unsigned int numNormEventsToGen)
+                                  unsigned int numNormEventsToGen,
+                                  double maxWeightMultiplier)
     : Amp4Body_TD(n,
                   observables,
                   decay,
                   Tres,
                   efficiency,
                   mistag,
-                  NormEvents_4Body_DeviceCached::buildBatches({normSeed}, numNormEventsToGen, decay.particle_masses)) {}
+                  NormEvents_4Body_DeviceCached::buildBatches(
+                      {normSeed}, numNormEventsToGen, decay.particle_masses), maxWeightMultiplier) {}
 
 // Does common initialization
 __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
@@ -307,12 +312,13 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
                                   MixingTimeResolution *Tres,
                                   GooPdf *efficiency,
                                   Observable *mistag,
-                                  const std::vector<NormEvents_4Body_Base *> &normEvents)
+                                  const std::vector<NormEvents_4Body_Base *> &normEvents,
+                                  double maxWeightMultiplier)
     : Amp4BodyBase("Amp4Body_TD", n)
     , _DECAY_INFO(decay)
     , _resolution(Tres)
     , _totalEventSize(observables.size() + 2) // number of observables plus eventnumber
-{
+    , _MAX_WEIGHT_MULTIPLIER(maxWeightMultiplier) {
     _normEvents.resize(normEvents.size());
     for(int n = 0; n < normEvents.size(); n++) {
         _normEvents[n] = std::unique_ptr<NormEvents_4Body_Base>(normEvents[n]);
@@ -814,8 +820,8 @@ __host__ std::vector<unsigned int> Amp4Body_TD::getLSFunctionIndices() const {
     return lsFunctionIndices;
 }
 
-__host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std::
-    tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::BoolVector_h> {
+__host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed)
+    -> std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::BoolVector_h> {
     initialize();
     copyParams();
 
@@ -948,7 +954,8 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
 
     setFitControl(std::make_shared<ProbFit>());
 
-    if(maxWeight == 0.0) // if max weight hasn't been set (i.e. this is first batch, determine an ideal value from the data)
+    if(maxWeight
+       == 0.0) // if max weight hasn't been set (i.e. this is first batch, determine an ideal value from the data)
     {
         GOOFIT_INFO("Determining ideal max weight value using this sample...");
 
@@ -960,7 +967,7 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
                           *logger);
         cudaDeviceSynchronize();
 
-        maxWeight = 1.2 * (fptype)*thrust::max_element(weights.begin(), weights.end());
+        maxWeight = 1.5 * (fptype)*thrust::max_element(weights.begin(), weights.end());
         GOOFIT_INFO("Model max weight: {}", maxWeight);
     } // end if maxWeight not yet determined
 

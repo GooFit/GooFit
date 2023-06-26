@@ -51,7 +51,8 @@ class Amp4Body_TD final : public Amp4BodyBase {
                          GooPdf *efficiency,
                          Observable *mistag,
                          const std::vector<long> &normSeeds,
-                         unsigned int numNormEventsToGenPerBatch);
+                         unsigned int numNormEventsToGenPerBatch,
+                         double maxWeightMultiplier);
 
     // Build Amp4Body_TD where the MC events used for normalization are stored on the device side.
     // This is much faster than the other case (where the events used for normalization are stored on the host side)
@@ -63,7 +64,8 @@ class Amp4Body_TD final : public Amp4BodyBase {
                          GooPdf *efficiency,
                          Observable *mistag,
                          long normSeed,
-                         unsigned int numNormEventsToGen);
+                         unsigned int numNormEventsToGen,
+                         double maxWeightMultiplier);
 
     // Does common initialization
     __host__ Amp4Body_TD(std::string n,
@@ -72,7 +74,8 @@ class Amp4Body_TD final : public Amp4BodyBase {
                          MixingTimeResolution *Tres,
                          GooPdf *efficiency,
                          Observable *mistag,
-                         const std::vector<NormEvents_4Body_Base *> &normEvents);
+                         const std::vector<NormEvents_4Body_Base *> &normEvents,
+                         double maxWeightMultiplier);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalization will get *really* confused and give wrong answers.
@@ -134,6 +137,7 @@ class Amp4Body_TD final : public Amp4BodyBase {
     unsigned int generation_offset{0};
     double maxWeight{0};
     unsigned int _NUM_AMPLITUDES;
+    const double _MAX_WEIGHT_MULTIPLIER;
 };
 
 } // namespace GooFit

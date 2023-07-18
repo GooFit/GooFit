@@ -967,7 +967,7 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed)
                           *logger);
         cudaDeviceSynchronize();
 
-        maxWeight = 1.5 * (fptype)*thrust::max_element(weights.begin(), weights.end());
+        maxWeight = _MAX_WEIGHT_MULTIPLIER * (fptype)*thrust::max_element(weights.begin(), weights.end());
         GOOFIT_INFO("Model max weight: {}", maxWeight);
     } // end if maxWeight not yet determined
 

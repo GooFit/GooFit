@@ -31,7 +31,7 @@ class TD4BodyOutput final {
     TFile _rootFile;
     TTree _tree;
 #else
-    static inline const std::string _DELIM = ",";
+    static const std::string _DELIM;
     std::ofstream _csvFile;
     std::stringstream _ss;
 #endif

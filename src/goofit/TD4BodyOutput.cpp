@@ -8,6 +8,10 @@
 #include <goofit/TD4BodyOutput.h>
 
 namespace GooFit {
+
+const std::string TD4BodyOutput::_DELIM = ",";
+
+
 TD4BodyOutput::TD4BodyOutput(const std::string &outFile, bool write4Vecs) {
     _write4Vecs = write4Vecs;
 #ifdef ROOT_FOUND

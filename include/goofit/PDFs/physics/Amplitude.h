@@ -33,6 +33,8 @@ class Amplitude : public AmpComponent {
     // have the lineshape parameters changed since the last evaluation?
     bool lineshapeParametersChanged() const;
 
+    std::string getUniqueDecayStr() const {return _uniqueDecayStr;}
+
   private:
     std::string _uniqueDecayStr;
     Variable _ar;

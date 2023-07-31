@@ -186,4 +186,12 @@ typedef struct {
 typedef thrust::tuple<fptype, fptype, fptype, fptype> WaveHolder;
 typedef thrust::tuple<fptype, fptype, fptype, fptype, fptype, fptype> ThreeComplex;
 
+struct PhspPoint4Body {
+    fptype _m12;
+    fptype _m34;
+    fptype _cos12;
+    fptype _cos34;
+    fptype _phi;
+};
+
 } // namespace GooFit

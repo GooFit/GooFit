@@ -51,36 +51,32 @@ void init_Lineshapes(py::module &m) {
 #if GOOFIT_KMATRIX
     py::class_<Lineshapes::kMatrix, Lineshape>(m_ls, "kMatrix")
         .def(py::init<std::string,
-                      Variable,
-                      Variable,
+                      unsigned int,
+                      bool,
                       Variable,
                       Variable,
                       Variable,
                       Variable,
                       std::vector<Variable>,
                       std::vector<Variable>,
-                      std::vector<Variable>,
-                      std::vector<Variable>,
-                      std::vector<Variable>,
-                      std::vector<Variable>,
+                      Variable,
+                      Variable,
                       unsigned int,
                       unsigned int,
                       FF,
                       fptype>(),
              "Create a kMatrix lineshape",
              "name"_a,
-             "a_r"_a,
-             "a_i"_a,
+             "pterm"_a,
+             "is_pole"_a,
              "sA0"_a,
              "sA"_a,
              "s0_prod"_a,
              "s0_scatt"_a,
-             "beta_r"_a,
-             "beta_i"_a,
-             "f_prod_r"_a,
-             "f_prod_i"_a,
-             "fscat"_a,
+             "f"_a,
              "poles"_a,
+             "mass"_a,
+             "width"_a,
              "L"_a,
              "Mpair"_a,
              "FormFac"_a = FF::BL_Prime,
@@ -165,6 +161,23 @@ void init_Lineshapes(py::module &m) {
              "FormFac"_a        = FF::BL_Prime,
              "radius"_a         = 1.5,
              "AdditionalVars"_a = std::vector<Variable>());
+    py::enum_<Lineshapes::FOCUS::Mod>(m_ls, "FocusMod")
+        .value("Kpi", Lineshapes::FOCUS::Mod::Kpi)
+        .value("KEta", Lineshapes::FOCUS::Mod::KEta)
+        .value("I32", Lineshapes::FOCUS::Mod::I32);
+
+    py::class_<Lineshapes::FOCUS, Lineshape>(m_ls, "FOCUS")
+        .def(
+            py::init<std::string, Lineshapes::FOCUS::Mod, Variable, Variable, unsigned int, unsigned int, FF, fptype>(),
+            "Create a FOCUS lineshape",
+            "name"_a,
+            "mod"_a,
+            "mass"_a,
+            "width"_a,
+            "L"_a,
+            "Mpair"_a,
+            "FormFac"_a = FF::BL_Prime,
+            "radius"_a  = 1.5);
 
     py::class_<Lineshapes::GSpline, Lineshape>(m_ls, "GSpline")
         .def(py::init<std::string,

@@ -456,17 +456,17 @@ __device__ fptype device_threegauss_resolutionSplice(fptype coshterm,
                                                      fptype ymixing,
                                                      fptype sigma,
                                                      ParameterContainer &pc) {
-    fptype coreFraction       = pc.getParameter(0);
-    fptype tailFraction       = pc.getParameter(1);
-    fptype outlFraction       = 1 - coreFraction - tailFraction;
-    fptype coreBias           = pc.getParameter(2);
-    fptype coreScaleFactor    = pc.getParameter(3);
-    fptype tailBias           = pc.getParameter(4);
-    fptype tailScaleFactor    = pc.getParameter(5);
-    fptype outlBias           = pc.getParameter(6);
-    fptype outlScaleFactor    = pc.getParameter(7);
-    fptype common_bias_offset = pc.getParameter(8);
-    fptype common_width_scale = pc.getParameter(9);
+    fptype coreFraction        = pc.getParameter(0);
+    fptype tailFraction        = pc.getParameter(1);
+    fptype outlFraction        = 1 - coreFraction - tailFraction;
+    fptype coreBias            = pc.getParameter(2);
+    fptype coreScaleFactor     = pc.getParameter(3);
+    fptype tailBias            = pc.getParameter(4);
+    fptype tailScaleFactor     = pc.getParameter(5);
+    fptype outlBias            = pc.getParameter(6);
+    fptype outlScaleFactor     = pc.getParameter(7);
+    fptype common_bias_offset  = pc.getParameter(8);
+    fptype common_width_scale  = pc.getParameter(9);
     fptype common_bias_offset2 = pc.getParameter(10);
     fptype common_width_scale2 = pc.getParameter(11);
     coreBias += common_bias_offset;

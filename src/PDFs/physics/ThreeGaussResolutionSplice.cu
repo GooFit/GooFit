@@ -467,12 +467,14 @@ __device__ fptype device_threegauss_resolutionSplice(fptype coshterm,
     fptype outlScaleFactor    = pc.getParameter(7);
     fptype common_bias_offset = pc.getParameter(8);
     fptype common_width_scale = pc.getParameter(9);
+    fptype common_bias_offset2 = pc.getParameter(10);
+    fptype common_width_scale2 = pc.getParameter(11);
     coreBias += common_bias_offset;
-    tailBias += common_bias_offset;
-    outlBias += common_bias_offset;
+    tailBias += common_bias_offset2;
+    outlBias += common_bias_offset2;
     coreScaleFactor *= common_width_scale;
-    tailScaleFactor *= common_width_scale;
-    outlScaleFactor *= common_width_scale;
+    tailScaleFactor *= common_width_scale2;
+    outlScaleFactor *= common_width_scale2;
 
     int nKnots   = pc.getConstant(0);
     int nSplines = nKnots - 1;
@@ -484,11 +486,11 @@ __device__ fptype device_threegauss_resolutionSplice(fptype coshterm,
     fptype spline_2[7];
     fptype spline_3[7];
     for(int i = 0; i < nKnots; i++) {
-        knots[i] = pc.getParameter(10 + i);
+        knots[i] = pc.getParameter(12 + i);
     }
     knots[0] = 0.;
     for(int i = 0; i < nSplines; i++) {
-        int offset  = 10 + nKnots + i;
+        int offset  = 12 + nKnots + i;
         spline_0[i] = pc.getParameter(offset);
         spline_1[i] = pc.getParameter(offset + nSplines);
         spline_2[i] = pc.getParameter(offset + 2 * nSplines);
@@ -655,7 +657,9 @@ ThreeGaussResolutionSplice::ThreeGaussResolutionSplice(Variable cf,
                                                        std::vector<Variable> a2,
                                                        std::vector<Variable> a3,
                                                        Variable common_bias_offset,
-                                                       Variable common_width_scale)
+                                                       Variable common_width_scale,
+                                                       Variable common_bias_offset2,
+                                                       Variable common_width_scale2)
     : MixingTimeResolution("ThreeGaussResolutionSplice", cf, tf, cb, cs, tb, ts, ob, os)
     , m_knots(knots)
     , m_a0(a0)
@@ -666,6 +670,8 @@ ThreeGaussResolutionSplice::ThreeGaussResolutionSplice(Variable cf,
     registerConstant(knots.size());
     registerParameter(common_bias_offset);
     registerParameter(common_width_scale);
+    registerParameter(common_bias_offset2);
+    registerParameter(common_width_scale2);
     for(auto knot : knots)
         registerParameter(knot);
     for(auto i : a0)

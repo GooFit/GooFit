@@ -23,3 +23,4 @@ bool test_fitter(GooFit::GooPdf *pdf) {
     fitter.fit();
     return bool(fitter);
 }
+

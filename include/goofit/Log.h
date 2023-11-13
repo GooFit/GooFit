@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <stdio.h>
 
 #include <fmt/format.h>
 #include <goofit/Color.h>

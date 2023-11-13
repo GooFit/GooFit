@@ -51,6 +51,8 @@ class.
 #include <cstdarg>
 #include <map>
 
+#include <sys/time.h>
+
 namespace GooFit {
 
 struct genExp {
@@ -118,37 +120,49 @@ struct exp_functor {
     }
 };
 
-void Amp4Body_TD::printSelectedLineshapes(const std::vector<unsigned int> &lsIndices) const {
-    std::cout << "Lineshapes:" << std::endl;
-    for(int l = 0; l < lsIndices.size(); l++) {
+size_t Amp4Body_TD::getCachedResSFStride() const
+{
+    return _LineShapes.size() + _SpinFactors.size();
+}
+
+void Amp4Body_TD::printSelectedLineshapes(const std::vector<size_t> &lsIndices) const 
+{
+    for(int l = 0; l < lsIndices.size(); l++) 
+    {
         int index = lsIndices[l];
-        std::cout << "LS #" << index << ": " << *_LineShapes[index] << std::endl;
+        std::cout << "LS #" << index << ": " << *(_LineShapes[index]) << std::endl;
+        //GOOFIT_INFO("LS #{}: {}", index, *(_LineShapes[index]));
     }
 }
 
-void Amp4Body_TD::printSelectedSFs(const std::vector<unsigned int> &sfIndices) const {
-    std::cout << "Spin factors:" << std::endl;
-    for(int s = 0; s < sfIndices.size(); s++) {
+void Amp4Body_TD::printSelectedSFs(const std::vector<size_t> &sfIndices) const 
+{
+    for(int s = 0; s < sfIndices.size(); s++) 
+    {
         int index = sfIndices[s];
         std::cout << "SF #" << index << ": " << *(_SpinFactors[index]) << std::endl;
+        //GOOFIT_INFO("SF #{}: {}", index, *(_SpinFactors[index])); 
     }
 }
 
 void Amp4Body_TD::printAmpMappings() const {
-    std::cout << "\nAmplitudes included in Amp4Body_TD model:" << std::endl << std::endl;
+    GOOFIT_INFO("\nAmplitudes included in Amp4Body_TD model:\n");
 
-    for(int a = 0; a < _AmpCalcs.size(); a++) {
+    for(int a = 0; a < _AmpCalcs.size(); a++) 
+    {
         AmpCalc_TD *ampCalc = _AmpCalcs[a];
         Amplitude *amp      = dynamic_cast<Amplitude *>(components[a]);
         std::cout << "Amplitude # " << a << " (" << amp->_uniqueDecayStr << "):" << std::endl;
 
-        std::vector<unsigned int> lsIndices = ampCalc->getLineshapeIndices(_NUM_AMPLITUDES);
+        GOOFIT_INFO("Lineshapes:");
+        std::vector<size_t> lsIndices = ampCalc->getLineshapeIndices(_NUM_AMPLITUDES);
         printSelectedLineshapes(lsIndices);
 
-        std::vector<unsigned int> sfIndices = ampCalc->getSpinFactorIndices(_NUM_AMPLITUDES);
+        GOOFIT_INFO("Spin factors:")
+        std::vector<size_t> sfIndices = ampCalc->getSpinFactorIndices(_NUM_AMPLITUDES);
         printSelectedSFs(sfIndices);
 
-        std::cout << std::endl << std::endl;
+        GOOFIT_INFO("\n\n");
     } // end loop over amps
 }
 
@@ -608,29 +622,38 @@ __host__ void Amp4Body_TD::computeCachedValues(const std::vector<bool> &lineshap
     thrust::constant_iterator<int> eventSize(_totalEventSize);
     thrust::counting_iterator<int> eventIndex(0);
 
+    GOOFIT_INFO("Computing cached values for {} events", numEntries);
+
+    const size_t CACHEDRESSF_STRIDE = getCachedResSFStride();
+
     // Calculate spinfactors only once for normalization events and real events
     // strided_range is a template implemented in DalitsPlotHelpers.hh
     // it basically goes through the array by increasing the pointer by a certain amount instead of just one step.
     if(!_SpinsCalculated) {
-        for(int i = 0; i < _SpinFactors.size(); ++i) {
+        for(size_t i = 0; i < _SpinFactors.size(); ++i) {
             unsigned int offset = _LineShapes.size();
-            unsigned int stride = _LineShapes.size() + _SpinFactors.size();
+            GOOFIT_TRACE("SpinFactors - stride: {}", CACHEDRESSF_STRIDE);
 
-            GOOFIT_TRACE("SpinFactors - stride: {}", stride);
-            _sfcalculators[i]->setDalitzId(getFunctionIndex());
-            _sfcalculators[i]->setSpinFactorId(_SpinFactors[i]->getFunctionIndex());
-
+            unsigned int sfDalitzId = getFunctionIndex();
+            _sfcalculators[i]->setDalitzId(sfDalitzId);
+            unsigned int sfSpinFactorID = _SpinFactors[i]->getFunctionIndex();
+            _sfcalculators[i]->setSpinFactorId(sfSpinFactorID);
+            GOOFIT_INFO("SF calculator {}:", i);
+            GOOFIT_INFO("SF calc dalitz ID: {}, SF calc SF ID: {}", sfDalitzId, sfSpinFactorID);
+            printSelectedSFs({i});
+            GOOFIT_INFO("");
+            
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
                 strided_range<thrust::device_vector<fpcomplex>::iterator>(
-                    _cachedResSF->begin() + offset + i, _cachedResSF->end(), stride)
+                    _cachedResSF->begin()+ offset + i, _cachedResSF->end(), CACHEDRESSF_STRIDE)
                     .begin(),
                 *(_sfcalculators[i]));
 
             // DebugTools::printDeviceVecComplexVals(_cachedResSF->begin()+offset+i,
             //       _cachedResSF->end(),
-            //       stride,
+            //       CACHEDRESSF_STRIDE,
             //       "Cached res SF (in SF block)",
             //       INT_MAX, 20);
         }
@@ -638,25 +661,35 @@ __host__ void Amp4Body_TD::computeCachedValues(const std::vector<bool> &lineshap
 
     // this calculates the values of the lineshapes and stores them in the array. It is recalculated every time
     // parameters change.
-    for(int i = 0; i < _LineShapes.size(); ++i) {
+    for(unsigned int i = 0; i < _LineShapes.size(); ++i) {
         if(lineshapeChanged[i]) {
-            _lscalculators[i]->setDalitzId(getFunctionIndex());
-            _lscalculators[i]->setResonanceId(_LineShapes[i]->getFunctionIndex());
+            unsigned int lsDalitzID = getFunctionIndex();
+            _lscalculators[i]->setDalitzId(lsDalitzID);
+            unsigned int lsResonanceID = _LineShapes[i]->getFunctionIndex();
+            _lscalculators[i]->setResonanceId(lsResonanceID);
+            GOOFIT_INFO("LS calculator {}:", i);
+            GOOFIT_INFO("LS calc dalitz ID: {}, LS calc resonance ID: {}", lsDalitzID, lsResonanceID);
+            printSelectedLineshapes({i});
+            GOOFIT_INFO("");
 
-            unsigned int stride = _LineShapes.size() + _SpinFactors.size();
+            GOOFIT_TRACE("LineShape[{}] - stride: {}", _LineShapes[i]->getName().c_str(), CACHEDRESSF_STRIDE);
 
-            GOOFIT_TRACE("LineShape[{}] - stride: {}", _LineShapes[i]->getName().c_str(), stride);
+            struct timeval t1, t2;
+            gettimeofday(&t1, 0);
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
                 strided_range<thrust::device_vector<fpcomplex>::iterator>(
-                    _cachedResSF->begin() + i, _cachedResSF->end(), stride)
+                    _cachedResSF->begin() + i, _cachedResSF->end(), CACHEDRESSF_STRIDE)
                     .begin(),
                 *(_lscalculators[i]));
+            gettimeofday(&t2, 0);
+            double time = (1000000.0*(t2.tv_sec-t1.tv_sec) + t2.tv_usec-t1.tv_usec)/1000.0;
+            GOOFIT_INFO_C(GooFit::yellow, "Time to compute LS {}: {} ms", i, time);
 
             // DebugTools::printDeviceVecComplexVals(_cachedResSF->begin()+i,
             //                        _cachedResSF->end(),
-            //      stride,
+            //      CACHEDRESSF_STRIDE,
             //      "Cached res SF (in LS block)",
             // INT_MAX, 20);
         }
@@ -668,7 +701,12 @@ __host__ void Amp4Body_TD::computeCachedValues(const std::vector<bool> &lineshap
             continue;
         }
 
-        _AmpCalcs[a]->setDalitzId(getFunctionIndex());
+        unsigned int ampDalitzId = getFunctionIndex();
+        _AmpCalcs[a]->setDalitzId(ampDalitzId);
+        GOOFIT_INFO("Amp calculator {}:", a);
+        Amplitude *amp = dynamic_cast<Amplitude *>(components[a]);
+        GOOFIT_INFO("Amplitude {}", amp->_uniqueDecayStr);
+        GOOFIT_INFO("Amp calc dalitz ID: {}", ampDalitzId);
 
         thrust::transform(eventIndex,
                           eventIndex + numEntries,
@@ -791,7 +829,7 @@ __host__ auto Amp4Body_TD::normalize() -> fptype {
     host_normalizations[normalIdx + 1] = 1.0 / ret;
     cachedNormalization                = 1.0 / ret;
 
-    GOOFIT_DEBUG("Norm value: {:.20f}\n", ret);
+    GOOFIT_INFO("Norm value: {:.20f}\n", ret);
 
     return ret;
 }

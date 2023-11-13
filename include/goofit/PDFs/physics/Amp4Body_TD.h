@@ -99,9 +99,9 @@ class Amp4Body_TD final : public Amp4BodyBase {
 
     void printAmpMappings() const;
 
-    void printSelectedLineshapes(const std::vector<unsigned int> &lsIndices) const;
+    void printSelectedLineshapes(const std::vector<size_t> &lsIndices) const;
 
-    void printSelectedSFs(const std::vector<unsigned int> &sfIndices) const;
+    void printSelectedSFs(const std::vector<size_t> &sfIndices) const;
 
   protected:
   private:
@@ -115,6 +115,8 @@ class Amp4Body_TD final : public Amp4BodyBase {
     __host__ std::vector<unsigned int> getSFFunctionIndices() const;
 
     __host__ std::vector<unsigned int> getLSFunctionIndices() const;
+
+    size_t getCachedResSFStride() const;
 
     std::vector<SpinFactor *> _SpinFactors;
     std::vector<Lineshape *> _LineShapes;

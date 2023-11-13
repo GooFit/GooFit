@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include <goofit/PDFs/physics/detail/AmpCalc_TD.h>
 
 #include <goofit/PDFs/ParameterContainer.h>
@@ -14,6 +16,10 @@ AmpCalc_TD::AmpCalc_TD(unsigned int nPerm, unsigned int ampIdx)
     , _AmpIdx(ampIdx) {}
 
 __device__ auto AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex {
+    // int tid = blockIdx.x*blockDim.x + threadIdx.x;
+    // bool printStatus = tid == 0;
+    const bool PRINT_ME = false;
+
     ParameterContainer pc;
 
     while(pc.funcIdx < dalitzFuncId)
@@ -32,11 +38,8 @@ __device__ auto AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t) cons
     unsigned int SF_step = numSF / _nPerm;
     unsigned int LS_step = numLS / _nPerm;
 
-    // int tid = blockIdx.x*blockDim.x + threadIdx.x;
-    // bool printStatus = tid == 0;
-    bool printStatus = false;
-
-    if(printStatus) {
+    if(PRINT_ME) 
+    {
         printf("_AmpIdx: %i\n", _AmpIdx);
         printf("_nPerm: %i\n", _nPerm);
         printf("totalAMP: %i\n", totalAMP);
@@ -46,58 +49,82 @@ __device__ auto AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t) cons
         printf("SF_step: %i\n", SF_step);
     }
 
-    for(int i = 0; i < _nPerm; ++i) {
+    for(int i = 0; i < _nPerm; ++i) 
+    {
         fpcomplex ret(1, 0);
 
-        if(printStatus) {
+        if(PRINT_ME) 
+        {
             printf("i: %i\n", i);
         }
 
-        for(int j = i * LS_step; j < (i + 1) * LS_step; ++j) {
+        for(int j = i * LS_step; j < (i + 1) * LS_step; ++j) 
+        {
             int idx = AmpIndices[totalAMP + _AmpIdx + 4 + j];
-            ret *= (cResSF_TD[cacheToUse][evtNum * offset + idx]);
+            fpcomplex lsVal = (cResSF_TD[cacheToUse][evtNum * offset + idx]);
+            ret *= lsVal;
             // printf("Lineshape %i = (%.7g, %.7g)\n", j, (cResSF_TD[cacheToUse][evtNum*offset + AmpIndices[totalAMP +
             // _AmpIdx + 4 + j]]).real, (cResSF_TD[cacheToUse][evtNum*offset + AmpIndices[totalAMP + _AmpIdx + 4 +
             // j]]).imag);
-            if(printStatus) {
+            if(PRINT_ME) 
+            {
                 printf("LS iteration %i: LS index %i\n", j, idx);
+                printf("LS value: (%f, %f)\n", lsVal.real(), lsVal.imag());
+                printf("Running ret total: (%f, %f)\n", ret.real(), ret.imag());
             }
         }
 
         // printf("Lineshape Product = (%.7g, %.7g)\n", ret.real, ret.imag);
-        for(int j = i * SF_step; j < (i + 1) * SF_step; ++j) {
+        for(int j = i * SF_step; j < (i + 1) * SF_step; ++j) 
+        {
             int idx = AmpIndices[totalAMP + _AmpIdx + 4 + numLS + j];
-            ret *= (cResSF_TD[cacheToUse][evtNum * offset + totalLS + idx].real());
+            fpcomplex sfVal = (cResSF_TD[cacheToUse][evtNum * offset + totalLS + idx].real());
+            ret *= sfVal;
             // printf(" SF = %.7g\n", (cResSF_TD[cacheToUse][evtNum*offset + totalLS + AmpIndices[totalAMP + _AmpIdx + 4
             // + numLS + j]].real));
-            if(printStatus) {
+            if(PRINT_ME) 
+            {
                 printf("SF iteration %i: SF index %i\n", j, idx);
+                printf("SF value: (%f, %f)\n", sfVal.real(), sfVal.imag());
+                printf("Running ret total: (%f, %f)\n", ret.real(), ret.imag());
             }
         }
 
         // printf("Lineshape Product * SF = (%.7g, %.7g)\n", ret.real, ret.imag);
 
         returnVal += ret;
+        if (PRINT_ME)
+        {
+            printf("Running returnVal total: (%f, %f)\n", returnVal.real(), returnVal.imag());
+        }
     }
 
-    if(printStatus) {
+    if (PRINT_ME)
+    {
+        printf("Value before including nPerm: (%f, %f)\n", returnVal.real(), returnVal.imag());
+    }
+    returnVal *= (1 / sqrt(static_cast<fptype>(_nPerm)));
+    
+    // printf("Amplitude Value = (%.7g, %.7g)\n", returnVal.real(), returnVal.imag());
+
+    if(PRINT_ME) 
+    {
+        printf("Value after including nPerm: (%f, %f)\n", returnVal.real(), returnVal.imag());
         printf("Finished AmpCalc (TD).\n\n");
     }
-
-    returnVal *= (1 / sqrt(static_cast<fptype>(_nPerm)));
-    // printf("Amplitude Value = (%.7g, %.7g)\n", returnVal.real(), returnVal.imag());
+    
     return returnVal;
 }
 
-__host__ std::vector<unsigned int> AmpCalc_TD::getLineshapeIndices(int totalAMP) const {
+__host__ std::vector<size_t> AmpCalc_TD::getLineshapeIndices(int totalAMP) const {
     bool printStatus = false;
 
-    std::vector<unsigned int> hostAmpIndices = DebugTools::copyAmpIndicesToHost();
+    std::vector<size_t> hostAmpIndices = DebugTools::copyAmpIndicesToHost();
 
     unsigned int numLS   = hostAmpIndices[totalAMP + _AmpIdx];
     unsigned int LS_step = numLS / _nPerm;
 
-    std::vector<unsigned int> ret;
+    std::vector<size_t> ret;
 
     if(printStatus) {
         printf("In getLineShapesIndices:\n");
@@ -130,16 +157,16 @@ __host__ std::vector<unsigned int> AmpCalc_TD::getLineshapeIndices(int totalAMP)
     return ret;
 }
 
-__host__ std::vector<unsigned int> AmpCalc_TD::getSpinFactorIndices(int totalAMP) const {
+__host__ std::vector<size_t> AmpCalc_TD::getSpinFactorIndices(int totalAMP) const {
     bool printStatus = false;
 
-    std::vector<unsigned int> hostAmpIndices = DebugTools::copyAmpIndicesToHost();
+    std::vector<size_t> hostAmpIndices = DebugTools::copyAmpIndicesToHost();
 
     unsigned int numLS   = hostAmpIndices[totalAMP + _AmpIdx];
     unsigned int numSF   = hostAmpIndices[totalAMP + _AmpIdx + 1];
     unsigned int SF_step = numSF / _nPerm;
 
-    std::vector<unsigned int> ret;
+    std::vector<size_t> ret;
 
     if(printStatus) {
         printf("In getSpinFactorIndices:\n");

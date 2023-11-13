@@ -175,6 +175,18 @@ __device__ auto getmass(const unsigned int &pair,
     fptype mpair     = 0;
 
     switch(pair) {
+    case 0:
+        d1 = m1;
+        d2 = m2;
+        mpair = Mass(P1, P2);
+        break;
+
+    case 1:
+        d1 = m3;
+        d2 = m4;
+        mpair = Mass(P3, P4);
+        break;
+
     case 2:
         d1    = m1;
         d2    = m3;

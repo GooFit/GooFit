@@ -1054,4 +1054,20 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed)
     return std::make_tuple(ParSet, VarSet, flags_h);
 }
 
+thrust::host_vector<fpcomplex> Amp4Body_TD::debugLS(
+    size_t ampNum,
+    unsigned int permNum,
+    const thrust::device_vector<unsigned int>& evtNums) const
+{
+    return _AmpCalcs[ampNum]->debugLS(permNum, evtNums);
+}
+
+thrust::host_vector<fptype> Amp4Body_TD::debugSF(
+    size_t ampNum,
+    unsigned int sfNum,
+    const thrust::device_vector<unsigned int>& evtNums) const
+{
+   return _AmpCalcs[ampNum]->debugSF(sfNum, evtNums); 
+}
+
 } // namespace GooFit

@@ -17,6 +17,14 @@ __device__ ParameterContainer::ParameterContainer(const ParameterContainer &pc)
     funcIdx       = pc.funcIdx;
 }
 
+__device__ void ParameterContainer::prepare(unsigned int dalitzFuncId)
+{
+    while(funcIdx < dalitzFuncId)
+    {
+        incrementIndex();
+    }
+}
+
 /// Only on CPU and with Trace enabled, this will run slowly but check to make sure you are correctly incrementing
 /// indices
 __device__ void

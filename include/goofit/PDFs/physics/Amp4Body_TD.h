@@ -92,8 +92,8 @@ class Amp4Body_TD final : public Amp4BodyBase {
 
     __host__ void setGenerationOffset(int off) { generation_offset = off; }
 
-    __host__ auto GenerateSig(unsigned int numEvents, int seed = 0) -> std::
-        tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::BoolVector_h>;
+    __host__ auto GenerateSig(unsigned int numEvents, int seed = 0)
+        -> std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::BoolVector_h>;
 
     __host__ void populateArrays() override;
 
@@ -102,6 +102,13 @@ class Amp4Body_TD final : public Amp4BodyBase {
     void printSelectedLineshapes(const std::vector<size_t> &lsIndices) const;
 
     void printSelectedSFs(const std::vector<size_t> &sfIndices) const;
+
+    thrust::host_vector<fpcomplex> debugLS(size_t ampNum,
+                                           unsigned int permNum,
+                                           const thrust::device_vector<unsigned int> &evtNums) const;
+
+    thrust::host_vector<fptype>
+    debugSF(size_t ampNum, unsigned int sfNum, const thrust::device_vector<unsigned int> &evtNums) const;
 
   protected:
   private:

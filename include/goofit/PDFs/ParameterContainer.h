@@ -44,6 +44,8 @@ struct ParameterContainer {
 
     // slow version, avoid at all costs!
     __device__ void incrementIndex();
+
+    __device__ void prepare(unsigned int dalitzFuncId);
 };
 
 } // namespace GooFit

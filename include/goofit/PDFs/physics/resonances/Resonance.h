@@ -75,6 +75,26 @@ __device__ void getPropagator(const fptype kMatrix[NCHANNELS][NCHANNELS],
                               fpcomplex F[NCHANNELS][NCHANNELS],
                               fptype adlerTerm);
 
+__device__ fpcomplex _Vc (fptype c);
+__device__ fpcomplex sigma (fpcomplex s, fptype m);
+__device__ fpcomplex V(fpcomplex x);
+__device__ fpcomplex wp(fpcomplex x);
+__device__ fptype q(fptype s);
+__device__ fpcomplex tlow(fpcomplex s);
+__device__ fpcomplex pn( fpcomplex x, fptype n);
+__device__ fpcomplex fu(fpcomplex x);
+__device__ fpcomplex Jp(fpcomplex s,fptype m);
+__device__ fpcomplex tf0(fpcomplex s);
+__device__ fpcomplex t00(fptype s);
+__device__ fpcomplex S00(fptype s);
+__device__ fptype wp2(fptype s);
+__device__ fptype Phim(fptype s);
+__device__ fptype derivaPhi(fptype s);
+__device__ fptype Phi(fptype s);
+__device__ fptype argument(fptype s);
+__device__ fptype Inela(fptype s);
+__device__ fpcomplex ampt00 (fptype s);
+
 /**
 Represents a resonance-shape parametrization, the
 \f$B_i\f$ that appear in the equations for GooFit::Amp3Body,

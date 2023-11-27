@@ -116,7 +116,7 @@ __device__ fpcomplex pelaez_pipi2pipi_interpolation(fptype m12, fptype m13, fpty
 __device__ resonance_function_ptr ptr_to_AMP_PIPI = pelaez_pipi2pipi_interpolation;
 
 namespace Resonances {
-    Amplitude_PiPi::Amplitude_PiPi(std::string name,
+    ScatteringAmp::ScatteringAmp(std::string name,
                             Variable ar,
                             Variable ai,
                             Variable akk,
@@ -125,7 +125,7 @@ namespace Resonances {
                             bool charge_pos,
                             unsigned int cyc,
                             bool symmDP)
-            : ResonancePdf("Amplitude_PiPi",name, ar, ai) {
+            : ResonancePdf("ScatteringAmp",name, ar, ai) {
         
             std::vector<unsigned int> pindices;
 

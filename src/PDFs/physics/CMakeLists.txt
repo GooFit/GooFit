@@ -75,6 +75,7 @@ goofit_add_pdf_library(
   resonances/RBW.cu
   resonances/PolarFFNR.cu
   resonances/Rescattering2.cu
+  resonances/ScatteringAmp.cu
   resonances/RhoOmegaMix.cu
   resonances/Spline.cu
   ${GOOFIT_PHYSICS_HEADERS}

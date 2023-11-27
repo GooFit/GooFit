@@ -78,6 +78,7 @@ goofit_add_pdf_library(
   resonances/ScatteringAmp.cu
   resonances/RhoOmegaMix.cu
   resonances/Spline.cu
+  resonances/ScatteringAmp.cu
   ${GOOFIT_PHYSICS_HEADERS}
   detail/NormEvents_4Body_Base.cu
   detail/NormEvents_4Body_DeviceCached.cu

@@ -70,8 +70,8 @@ __device__ auto device_threegauss_resolution(fptype coshterm,
                                              fptype ymixing,
                                              fptype sigma,
                                              ParameterContainer &pc) -> fptype {
-    fptype coreFraction    = pc.getParameter(0);
-    //should just be pc.getParameter(1);?
+    fptype coreFraction = pc.getParameter(0);
+    // should just be pc.getParameter(1);?
     fptype tailFraction    = pc.getParameter(1);
     fptype outlFraction    = 1 - coreFraction - tailFraction;
     fptype coreBias        = pc.getParameter(2);
@@ -82,8 +82,8 @@ __device__ auto device_threegauss_resolution(fptype coshterm,
     fptype outlScaleFactor = pc.getParameter(7);
     fptype selbias         = pc.getParameter(8);
 
-    fptype common_bias_offset = pc.getParameter(9);
-    fptype common_width_scale = pc.getParameter(10);
+    fptype common_bias_offset  = pc.getParameter(9);
+    fptype common_width_scale  = pc.getParameter(10);
     fptype common_bias_offset2 = pc.getParameter(11);
     fptype common_width_scale2 = pc.getParameter(12);
     coreBias += common_bias_offset;
@@ -128,12 +128,19 @@ __device__ auto device_threegauss_resolution(fptype coshterm,
 
 __device__ device_resfunction_ptr ptr_to_threegauss = device_threegauss_resolution;
 
-ThreeGaussResolution::ThreeGaussResolution(
-    Variable cf, Variable tf, Variable cb, Variable cs, Variable tb, Variable ts, Variable ob, Variable os, Variable sb,
-    Variable common_bias_offset,
-                                                       Variable common_width_scale,
-                                                       Variable common_bias_offset2,
-                                                       Variable common_width_scale2)
+ThreeGaussResolution::ThreeGaussResolution(Variable cf,
+                                           Variable tf,
+                                           Variable cb,
+                                           Variable cs,
+                                           Variable tb,
+                                           Variable ts,
+                                           Variable ob,
+                                           Variable os,
+                                           Variable sb,
+                                           Variable common_bias_offset,
+                                           Variable common_width_scale,
+                                           Variable common_bias_offset2,
+                                           Variable common_width_scale2)
     : MixingTimeResolution("ThreeGaussResolution", cf, tf, cb, cs, tb, ts, ob, os, sb)
     , selectionBias(sb) {
     initIndex();

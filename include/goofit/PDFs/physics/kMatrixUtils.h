@@ -23,11 +23,11 @@ __device__ void getPropagator(const fptype kMatrix[NCHANNELS][NCHANNELS],
 
 template <int N>
 inline __device__ fpcomplex determinant(fpcomplex A[NCHANNELS][NCHANNELS]) {
-    fpcomplex D = 0;                      // Initialize result
+    fpcomplex D = 0; // Initialize result
 
     fpcomplex temp[NCHANNELS][NCHANNELS]; // To store cofactors
 
-    int sign = 1;                         // To store sign multiplier
+    int sign = 1; // To store sign multiplier
 
     // Iterate for each element of first row
     for(int f = 0; f < N; f++) {

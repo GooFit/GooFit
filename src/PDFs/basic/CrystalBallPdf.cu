@@ -22,7 +22,7 @@ __device__ auto device_CrystalBall(fptype *evt, ParameterContainer &pc) -> fptyp
        (alpha < 0 && rx >= alpha) || // Left-hand tail, in Gaussian region
        (alpha == 0)) {               // Pure Gaussian
         ret = exp(-0.5 * rx * rx);
-    } else {                         // Tail part
+    } else { // Tail part
         fptype n_over_alpha = power / alpha;
         fptype a            = exp(-0.5 * alpha * alpha);
         fptype b            = n_over_alpha - alpha;

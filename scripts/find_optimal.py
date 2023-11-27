@@ -61,7 +61,7 @@ currentMin = 1000000
 
 # loop over the possible range
 for i in range(begin, end):
-    s = f"{str(begin)},"
+    s = f"{begin!s},"
     for j in range(4, 11):
         # i is our group size
         # j is our grain size

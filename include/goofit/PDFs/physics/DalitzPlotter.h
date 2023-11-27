@@ -24,8 +24,8 @@ class DalitzPlotter {
     std::vector<size_t> xbins;
     std::vector<size_t> ybins;
     std::vector<std::vector<fptype>> pdfValues;
-    Observable m12;
     Observable m13;
+    Observable m23;
     EventNumber eventNumber;
     UnbinnedDataSet data;
     fptype mother;
@@ -35,23 +35,23 @@ class DalitzPlotter {
 
   public:
     DalitzPlotter(GooPdf *overallSignal, Amp3Body *signalDalitz)
-        : m12(signalDalitz->_m12)
-        , m13(signalDalitz->_m13)
+        : m13(signalDalitz->_m13)
+        , m23(signalDalitz->_m23)
         , eventNumber(signalDalitz->_eventNumber)
-        , data({m12, m13, eventNumber})
+        , data({m13, m23, eventNumber})
         , mother(signalDalitz->decayInfo.motherMass)
         , daug_1(signalDalitz->decayInfo.daug1Mass)
         , daug_2(signalDalitz->decayInfo.daug2Mass)
         , daug_3(signalDalitz->decayInfo.daug3Mass) {
         eventNumber.setValue(0);
 
-        for(size_t i = 0; i < m12.getNumBins(); ++i) {
-            m12.setValue(m12.getLowerLimit() + m12.getBinSize() * (i + 0.5));
-            for(size_t j = 0; j < m13.getNumBins(); ++j) {
-                m13.setValue(m13.getLowerLimit() + m13.getBinSize() * (j + 0.5));
+        for(size_t i = 0; i < m13.getNumBins(); ++i) {
+            m13.setValue(m13.getLowerLimit() + m13.getBinSize() * (i + 0.5));
+            for(size_t j = 0; j < m23.getNumBins(); ++j) {
+                m23.setValue(m23.getLowerLimit() + m23.getBinSize() * (j + 0.5));
                   //if(m12.getValue()>m13.getValue()) continue;
-                if(inDalitz(m12.getValue(),
-                            m13.getValue(),
+                if(inDalitz(m13.getValue(),
+                            m23.getValue(),
                             signalDalitz->decayInfo.motherMass,
                             signalDalitz->decayInfo.daug1Mass,
                             signalDalitz->decayInfo.daug2Mass,
@@ -77,9 +77,9 @@ class DalitzPlotter {
 
     auto getY(size_t event) const -> size_t { return ybins.at(event); }
 
-    auto getXval(size_t event) const -> fptype { return data.getValue(m12, event); }
+    auto getXval(size_t event) const -> fptype { return data.getValue(m13, event); }
 
-    auto getYval(size_t event) const -> fptype { return data.getValue(m13, event); }
+    auto getYval(size_t event) const -> fptype { return data.getValue(m23, event); }
 
     auto getZval(size_t event) const -> fptype {
         return POW2(mother) + POW2(daug_1) + POW2(daug_2) + POW2(daug_3) - getXval(event) - getYval(event);
@@ -89,8 +89,8 @@ class DalitzPlotter {
 
     auto getDataSet() -> UnbinnedDataSet * { return &data; }
 
-    auto getM12() const -> const Observable & { return m12; }
     auto getM13() const -> const Observable & { return m13; }
+    auto getM23() const -> const Observable & { return m23; }
 
 #if GOOFIT_ROOT_FOUND
     /// Produce a TH2F over the contained evaluation
@@ -98,18 +98,18 @@ class DalitzPlotter {
         auto *dalitzplot = new TH2F(name.c_str(),
                                     title.c_str(),
                                     nbins,
-                                    m12.getLowerLimit(),
-                                    m12.getUpperLimit(),
-                                    nbins,
                                     m13.getLowerLimit(),
-                                    m13.getUpperLimit());
+                                    m13.getUpperLimit(),
+                                    nbins,
+                                    m23.getLowerLimit(),
+                                    m23.getUpperLimit());
 
         for(unsigned int j = 0; j < getNumEvents(); ++j) {
-            size_t currm12 = getX(j);
-            size_t currm13 = getY(j);
+            size_t currm13 = getX(j);
+            size_t currm23 = getY(j);
             double val     = getVal(j);
 
-            dalitzplot->SetBinContent(1 + currm12, 1 + currm13, val);
+            dalitzplot->SetBinContent(1 + currm13, 1 + currm23, val);
         }
 
         return dalitzplot;
@@ -167,23 +167,23 @@ class DalitzPlotter {
             size_t j = std::lower_bound(integral.begin(), integral.end(), r) - integral.begin();
 
             // Fill in the grid square randomly
-            double currm12 = data.getValue(m12, j) + m12.getBinSize() * unihalf(gen);
             double currm13 = data.getValue(m13, j) + m13.getBinSize() * unihalf(gen);
+            double currm23 = data.getValue(m23, j) + m23.getBinSize() * unihalf(gen);
 
-            m12.setValue(currm12);
             m13.setValue(currm13);
+            m23.setValue(currm23);
             eventNumber.setValue(i);
 
             if(save_tree) {
-                _s12 = currm12;
                 _s13 = currm13;
-                _s23 = pow(mother, 2) + pow(daug_1, 2) + pow(daug_2, 2) + pow(daug_3, 2) - currm12 - currm13;
-                if(currm12 < currm13) {
-                    _slow  = currm12;
-                    _shigh = currm13;
-                } else {
+                _s23 = currm23;
+                _s12 = pow(mother, 2) + pow(daug_1, 2) + pow(daug_2, 2) + pow(daug_3, 2) - currm13 - currm23;
+                if(currm13 < currm23) {
                     _slow  = currm13;
-                    _shigh = currm12;
+                    _shigh = currm23;
+                } else {
+                    _slow  = currm23;
+                    _shigh = currm13;
                 }
                 tree->Fill();
             }
@@ -201,59 +201,58 @@ class DalitzPlotter {
         auto *Data_DP = new TH2F("Data_DP",
                                  "",
                                  nbins,
-                                 m12.getLowerLimit(),
-                                 m12.getUpperLimit(),
-                                 nbins,
                                  m13.getLowerLimit(),
-                                 m13.getUpperLimit());
+                                 m13.getUpperLimit(),
+                                 nbins,
+                                 m23.getLowerLimit(),
+                                 m23.getUpperLimit());
 
         auto *Fitted_DP = new TH2F("Fitted_DP",
                                    "",
                                    nbins,
-                                   m12.getLowerLimit(),
-                                   m12.getUpperLimit(),
-                                   nbins,
                                    m13.getLowerLimit(),
-                                   m13.getUpperLimit());
+                                   m13.getUpperLimit(),
+                                   nbins,
+                                   m23.getLowerLimit(),
+                                   m23.getUpperLimit());
 
-        auto s23_min = pow(daug_2+daug_3,2);
-        auto s23_max = pow(mother-daug_1,2);
+        auto s12_min = pow(daug_1+daug_2,2);
+        auto s12_max = pow(mother-daug_3,2);
 
-        auto s23_data = new TH1F("s23_data", "", nbins, s23_min, s23_max);
-        auto s23_pdf  = new TH1F("s23_pdf", "", nbins, s23_min, s23_max);
+        auto s12_data = new TH1F("s12_data", "", nbins, s12_min, s12_max);
+        auto s12_pdf  = new TH1F("s12_pdf", "", nbins, s12_min, s12_max);
 
         for(int i = 0; i < data->getNumEvents(); i++) {
             data->loadEvent(i);
-            Data_DP->Fill(m12.getValue(), m13.getValue());
-            s23_data->Fill(pow(mother, 2) + pow(daug_1, 2) + pow(daug_2, 2) + pow(daug_3, 2) - m12.getValue()
-                           - m13.getValue());
+            Data_DP->Fill(m13.getValue(), m23.getValue());
+            s12_data->Fill(pow(mother, 2) + pow(daug_1, 2) + pow(daug_2, 2) + pow(daug_3, 2) - m13.getValue()- m23.getValue());
         }
 
         for(int i = 0; i < getNumEvents(); i++) {
-            s23_pdf->Fill(getZval(i), getVal(i));
+            s12_pdf->Fill(getZval(i), getVal(i));
             Fitted_DP->Fill(getXval(i), getYval(i), getVal(i));
         }
 
-        auto s12_data = (TH1D *)Data_DP->ProjectionX("s12_data");
-        auto s13_data = (TH1D *)Data_DP->ProjectionY("s13_data");
-        s12_data->Sumw2();
-        s12_data->GetXaxis()->SetTitle("s12");
-        s12_data->GetYaxis()->SetTitle("Candidates");
+        auto s13_data = (TH1D *)Data_DP->ProjectionX("s13_data");
+        auto s23_data = (TH1D *)Data_DP->ProjectionY("s23_data");
         s13_data->Sumw2();
         s13_data->GetXaxis()->SetTitle("s13");
         s13_data->GetYaxis()->SetTitle("Candidates");
+        s23_data->Sumw2();
+        s23_data->GetXaxis()->SetTitle("s23");
+        s23_data->GetYaxis()->SetTitle("Candidates");
 
-        auto s12_pdf = (TH1D *)Fitted_DP->ProjectionX("s12_pdf");
-        s12_pdf->Sumw2();
-        auto s13_pdf = (TH1D *)Fitted_DP->ProjectionY("s13_pdf");
+        auto s13_pdf = (TH1D *)Fitted_DP->ProjectionX("s13_pdf");
         s13_pdf->Sumw2();
+        auto s23_pdf = (TH1D *)Fitted_DP->ProjectionY("s23_pdf");
+        s23_pdf->Sumw2();
 
-        s12_pdf->SetLineColor(kRed);
-        s12_pdf->SetLineWidth(2);
         s13_pdf->SetLineColor(kRed);
         s13_pdf->SetLineWidth(2);
         s23_pdf->SetLineColor(kRed);
         s23_pdf->SetLineWidth(2);
+        s12_pdf->SetLineColor(kRed);
+        s12_pdf->SetLineWidth(2);
 
         TFile *output = new TFile(name.c_str(), "recreate");
         s12_data->Write(0, TObject::kOverwrite);

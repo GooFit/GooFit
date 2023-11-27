@@ -62,17 +62,17 @@ __device__ inline auto parIndexFromResIndex_DP(int resIndex) -> int {
 
 __device__ auto device_DalitzPlot(fptype *evt, ParameterContainer &pc) -> fptype {
     int num_obs = pc.getNumObservables();
-    int id_m12  = pc.getObservable(0);
-    int id_m13  = pc.getObservable(1);
+    int id_m13  = pc.getObservable(0);
+    int id_m23  = pc.getObservable(1);
     int id_num  = pc.getObservable(2);
 
-    fptype m12 = evt[id_m12];
     fptype m13 = evt[id_m13];
+    fptype m23 = evt[id_m23];
 
     unsigned int numResonances = pc.getConstant(0);
     unsigned int cacheToUse    = pc.getConstant(1);
 
-    if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass)) {
+    if(!inDalitz2(m13, m23, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass)) {
         pc.incrementIndex(1, numResonances * 2, 2, num_obs, 1);
 
         // loop over resonances and efficiency functions
@@ -114,11 +114,11 @@ int Amp3Body::cacheCount                         = 0;
 __device__ device_function_ptr ptr_to_DalitzPlot = device_DalitzPlot;
 
 __host__ Amp3Body::Amp3Body(
-    std::string n, Observable m12, Observable m13, EventNumber eventNumber, DecayInfo3 decay, GooPdf *efficiency)
-    : Amp3BodyBase("Amp3Body", n, m12, m13, eventNumber)
+    std::string n, Observable m13, Observable m23, EventNumber eventNumber, DecayInfo3 decay, GooPdf *efficiency)
+    : Amp3BodyBase("Amp3Body", n, m13, m23, eventNumber)
     , decayInfo(decay)
-    , _m12(m12)
     , _m13(m13)
+    , _m23(m23)
     , _eventNumber(eventNumber)
     , dalitzNormRange(nullptr)
     //, cachedWaves(0)
@@ -241,7 +241,7 @@ __host__ auto Amp3Body::normalize() -> fptype {
     // we need to update the normal here, as values are used at this point.
     host_normalizations.sync(d_normalizations);
 
-    int totalBins = _m12.getNumBins() * _m13.getNumBins();
+    int totalBins = _m13.getNumBins() * _m23.getNumBins();
 
     if(!dalitzNormRange) {
         gooMalloc((void **)&dalitzNormRange, 6 * sizeof(fptype));
@@ -250,12 +250,12 @@ __host__ auto Amp3Body::normalize() -> fptype {
     // This line runs once
     static std::array<fptype, 6> host_norms{{0, 0, 0, 0, 0, 0}};
 
-    std::array<fptype, 6> current_host_norms{{_m12.getLowerLimit(),
-                                              _m12.getUpperLimit(),
-                                              static_cast<fptype>(_m12.getNumBins()),
-                                              _m13.getLowerLimit(),
+    std::array<fptype, 6> current_host_norms{{_m13.getLowerLimit(),
                                               _m13.getUpperLimit(),
-                                              static_cast<fptype>(_m13.getNumBins())}};
+                                              static_cast<fptype>(_m13.getNumBins()),
+                                              _m23.getLowerLimit(),
+                                              _m23.getUpperLimit(),
+                                              static_cast<fptype>(_m23.getNumBins())}};
 
     if(host_norms != current_host_norms) {
         host_norms = current_host_norms;
@@ -350,8 +350,8 @@ __host__ auto Amp3Body::normalize() -> fptype {
 
     fptype ret           = sumIntegral.real(); // That complex number is a square, so it's fully real
     double binSizeFactor = 1;
-    binSizeFactor *= _m12.getBinSize();
     binSizeFactor *= _m13.getBinSize();
+    binSizeFactor *= _m23.getBinSize();
     ret *= binSizeFactor;
     host_normalizations[normalIdx + 1] = 1.0 / ret;
     cachedNormalization                = 1.0 / ret;
@@ -383,7 +383,7 @@ __host__ auto Amp3Body::fit_fractions(bool print) -> std::vector<std::vector<fpt
     host_normalizations.sync(d_normalizations);
 
     size_t n_res     = getDecayInfo().resonances.size();
-    size_t totalBins = _m12.getNumBins() * _m13.getNumBins();
+    size_t totalBins = _m13.getNumBins() * _m23.getNumBins();
 
     if(!dalitzNormRange) {
         gooMalloc((void **)&dalitzNormRange, 6 * sizeof(fptype));
@@ -392,12 +392,12 @@ __host__ auto Amp3Body::fit_fractions(bool print) -> std::vector<std::vector<fpt
     // This line runs once
     static std::array<fptype, 6> host_norms{{0, 0, 0, 0, 0, 0}};
 
-    std::array<fptype, 6> current_host_norms{{_m12.getLowerLimit(),
-                                              _m12.getUpperLimit(),
-                                              static_cast<fptype>(_m12.getNumBins()),
-                                              _m13.getLowerLimit(),
+    std::array<fptype, 6> current_host_norms{{_m13.getLowerLimit(),
                                               _m13.getUpperLimit(),
-                                              static_cast<fptype>(_m13.getNumBins())}};
+                                              static_cast<fptype>(_m13.getNumBins()),
+                                              _m23.getLowerLimit(),
+                                              _m23.getUpperLimit(),
+                                              static_cast<fptype>(_m23.getNumBins())}};
 
     if(host_norms != current_host_norms) {
         host_norms = current_host_norms;

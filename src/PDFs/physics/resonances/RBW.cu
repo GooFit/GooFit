@@ -27,15 +27,15 @@ __device__ auto plainBW(fptype m13, fptype m23, fptype m12, ParameterContainer &
     fptype m2= 0.0;
     fptype m3= 0.0;
 
-    // if(resmass < 1.e-10) {
-    //     GOOFIT_TRACE("Resonance Mass zero!");
-    //     return result;
-    // }
+    if(resmass < 1.e-10) {
+        GOOFIT_TRACE("Resonance Mass zero!");
+        return result;
+    }
 
-    // if(reswidth < 1.e-10) {
-    //     GOOFIT_TRACE("Resonance Width zero!");
-    //     return result;
-    // }
+    if(reswidth < 1.e-10) {
+        GOOFIT_TRACE("Resonance Width zero!");
+        return result;
+    }
 
 #pragma unroll
     for(size_t i = 0; i < I; i++) {
@@ -97,7 +97,7 @@ __device__ auto plainBW(fptype m13, fptype m23, fptype m12, ParameterContainer &
         fptype legPol = calcLegendrePoly(cosHel,spin);
         fptype ZemachSpinFactor = ignoreMom ? calcZemachSpinFactor(1.0, legPol, spin) :calcZemachSpinFactor(q_*p_, legPol, spin);
         ret *= ZemachSpinFactor;
-        //printf("%f \t %f \t %f \t %f \t %f \t %f \t %f \t %f \t %f \t %f \t %f \t %f  \t %f  \t %f  \t %f \n",resmass,reswidth,s,m1,m2,m3,c_motherMass,q0_,p0_,q_,p_,FR0,FP0,FR,FP);
+    
 
         result += ret;
 

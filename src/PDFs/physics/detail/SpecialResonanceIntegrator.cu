@@ -4,9 +4,9 @@
 
 namespace GooFit {
 
-__device__ auto device_DalitzPlot_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, ParameterContainer &pc)
+__device__ auto device_DalitzPlot_calcIntegrals(fptype m13, fptype m23, int res_i, int res_j, ParameterContainer &pc)
     -> fpcomplex {
-    // Calculates BW_i(m12, m13) * BW_j^*(m12, m13).
+    // Calculates BW_i(m13, m23) * BW_j^*(m13, m23).
     // This calculation is in a separate function so
     // it can be cached. Note that this function expects
     // to be called on a normalization grid, not on
@@ -20,23 +20,23 @@ __device__ auto device_DalitzPlot_calcIntegrals(fptype m12, fptype m13, int res_
 
     fpcomplex ret;
 
-    if(!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass)){
+    if(!inDalitz2(m13, m23, motherMass, daug1Mass, daug2Mass, daug3Mass)){
         return fpcomplex(0.0,0.0);
     }
-    fptype m23
-        = motherMass * motherMass + daug1Mass * daug1Mass + daug2Mass * daug2Mass + daug3Mass * daug3Mass - m12 - m13;
+    fptype m12
+        = motherMass * motherMass + daug1Mass * daug1Mass + daug2Mass * daug2Mass + daug3Mass * daug3Mass - m13 - m23;
 
     ParameterContainer ipc = pc;
     while(ipc.funcIdx < res_i)
         ipc.incrementIndex();
 
-    ret = getResonanceAmplitude(m12, m13, m23, ipc);
+    ret = getResonanceAmplitude(m13, m23, m12, ipc);
 
     ParameterContainer jpc = pc;
     while(jpc.funcIdx < res_j)
         jpc.incrementIndex();
 
-    ret *= conj(getResonanceAmplitude(m12, m13, m23, jpc));
+    ret *= conj(getResonanceAmplitude(m13, m23, m12, jpc));
 
     return ret;
 }
@@ -54,25 +54,25 @@ __device__ auto SpecialResonanceIntegrator::operator()(thrust::tuple<int, fptype
     // that event size is two, and that the function to call is dev_DalitzPlot_calcIntegrals.
 
     int globalBinNumber  = thrust::get<0>(t);
-    fptype lowerBoundM12 = thrust::get<1>(t)[0];
-    fptype upperBoundM12 = thrust::get<1>(t)[1];
-    int numBinsM12      = static_cast<int>(floor(thrust::get<1>(t)[2] + 0.5));
-    auto binNumberM12     = globalBinNumber % numBinsM12;
-    fptype binCenterM12  = upperBoundM12 - lowerBoundM12;
-    binCenterM12 /= numBinsM12;
-    binCenterM12 *= (binNumberM12 + 0.5);
-    binCenterM12 += lowerBoundM12;
+    fptype lowerBoundM13 = thrust::get<1>(t)[0];
+    fptype upperBoundM13 = thrust::get<1>(t)[1];
+    int numBinsM13      = static_cast<int>(floor(thrust::get<1>(t)[2] + 0.5));
+    auto binNumberM13     = globalBinNumber % numBinsM13;
+    fptype binCenterM13  = upperBoundM13 - lowerBoundM13;
+    binCenterM13 /= numBinsM13;
+    binCenterM13 *= (binNumberM13 + 0.5);
+    binCenterM13 += lowerBoundM13;
 
     //printf("%d %f %f %d %d %f\n",globalBinNumber,lowerBoundM12,upperBoundM12,numBinsM12,binNumberM12,binCenterM12);
 
-    globalBinNumber /= numBinsM12;
-    fptype lowerBoundM13 = thrust::get<1>(t)[3];
-    fptype upperBoundM13 = thrust::get<1>(t)[4];
-    auto numBinsM13      = static_cast<int>(floor(thrust::get<1>(t)[2] + 0.5));
-    fptype binCenterM13  = upperBoundM13 - lowerBoundM13;
-    binCenterM13 /= numBinsM13;
-    binCenterM13 *= (globalBinNumber + 0.5);
-    binCenterM13 += lowerBoundM13;
+    globalBinNumber /= numBinsM13;
+    fptype lowerBoundM23 = thrust::get<1>(t)[3];
+    fptype upperBoundM23 = thrust::get<1>(t)[4];
+    auto numBinsM23      = static_cast<int>(floor(thrust::get<1>(t)[2] + 0.5));
+    fptype binCenterM23  = upperBoundM23 - lowerBoundM23;
+    binCenterM23 /= numBinsM23;
+    binCenterM23 *= (globalBinNumber + 0.5);
+    binCenterM23 += lowerBoundM23;
 
     ParameterContainer pc;
 
@@ -81,12 +81,12 @@ __device__ auto SpecialResonanceIntegrator::operator()(thrust::tuple<int, fptype
     while(pc.funcIdx < dalitz_i)
         pc.incrementIndex();
 
-    fpcomplex ret = device_DalitzPlot_calcIntegrals(binCenterM12, binCenterM13, resonance_i, resonance_j, pc);
+    fpcomplex ret = device_DalitzPlot_calcIntegrals(binCenterM13, binCenterM23, resonance_i, resonance_j, pc);
 
     // TODO: read id's in in order to set them for the fake event.
 
-    int id_m12 = pc.getObservable(0);
-    int id_m13 = pc.getObservable(1);
+    int id_m13 = pc.getObservable(0);
+    int id_m23 = pc.getObservable(1);
 
     // fptype fakeEvt[10]; // Need room for many observables in case m12 or m13 were assigned a high index in an
     // event-weighted fit.
@@ -95,8 +95,8 @@ __device__ auto SpecialResonanceIntegrator::operator()(thrust::tuple<int, fptype
     // fakeEvt[id_m13] = binCenterM13;
 
     events[0]      = 2;
-    events[id_m12] = binCenterM12;
     events[id_m13] = binCenterM13;
+    events[id_m23] = binCenterM23;
 
     // unsigned int numResonances           = indices[2];
     // int effFunctionIdx                   = parIndexFromResIndex_DP(numResonances);

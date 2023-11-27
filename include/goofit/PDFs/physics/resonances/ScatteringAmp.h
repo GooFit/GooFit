@@ -5,9 +5,9 @@ namespace GooFit {
 
 namespace Resonances {
 
-class Amplitude_PiPi : public ResonancePdf {
+class ScatteringAmp : public ResonancePdf {
 			public:
-				Amplitude_PiPi(std::string name,
+				ScatteringAmp(std::string name,
 						Variable ar,
 						Variable ai,
 						Variable akk,
@@ -16,7 +16,7 @@ class Amplitude_PiPi : public ResonancePdf {
 						bool charge_pos,
 						unsigned int cyc,
 						bool symmDP = false);
-				~Amplitude_PiPi() override = default;
+				~ScatteringAmp() override = default;
 
 
 };

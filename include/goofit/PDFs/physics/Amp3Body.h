@@ -41,8 +41,8 @@ mother and daughter masses, and the efficiency function.
 class Amp3Body : public Amp3BodyBase {
   public:
     Amp3Body(std::string n,
-             Observable m12,
              Observable m13,
+             Observable m23,
              EventNumber eventNumber,
              DecayInfo3 decay,
              GooPdf *eff = nullptr);
@@ -84,8 +84,8 @@ class Amp3Body : public Amp3BodyBase {
 
   protected:
     DecayInfo3 decayInfo;
-    Observable _m12;
     Observable _m13;
+    Observable _m23;
     EventNumber _eventNumber;
     fptype *dalitzNormRange;
 

@@ -26,7 +26,11 @@ class ThreeGaussResolution : public MixingTimeResolution {
                          Variable ts,
                          Variable ob,
                          Variable os,
-                         Variable sb);
+                         Variable sb,
+                         Variable common_bias_offset,
+                         Variable common_width_scale,
+                         Variable common_bias_offset2,
+                         Variable common_width_scale2);
     ~ThreeGaussResolution() override;
 
     auto normalization(fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const

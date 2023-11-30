@@ -30,10 +30,6 @@ __device__ auto device_SqDalitzPlot_calcIntegrals(fptype mprime, fptype thetapri
     fptype s23 = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass
                  + c_daug3Mass * c_daug3Mass - s12 - s13;
 
-    
-
-    
-
     if(!inDalitz2(s13, s23,c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass ))
         return ret;
 
@@ -43,12 +39,9 @@ __device__ auto device_SqDalitzPlot_calcIntegrals(fptype mprime, fptype thetapri
 
     ret = getResonanceAmplitude(s13, s23 , s12 , ipc);
 
-    
-
     ParameterContainer jpc = pc;
     while(jpc.funcIdx < res_j)
         jpc.incrementIndex();
-    
 
     ret *= conj(getResonanceAmplitude(s13, s23 , s12 , jpc));
 
@@ -67,7 +60,7 @@ __device__ auto SpecialSqDpResonanceIntegrator::operator()(thrust::tuple<int, fp
 
     ParameterContainer pc;
 
-    fptype events[10];
+    fptype events[3];
 
     while(pc.funcIdx < dalitz_i)
         pc.incrementIndex();
@@ -78,13 +71,14 @@ __device__ auto SpecialSqDpResonanceIntegrator::operator()(thrust::tuple<int, fp
     fptype mprime = RO_CACHE(evt[id_mprime]);
     fptype thetaprime = RO_CACHE(evt[id_thetaprime]);
 
-    if(thetaprime>0.5)
-        thetaprime = 1.0-thetaprime;
+    // if(thetaprime>0.5)
+    //     thetaprime = 1.0-thetaprime;
 
     if(!inSqDalitz(mprime, thetaprime))
         return fpcomplex(0.,0.);
 
- 
+    fptype jacobian = calc_SqDp_Jacobian(mprime, thetaprime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
+
     fpcomplex ret = device_SqDalitzPlot_calcIntegrals(mprime, thetaprime, resonance_i, resonance_j, pc);
 
     // fptype m12 = calc_m12(mprime,c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass);
@@ -113,13 +107,13 @@ __device__ auto SpecialSqDpResonanceIntegrator::operator()(thrust::tuple<int, fp
     // These complex numbers will not be squared when they
     // go into the integrals. They've been squared already,
     // as it were.
-    fptype jacobian = calc_SqDp_Jacobian(mprime, thetaprime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
+    
     // if(m_no_eff)
     //     return ret*jacobian;
     // else
     //     return ret*eff;
 
-    return thrust::make_tuple(ret*jacobian,ret*eff);
+    return thrust::make_tuple(ret*jacobian,ret*eff*jacobian);
 
    
     // printf("ret %f %f %f %f %f\n",binCenterMPrime, binCenterThetaPrime, ret.real, ret.imag, eff );

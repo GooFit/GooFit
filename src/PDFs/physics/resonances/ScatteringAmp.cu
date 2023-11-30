@@ -167,8 +167,6 @@ __device__ fpcomplex pelaez_pipi2pipi_interpolation(fptype m13, fptype m23, fpty
             break;
     }
 
-    fptype mAB = sqrt(sAB), mAC = sqrt(sAC);
-
     #pragma unroll
     for(size_t i = 0; i < 1 + symmDP; i++) {
 

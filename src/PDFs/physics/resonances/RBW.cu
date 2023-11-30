@@ -18,6 +18,10 @@ __device__ auto plainBW(fptype m13, fptype m23, fptype m12, ParameterContainer &
     fptype resmass  = pc.getParameter(0);
     fptype reswidth = pc.getParameter(1);
 
+    double phi1020_MASS  = 1.019461;
+    // if(resmass!=phi1020_MASS)
+    //     printf("current resmass = %f\n", resmass);
+
     fpcomplex result{0.0, 0.0};
     fptype resmass2 = resmass*resmass;
 
@@ -27,14 +31,17 @@ __device__ auto plainBW(fptype m13, fptype m23, fptype m12, ParameterContainer &
     fptype m2= 0.0;
     fptype m3= 0.0;
 
-    if(resmass < 1.e-10) {
+    if(resmass < 0.) {
         GOOFIT_TRACE("Resonance Mass zero!");
-        return result;
+        resmass *= -1.;
+        resmass2 = resmass*resmass;
+        //return result;
     }
 
-    if(reswidth < 1.e-10) {
+    if(reswidth < 0.) {
         GOOFIT_TRACE("Resonance Width zero!");
-        return result;
+        reswidth*= -1.;
+        //return result;
     }
 
 #pragma unroll
@@ -63,6 +70,8 @@ __device__ auto plainBW(fptype m13, fptype m23, fptype m12, ParameterContainer &
             m2 = c_daug3Mass;
             m3 = c_daug1Mass;
         }
+
+        
        
 
         fptype q0_ = DaugDecayMomResFrame(resmass2, m1, m2);

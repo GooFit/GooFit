@@ -20,16 +20,16 @@ __device__ auto cubicspline(fptype m13, fptype m23, fptype m12, ParameterContain
     unsigned int i                   = 0;
     idx += 2 * nKnobs;
     fptype mAC = m13, mBC = m23;
-    // switch(cyclic_index) {
-    // case PAIR_13:
-    //     mAB = m13;
-    //     mAC = m12;
-    //     break;
-    // case PAIR_23:
-    //     mAB = m23;
-    //     mAC = m12;
-    //     break;
-    // }
+    switch(cyclic_index) {
+    case PAIR_13:
+        mAC = m13;
+        mBC = m23;
+        break;
+    case PAIR_23:
+        mAC = m23;
+        mBC = m12;
+        break;
+    }
 
     int khiAC = 0, khiBC = 0;
     fptype dmKK, aa, bb, aa3, bb3;

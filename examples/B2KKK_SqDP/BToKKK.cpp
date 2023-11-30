@@ -82,8 +82,8 @@ const fptype s23_min = (d2_MASS + d3_MASS) * (d2_MASS + d3_MASS);
 const fptype s23_max = (Decay_MASS - d1_MASS) * (Decay_MASS - d1_MASS);
 
 // Observables
-Observable mprime("mprime",0,1);
-Observable thetaprime("thetaprime",0,1);
+Observable mprime("mprime",0.,1.);
+Observable thetaprime("thetaprime",0.,1.);
 Observable s23("s23", s23_min, s23_max);
 EventNumber eventNumber("eventNumber");
 
@@ -114,21 +114,21 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
     D2KKK.mother_meson_radius = 5.0; // GeV^-1
 
 
-    double f2p_1525_MASS  = 1.5174;
-    double f2p_1525_WIDTH = 0.086;
-    double f2p_1525_amp   = 123.;
-    double f2p_1525_img   = -12.;
+    double f2p_1525_MASS  = 1.525;
+    double f2p_1525_WIDTH = 0.073;
+    double f2p_1525_amp   = 76.;
+    double f2p_1525_img   = 9.;
 
     Variable v_f2p_1525_Mass("f2p_1525_MASS", f2p_1525_MASS);
     Variable v_f2p_1525_Width("f2p_1525_WIDTH", f2p_1525_WIDTH);
-    Variable v_f2p_1525_real("f2p_1525_REAL", f2p_1525_amp, 0.01, 0, 0);
-    Variable v_f2p_1525_img("f2p_1525_IMAG", f2p_1525_img, 0.01, 0, 0);
+    Variable v_f2p_1525_real("f2p_1525_REAL", f2p_1525_amp,0.01,0,0);
+    Variable v_f2p_1525_img("f2p_1525_IMAG", f2p_1525_img,0.01,0,0);
 
     auto f2p_1525 = new Resonances::RBW(
         "f2p_1525", v_f2p_1525_real, v_f2p_1525_img, v_f2p_1525_Mass, v_f2p_1525_Width, 2, PAIR_13, true, false);
 
     double phi1020_MASS  = 1.019461;
-    double phi1020_WIDTH = 0.00429;
+    double phi1020_WIDTH = 0.004266;
     double phi1020_amp   = 1.;
     double phi1020_img   = 0.;
 
@@ -142,12 +142,12 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
 
     // If you want include a resonance in your model, just push into the vector 'vec_resonances'
 
-    auto nonres = new Resonances::NonRes("NonRes",Variable("re",45.,0.01,0,0),Variable("im",234.,0.01,0,0));
+    auto nonres = new Resonances::NonRes("NonRes",Variable("re",23.,0.01,0,0),Variable("im",29.,0.01,0,0));
 
     std::vector<ResonancePdf *> vec_resonances;
 
-    vec_resonances.push_back(phi1020);
-    vec_resonances.push_back(f2p_1525);
+    //vec_resonances.push_back(phi1020);
+    //vec_resonances.push_back(f2p_1525);
     vec_resonances.push_back(nonres);
 
     D2KKK.resonances = vec_resonances;
@@ -174,10 +174,16 @@ void getData(std::string toyFileName, GooFit::Application &app, DataSet &data, b
     tree->SetBranchAddress("thPrime", &thetaprime_val);
    
     size_t j = 0;
+    std::random_device rd;  // Will be used to obtain a seed for the random number engine
+    std::mt19937 gen(16); // Standard mersenne_twister_engine seeded with rd()
+    std::uniform_real_distribution<> dis(0.,1.);
     for(size_t i = 0; i < tree->GetEntries(); i++) {
         tree->GetEntry(i);
         mprime.setValue(mprime_val);
-        thetaprime.setValue(thetaprime_val);
+        if(dis(gen)>0.5)
+            thetaprime.setValue(thetaprime_val);
+        else
+            thetaprime.setValue(1.-thetaprime_val);
         eventNumber.setValue(data.getNumEvents());
         data.addEvent();
         if(j < 10)
@@ -194,7 +200,7 @@ void to_root(UnbinnedDataSet &toyMC, std::string name) {
     Observable thetaprime         = obs.at(1);
     Observable eventNumber = obs.at(2);
 
-    double _mprime, _thetaprime,_s12,_s13,_s23;
+    double _mprime, _thetaprime,_s12,_s13,_s23,_jac;
     auto f     = new TFile(name.c_str(), "recreate");
     auto t     = new TTree("DecayTree", "");
     auto b_mprime = t->Branch("mprime", &_mprime, "mprime/D");
@@ -202,6 +208,7 @@ void to_root(UnbinnedDataSet &toyMC, std::string name) {
     t->Branch("s12", &_s12, "s12/D");
     t->Branch("s13", &_s13, "s13/D");
     t->Branch("s23", &_s23, "s23/D");
+    t->Branch("jac", &_jac, "jac/D");
     
 
     for(int i = 0; i < toyMC.getNumEvents(); i++) {
@@ -209,15 +216,16 @@ void to_root(UnbinnedDataSet &toyMC, std::string name) {
         t->GetEntry(i);
         _mprime = mprime.getValue();
         _thetaprime = thetaprime.getValue();
-        if(_thetaprime>0.5)
-            _thetaprime = 1.0 -_thetaprime;
+        // if(_thetaprime>0.5)
+        //     _thetaprime = 1.0 -_thetaprime;
         _s12 = pow(calc_m12(_mprime, Decay_MASS, d1_MASS, d2_MASS, d3_MASS),2);
         _s13 = pow(calc_m13(sqrt(_s12), cos(_thetaprime*M_PI), Decay_MASS, d1_MASS, d2_MASS, d3_MASS),2);
         _s23 = Decay_MASS*Decay_MASS + d1_MASS*d1_MASS + d2_MASS*d2_MASS + d3_MASS*d3_MASS - _s13 - _s12;
+        _jac = calc_SqDp_Jacobian(_mprime, _thetaprime, Decay_MASS, d1_MASS, d2_MASS, d3_MASS);
         t->Fill();
     }
     t->Write("", TObject::kOverwrite);
-    f->Write();
+    f->Write("", TObject::kOverwrite);
     f->Close();
     std::cout << "------------------------------------------" << std::endl;
     std::cout << "toyMC --> " << name.c_str() << " was saved!" << std::endl;
@@ -251,7 +259,7 @@ Amp3BodySqDP *runFit(GooPdf *totalPdf, Amp3BodySqDP *signal, UnbinnedDataSet *da
 int main(int argc, char **argv) {
     GooFit::Application app{"Genfit", argc, argv};
 
-    std::string input_data_name = "input.root";
+    std::string input_data_name = "gen-3K.root";
     std::string fit_name        = "Fit";
     std::string acc_file        = "acc_hist_0_Smoothed.root";
     std::string bkg_file        = "bkg_hist_0_Smoothed.root";
@@ -265,7 +273,7 @@ int main(int argc, char **argv) {
     fit->add_option("-f,--file", input_data_name, "name_of_file.root");
     fit->add_option("-t,--isToy", is_toy, "Get toyData for fit");
     fit->add_option("-s,--saveToy", save_toy, "save toy in root file");
-    fit->add_option("-n,--fitName", fit_name, "name of this fit(useful to save results)")->required(true);
+    fit->add_option("-n,--fitName", fit_name, "name of this fit(useful to save results)");
     fit->add_option("-a,--acc", acc_file, "name of acc file");
     fit->add_option("-b,--bkg", bkg_file, "name of bkg file");
     fit->add_option("-d,--disable-acc-bkg", no_acc_and_bkg, "disable-acc-bkg");
@@ -402,16 +410,14 @@ int main(int argc, char **argv) {
         std::cout << "----------------------------------------------------------" << std::endl;
         std::cout << data.getNumEvents() << " events was generated!" << std::endl;
         std::cout << "----------------------------------------------------------" << std::endl;
-        auto fullName = fmt::format("MC/{0}", toyName);
+        auto fullName = fmt::format("Fit/{0}/{1}",fit_name, toyName);
         to_root(data, fullName);
         std::cout << toyName << " root file was saved in MC folder" << std::endl;
         std::cout << "----------------------------------------------------------" << std::endl;
-
-   
-        signal->setDataSize(data.getNumEvents());
-        totalpdf->setData(&data);
-    
         auto frac = signal->fit_fractions(true);
+
+        fullName = fmt::format("Fit/{0}/{1}",fit_name, "output_plots.root");
+        dplotter.Plot(fullName, &data);
        
     }
 }

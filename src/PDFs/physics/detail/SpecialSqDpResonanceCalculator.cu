@@ -32,7 +32,6 @@ __device__ auto SpecialSqDpResonanceCalculator::operator()(thrust::tuple<int, fp
     //     thetaprime = 1.0-thetaprime;
 
     if(!inSqDalitz(mprime, thetaprime)){
-        //printf("Not in Sq DP! \n");
         return ret;
     }
 
@@ -53,14 +52,10 @@ __device__ auto SpecialSqDpResonanceCalculator::operator()(thrust::tuple<int, fp
         pc.incrementIndex();
 
     ret = getResonanceAmplitude(s13, s23 , s12 ,  pc);
-
-    // fptype jacobian = calc_SqDp_Jacobian(mprime, thetaprime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
-    // fptype invjacobian = calc_SqDp_InvJacobian(m13 ,m23, m12, c_daug1Mass, c_daug2Mass, c_daug3Mass);
-   
-    //  ret/=jacobian;
-    //ret*=invjacobian;
     
     return ret/sqrt(norm);
+    // return ret;
+
 }
 
 } // namespace GooFit

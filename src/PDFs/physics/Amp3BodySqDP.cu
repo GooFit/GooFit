@@ -40,7 +40,7 @@ __host__ __device__   auto inSqDalitz(const fptype &mprime,const fptype &thetapr
 __host__ __device__  auto calc_mprime(const fptype &m12, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype{
     fptype min = m1+m2;
     fptype max = m_mother-m3;
-    fptype mprime = (2*(m12 - min)/(max-min)) - 1.0;
+    fptype mprime = (2.*(m12 - min)/(max-min)) - 1.0;
 
     if(mprime<-1.)
         mprime=-1.;
@@ -62,15 +62,25 @@ __host__ __device__  auto calc_thetaprime(const fptype &m12,const fptype &m13, c
     fptype EiCmsij = (m12Sq - m2Sq + m1Sq)/(2.0*m12);
     fptype EkCmsij = (m_motherSq - m12Sq - m3Sq)/(2.0*m12);
 
-    //printf("EiCmsij=%f \t EkCmsij=%f \n",m12, m13);
+    if(abs(EiCmsij-m1)>1e-6 && EiCmsij<m1)
+        return 0.0;
+
+    if(abs(EkCmsij-m3)>1e-6 && EkCmsij<m3)
+        return 0.0;
 
     fptype qi = EiCmsij*EiCmsij - m1Sq;
-    qi = qi>0. ? sqrt(qi) : 0.;
+    if(qi<0.0)
+        qi=0.0;
+    else
+        qi = sqrt(qi);
 
     fptype qk = EkCmsij*EkCmsij - m3Sq;
-    qk = qk>0. ?  sqrt(qk) : 0.;
+    if(qk<0.0)
+        qk=0.0;
+    else
+        qk = sqrt(qk);
     
-    fptype coshel = (m13Sq - m1Sq - m3Sq - 2.0*EiCmsij*EkCmsij)/(2.0*qi*qk);
+    fptype coshel = -(m13Sq - m1Sq - m3Sq - 2.0*EiCmsij*EkCmsij)/(2.0*qi*qk);
 
     if(coshel<-1.)
         coshel=-1.;
@@ -104,13 +114,23 @@ __host__ __device__   auto calc_m13(const fptype &m12, const fptype &cos_12, con
     fptype EiCmsij = (m12Sq - m2Sq + m1Sq)/(2.0*m12);
     fptype EkCmsij = (m_motherSq - m12Sq - m3Sq)/(2.0*m12);
 
+    if(abs(EiCmsij-m1)>1e-6 && EiCmsij<m1)
+        return 0.0;
+    
+    if(abs(EkCmsij-m3)>1e-6 && EkCmsij<m3)
+        return 0.0;
+
     fptype qi = EiCmsij*EiCmsij - m1Sq;
-    qi = qi>0. ? sqrt(qi) : 0.;
+    if(qi<0.)
+        qi=0.;
+    else    
+        qi = sqrt(qi);
 
     fptype qk = EkCmsij*EkCmsij - m3Sq;
-    qk = qk>0. ? sqrt(qk)  : 0.;
-
-    //printf("coshel = %.2f \n",cos_12);
+    if(qk<0.)
+        qk=0.;
+    else    
+        qk = sqrt(qk);
     
     fptype m13Sq = m1Sq + m3Sq + 2.0*EiCmsij*EkCmsij - 2.0*qi*qk*cos_12;
 
@@ -130,12 +150,24 @@ __host__ __device__  auto calc_SqDp_Jacobian(const fptype &mprime ,const fptype 
 
     fptype EiCmsij = (m12Sq - m2Sq + m1Sq)/(2.0*m12);
     fptype EkCmsij = (m_motherSq - m12Sq - m3Sq)/(2.0*m12);
+
+    if(abs(EiCmsij-m1)>1e-6 && EiCmsij<m1)
+        return 0.0;
+    
+    if(abs(EkCmsij-m3)>1e-6 && EkCmsij<m3)
+        return 0.0;
     
     fptype qi = EiCmsij*EiCmsij - m1Sq;
-    qi = qi>0. ? sqrt(qi) : 0.;
+    if(qi<0.)
+        qi=0.;
+    else    
+        qi = sqrt(qi);
 
     fptype qk = EkCmsij*EkCmsij - m3Sq;
-     qk = qk>0. ? sqrt(qk)  : 0.;
+    if(qk<0.)
+        qk=0.;
+    else    
+        qk = sqrt(qk);
     
     fptype deriv1 = 0.5*M_PI*((m_mother-m3) - (m1+m2))*sin(M_PI*mprime);
     fptype deriv2 = M_PI*sin(M_PI*thetaprime);
@@ -166,9 +198,24 @@ struct prg
 
 
 __host__  void genNormFakeEvents(size_t n){
+
+    printf("my n inside genNormFakeEvents = %d \n", n);
+    // thrust::host_vector<fptype> hmprime;
+    // thrust::host_vector<fptype> hthprime;
+
+    // for(int i=0; i<n; i++){
+    //     double mp = 0. + (1.-0.)*i/n;
+    //     hmprime.push_back(mp);
+    //     for(int j=0; j<n; j++){
+    //         double th = 0. + (1.-0.)*j/n;
+    //         hthprime.push_back(th);
+    //     }
+    // }
    
     thrust::device_vector<fptype> mprime(n);
     thrust::device_vector<fptype> thprime(n);
+    // thrust::device_vector<fptype> mprime = hmprime;
+    // thrust::device_vector<fptype> thprime = hthprime;
 
     thrust::counting_iterator<unsigned int> index_sequence(0);    
 
@@ -207,8 +254,6 @@ __host__  void genNormFakeEvents(size_t n){
     thrust::copy(eventNumber, eventNumber + n, sr.begin());
 
     dev_fake_event_array = thrust::raw_pointer_cast(DS->data());
-   
-    cudaDeviceSynchronize();
     
 }
 
@@ -258,6 +303,9 @@ __device__ auto device_SqDalitzPlot(fptype *evt, ParameterContainer &pc) -> fpty
     fptype mprime = RO_CACHE(evt[id_mprime]);
     fptype thetaprime = RO_CACHE(evt[id_thetaprime]);
 
+    // if(thetaprime>0.5)
+    //     thetaprime = 1.0-thetaprime;
+
     unsigned int numResonances = pc.getConstant(0);
     unsigned int cacheToUse    = pc.getConstant(1);
 
@@ -280,25 +328,12 @@ __device__ auto device_SqDalitzPlot(fptype *evt, ParameterContainer &pc) -> fpty
     fpcomplex totalAmp(0, 0);
 
     for(int i = 0; i < numResonances; ++i) {
-        for(int j = 0; j < numResonances; ++j) {
             fpcomplex amp_i = fpcomplex(pc.getParameter(i * 2), pc.getParameter(i * 2 + 1));
             fpcomplex me_i = RO_CACHE(cSqDpResonances[i + (16 * cacheToUse)][evtNum]);
-            fpcomplex amp_j = fpcomplex(pc.getParameter(j * 2), -pc.getParameter(j * 2 + 1));
-            fpcomplex me_j = RO_CACHE(cSqDpResonances[j + (16 * cacheToUse)][evtNum]);
-            totalAmp += amp_i*amp_j*me_i*conj(me_j);
-        }
+            totalAmp += amp_i*me_i;
     }
 
-    fptype ret = thrust::abs(totalAmp);
-
-
-    // for(int i = 0; i < numResonances; ++i) {
-    //         fpcomplex amp_i = fpcomplex(pc.getParameter(i * 2), pc.getParameter(i * 2 + 1));
-    //         fpcomplex me_i = RO_CACHE(cSqDpResonances[i + (16 * cacheToUse)][evtNum]);
-    //         totalAmp += amp_i*me_i;
-    // }
-
-    // fptype ret = thrust::norm(totalAmp);
+    fptype ret = thrust::norm(totalAmp);
    
     pc.incrementIndex(1, numResonances * 2, 2, num_obs, 1);
 
@@ -307,11 +342,7 @@ __device__ auto device_SqDalitzPlot(fptype *evt, ParameterContainer &pc) -> fpty
         pc.incrementIndex();
 
     fptype eff = callFunction(evt, pc);
-  
-    //fptype jacobian = calc_SqDp_Jacobian(mprime, thetaprime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
     ret *= eff;
-
-    // printf("likelihood=%f eff=%f \n",ret, eff);
 
     return ret;
 }
@@ -452,9 +483,9 @@ __host__ void Amp3BodySqDP::setDataSize(unsigned int dataSize, unsigned int evtS
 
     setForceIntegrals();
 
-    normalize();
+    // normalize();
 
-    setForceIntegrals(false);
+    // setForceIntegrals(false);
 
 }
 
@@ -546,8 +577,7 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
         }
     }
 
-    cudaDeviceSynchronize();
-
+    
     for(int i = 0; i < n_res; ++i){
         if((!redoIntegral[i]))
             continue;
@@ -565,7 +595,7 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
         );
     }
 
-    cudaDeviceSynchronize();
+    
 
     fpcomplex sumIntegral(0, 0);
     for(unsigned int i = 0; i < n_res; ++i) {
@@ -575,11 +605,11 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
 
             fptype fNorm_i = 1/(thrust::get<0>(integrals[i*n_res + i]).real());
             fptype fNorm_j = 1./(thrust::get<0>(integrals[j*n_res + j]).real());
-            fpcomplex int_ij = thrust::get<0>(integrals[i*n_res + j]);
+            fpcomplex int_ij = thrust::get<1>(integrals[i*n_res + j]); // int_ij= integral_{ij}*eff*jacobian
 
             sumIntegral += amplitude_i*amplitude_j*int_ij*sqrt(fNorm_i)*sqrt(fNorm_j);
             
-       
+            // sumIntegral += amplitude_i*amplitude_j*int_ij;
         }
     }
 

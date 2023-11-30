@@ -50,7 +50,7 @@ class DalitzPlotter {
             for(size_t j = 0; j < m23.getNumBins(); ++j) {
                 m23.setValue(m23.getLowerLimit() + m23.getBinSize() * (j + 0.5));
                   //if(m12.getValue()>m13.getValue()) continue;
-                if(inDalitz(m13.getValue(),
+                if(inDalitz2(m13.getValue(),
                             m23.getValue(),
                             signalDalitz->decayInfo.motherMass,
                             signalDalitz->decayInfo.daug1Mass,
@@ -261,6 +261,8 @@ class DalitzPlotter {
         s12_pdf->Write(0, TObject::kOverwrite);
         s13_pdf->Write(0, TObject::kOverwrite);
         s23_pdf->Write(0, TObject::kOverwrite);
+        Data_DP->Write(0, TObject::kOverwrite);
+        Fitted_DP->Write(0, TObject::kOverwrite);
 
         TCanvas ratio_s12("ratio_s12", "", 1000, 720);
         s12_pdf->Scale(s12_data->Integral() / s12_pdf->Integral());

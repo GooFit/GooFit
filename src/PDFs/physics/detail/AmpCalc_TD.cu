@@ -57,7 +57,7 @@ AmpCalc_TD::AmpCalc_TD(unsigned int nPerm, unsigned int ampIdx)
 __device__ auto AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex {
     //int tid = blockIdx.x*blockDim.x + threadIdx.x;
     //bool PRINT_ME = tid == 0;
-    const bool PRINT_ME = false;
+    const bool PRINT_ME = true;
 
     ParameterContainer pc;
     pc.prepare(_entryFinder._dalitzFuncId); 
@@ -71,10 +71,13 @@ __device__ auto AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t) cons
 
     if(PRINT_ME) 
     {
+        printf("_dalitzFuncId: %d\n", _entryFinder._dalitzFuncId);
         printf("_AmpIdx: %i\n", _entryFinder._AMP_IDX);
         printf("_nPerm: %i\n", _entryFinder._N_PERM);
         printf("LS_step: %i\n", LS_STEP);
         printf("SF_step: %i\n", SF_STEP);
+        printf("TotAMP: %d\n", _entryFinder.getTotAMP(pc));
+        printf("TotLS: %d\n", _entryFinder.getTotLS(pc));
     }
 
     for(int i = 0; i < _entryFinder._N_PERM; ++i) 
@@ -142,17 +145,22 @@ __device__ auto AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t) cons
     return returnVal;
 }
 
-__host__ std::vector<size_t> AmpCalc_TD::getLineshapeIndices(int totalAMP) const {
+__host__ std::vector<unsigned int> AmpCalc_TD::getLineshapeIndices(int totalAMP) const {
     bool printStatus = false;
 
-    std::vector<size_t> hostAmpIndices = DebugTools::copyAmpIndicesToHost();
+    std::vector<unsigned int> hostAmpIndices = DebugTools::copyAmpIndicesToHost();
 
     unsigned int numLS   = hostAmpIndices[totalAMP + _entryFinder._AMP_IDX];
     unsigned int LS_step = numLS / _entryFinder._N_PERM;
 
-    std::vector<size_t> ret;
+    std::vector<unsigned int> ret;
 
     if(printStatus) {
+        for (const auto& h : hostAmpIndices)
+        {
+            printf("AmpIdx: %d\n", h);
+        }
+
         printf("In getLineShapesIndices:\n");
         printf("_AmpIdx: %i\n", _entryFinder._AMP_IDX);
         printf("_nPerm: %i\n", _entryFinder._N_PERM);
@@ -176,23 +184,28 @@ __host__ std::vector<size_t> AmpCalc_TD::getLineshapeIndices(int totalAMP) const
         }
     }
 
-    if(printStatus) {
+    if(printStatus) 
+    {
+        for (const auto& l : ret)
+        {
+            printf("LSIdx: %d\n", l);
+        }
         printf("Finished getLineshapeIndices.\n\n");
     }
 
     return ret;
 }
 
-__host__ std::vector<size_t> AmpCalc_TD::getSpinFactorIndices(int totalAMP) const {
+__host__ std::vector<unsigned int> AmpCalc_TD::getSpinFactorIndices(int totalAMP) const {
     bool printStatus = false;
 
-    std::vector<size_t> hostAmpIndices = DebugTools::copyAmpIndicesToHost();
+    std::vector<unsigned int> hostAmpIndices = DebugTools::copyAmpIndicesToHost();
 
     unsigned int numLS   = hostAmpIndices[totalAMP + _entryFinder._AMP_IDX];
     unsigned int numSF   = hostAmpIndices[totalAMP + _entryFinder._AMP_IDX + 1];
     unsigned int SF_step = numSF / _entryFinder._N_PERM;
 
-    std::vector<size_t> ret;
+    std::vector<unsigned int> ret;
 
     if(printStatus) {
         printf("In getSpinFactorIndices:\n");

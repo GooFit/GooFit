@@ -12,8 +12,8 @@ LSCalculator_TD::LSCalculator_TD() = default;
 
 __device__ auto LSCalculator_TD::operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex {
     const int tid       = blockIdx.x * blockDim.x + threadIdx.x;
-    const bool PRINT_ME = tid == 0;
-    // const bool PRINT_ME = false;
+    //const bool PRINT_ME = tid == 0;
+    const bool PRINT_ME = false;
 
     // Calculates the BW values for a specific resonance.
     fpcomplex ret;

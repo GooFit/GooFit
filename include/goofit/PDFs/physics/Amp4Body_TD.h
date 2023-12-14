@@ -99,12 +99,12 @@ class Amp4Body_TD final : public Amp4BodyBase {
 
     void printAmpMappings() const;
 
-    void printSelectedLineshapes(const std::vector<size_t> &lsIndices) const;
+    void printSelectedLineshapes(const std::vector<unsigned int> &lsIndices) const;
 
-    void printSelectedSFs(const std::vector<size_t> &sfIndices) const;
+    void printSelectedSFs(const std::vector<unsigned int> &sfIndices) const;
 
     thrust::host_vector<fpcomplex> debugLS(size_t ampNum,
-                                           unsigned int permNum,
+                                           unsigned int lsNum,
                                            const thrust::device_vector<unsigned int> &evtNums) const;
 
     thrust::host_vector<fptype>

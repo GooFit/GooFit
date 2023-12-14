@@ -21,10 +21,18 @@ class Cache_SF_LS_TD_EntryFinder final {
 
     void setDalitzId(int idx) { _dalitzFuncId = idx; }
 
+    __device__ static inline unsigned int getTotAMP(const ParameterContainer &pc) { return pc.getConstant(_PC_TOT_AMP_IDX); }
+
     __device__ inline fpcomplex getLSVal(const ParameterContainer &pc, unsigned int evtNum, unsigned int lsNum) const {
         const unsigned int CACHE_TO_USE = getCacheToUse(pc);
         const unsigned int LS_IND       = getLSInd(pc, evtNum, lsNum);
-        return cResSF_TD[CACHE_TO_USE][LS_IND];
+        fpcomplex val = cResSF_TD[CACHE_TO_USE][LS_IND];
+        // printf("In getLSVal:\n");
+        // printf("Cache to use: %d\n", CACHE_TO_USE);
+        // printf("LS ind: %d\n", LS_IND);
+        // printf("Val real: %f\n", val.real());
+        // printf("Val imag: %f\n", val.imag());
+        return val;
     }
 
     __device__ inline fptype getSFVal(const ParameterContainer &pc, unsigned int evtNum, unsigned int sfNum) const {
@@ -32,9 +40,6 @@ class Cache_SF_LS_TD_EntryFinder final {
         const unsigned int SF_IND       = getSFInd(pc, evtNum, sfNum);
         return (cResSF_TD[CACHE_TO_USE][SF_IND]).real();
     }
-
-  private:
-    unsigned int _dalitzFuncId;
 
     __device__ inline unsigned int
     getSFInd(const ParameterContainer &pc, unsigned int evtNum, unsigned int sfNum) const {
@@ -64,8 +69,6 @@ class Cache_SF_LS_TD_EntryFinder final {
 
     __device__ static inline unsigned int getTotSF(const ParameterContainer &pc) { return pc.getConstant(_PC_TOT_SF_IDX); }
 
-    __device__ static inline unsigned int getTotAMP(const ParameterContainer &pc) { return pc.getConstant(_PC_TOT_AMP_IDX); }
-
     __device__ inline unsigned int getNumSF(const ParameterContainer &pc) const {
         const unsigned int totalAMP = getTotAMP(pc);
         return AmpIndices[totalAMP + _AMP_IDX + 1];
@@ -73,10 +76,20 @@ class Cache_SF_LS_TD_EntryFinder final {
 
     __device__ inline unsigned int getNumLS(const ParameterContainer &pc) const {
         const unsigned int totalAMP = getTotAMP(pc);
+        // printf("In getNumLS:\n");
+        // printf("totalAMP = %d\n", totalAMP);
+        // printf("_AMP_IDX = %d\n", _AMP_IDX);
+        // for (int i = 0; i < 10; i++)
+        // {
+        //     printf("AmpIndices[%d] = %d\n", i, AmpIndices[i]);
+        // }
         return AmpIndices[totalAMP + _AMP_IDX];
     }
 
     __device__ static inline unsigned int getOffset(const ParameterContainer &pc) { return getTotLS(pc) + getTotSF(pc); }
+
+    private:
+        unsigned int _dalitzFuncId;
 
     friend class AmpCalc_TD;
     friend struct SF_EntryDebugger_TD;

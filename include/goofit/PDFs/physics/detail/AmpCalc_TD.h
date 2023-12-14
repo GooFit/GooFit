@@ -22,9 +22,9 @@ class AmpCalc_TD : public thrust::unary_function<unsigned int, fpcomplex> {
 
     __device__ auto operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex;
 
-    __host__ std::vector<size_t> getLineshapeIndices(int totalAMP) const;
+    __host__ std::vector<unsigned int> getLineshapeIndices(int totalAMP) const;
 
-    __host__ std::vector<size_t> getSpinFactorIndices(int totalAMP) const;
+    __host__ std::vector<unsigned int> getSpinFactorIndices(int totalAMP) const;
 
     thrust::host_vector<fpcomplex>
     debugLS(unsigned int lsNum, const thrust::device_vector<unsigned int> &evtNums) const;

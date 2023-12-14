@@ -11,7 +11,12 @@
 namespace GooFit {
 
 // This function is modeled after BW_BW::getVal() in BW_BW.cpp from the MINT package written by Jonas Rademacker.
+// should match DEFINE_LINESHAPE( BW ) in AmpGen file src/Lineshapes/BW.cpp
 __device__ auto BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -> fpcomplex {
+    const int TID = blockIdx.x*blockDim.x + threadIdx.x;
+    //const bool PRINT_ME = TID == 0;
+    const bool PRINT_ME = false;
+
     fptype resmass       = pc.getParameter(0);
     fptype reswidth      = pc.getParameter(1);
     unsigned int orbital = pc.getConstant(1);
@@ -24,6 +29,15 @@ __device__ auto BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -
     fptype width         = reswidth;
     fptype mumsRecoMass2 = Mpair * Mpair;
 
+    if (PRINT_ME)
+    {
+        printf("[MATCHES] mass = mass AmpGen = %f\n", mass);
+        printf("[MATCHES] meson_radius = radius AmpGen = %f\n", meson_radius);
+        printf("[MATCHES] mumsRecoMass2 = s AmpGen = s_cse AmpGen = %f\n", mumsRecoMass2);
+        printf("[MATCHES] m1^2 = s1 AmpGen = %f\n", m1*m1);
+        printf("[MATCHES] m2^2 = s2 AmpGen = %f\n", m2*m2);
+    }
+
     fptype mpsq        = (m1 + m2) * (m1 + m2);
     fptype mmsq        = (m1 - m2) * (m1 - m2);
     fptype num         = (mumsRecoMass2 - mpsq) * (mumsRecoMass2 - mmsq);
@@ -32,6 +46,12 @@ __device__ auto BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -
     fptype prSqForGofM = num2 / (4 * mass * mass);
     fptype prSq2       = prSqForGofM < 0 ? 0 : prSqForGofM;
     prSqForGofM        = fabs(prSqForGofM);
+
+    if (PRINT_ME)
+    {
+        printf("[MATCHES] pABSq = q2 AmpGen = %f\n", pABSq);
+        printf("[MATCHES] prSqForGofM = q20 AmpGen = %f\n", prSqForGofM);
+    }
 
     fptype pratio = sqrt(pABSq / prSqForGofM);
 
@@ -44,11 +64,39 @@ __device__ auto BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -
     fptype mratio   = mass / Mpair;
     fptype r2       = meson_radius * meson_radius;
     fptype thisFR   = BL_PRIME(pABSq * r2, prSqForGofM * r2, orbital);
-    fptype frFactor = 1;
 
-    if(0 != orbital && 0 != FF) {
-        frFactor = (FF == 1 ? BL(pABSq * r2, orbital) : BL_PRIME(pABSq * r2, prSq2 * r2, orbital));
-        frFactor = (FF == 3 ? BL2(pABSq * r2, orbital) : frFactor);
+    if (PRINT_ME)
+    {
+        printf("orbital = %d\n", orbital);
+        printf("FF = %d\n", FF);
+    }
+
+    fptype frFactor = 1.0;
+    if (0 != orbital)
+    {
+        switch (FF)
+        {
+            case 0: //FF::One
+                frFactor = 1.0;
+                break;
+            case 1: //FF::BL
+                frFactor = BL(pABSq * r2, orbital);
+                break;
+            case 2: //FF::BL_Prime
+                frFactor = BL_PRIME(pABSq * r2, prSq2 * r2, orbital);
+                break;
+            case 3: //FF:BL2
+                frFactor = BL2(pABSq * r2, orbital);
+                break;
+            default:
+                printf("GooFit::BW Error - Unknown FF type\n");
+        }
+    }
+
+    if (PRINT_ME)
+    {
+        printf("[MATCHES] thisFR = AmpGen BF %f\n", thisFR);
+        printf("[MATCHES] sqrt frFactor = AmpGen FormFactor = %f\n", sqrt(frFactor));
     }
 
     fptype GofM = width * pratio_to_2Jplus1 * mratio * thisFR;

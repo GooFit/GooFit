@@ -36,8 +36,8 @@ void DebugTools::printDeviceVecComplexVals(
     std::cout << std::endl;
 }
 
-std::vector<size_t> DebugTools::copyAmpIndicesToHost() {
-    std::vector<size_t> hostAmpIndices(AMP_INDICES_SIZE);
+std::vector<unsigned int> DebugTools::copyAmpIndicesToHost() {
+    std::vector<unsigned int> hostAmpIndices(AMP_INDICES_SIZE);
 
     MEMCPY_FROM_SYMBOL(&(hostAmpIndices[0]), AmpIndices, AMP_INDICES_SIZE * sizeof(unsigned int), 0, cudaMemcpyDeviceToHost);
 

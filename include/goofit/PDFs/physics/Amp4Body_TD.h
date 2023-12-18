@@ -147,6 +147,7 @@ class Amp4Body_TD final : public Amp4BodyBase {
     double maxWeight{0};
     unsigned int _NUM_AMPLITUDES;
     const double _MAX_WEIGHT_MULTIPLIER;
+    bool _hasComputedCachedVals = false;
 };
 
 } // namespace GooFit

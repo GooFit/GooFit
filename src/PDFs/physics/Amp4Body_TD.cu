@@ -731,6 +731,8 @@ __host__ void Amp4Body_TD::computeCachedValues(const std::vector<bool> &lineshap
         //      "Cached AMPs (in AMP block)",
         // INT_MAX, 20);
     } // end loop over amps
+
+    _hasComputedCachedVals = true;
 }
 
 __host__ std::vector<bool> Amp4Body_TD::areLineshapesChanged() const {
@@ -1069,6 +1071,11 @@ thrust::host_vector<fpcomplex> Amp4Body_TD::debugLS(
     unsigned int lsNum,
     const thrust::device_vector<unsigned int>& evtNums) const
 {
+    if (!_hasComputedCachedVals)
+    {
+        throw GooFit::GeneralError("Amp4Body_TD::debugLS: Have not yet computed LS values")
+    }
+
     _AmpCalcs[ampNum]->setDalitzId(getFunctionIndex());
     return _AmpCalcs[ampNum]->debugLS(lsNum, evtNums);
 }
@@ -1078,6 +1085,11 @@ thrust::host_vector<fptype> Amp4Body_TD::debugSF(
     unsigned int sfNum,
     const thrust::device_vector<unsigned int>& evtNums) const
 {
+    if (!_hasComputedCachedVals)
+    {
+        throw GooFit::GeneralError("Amp4Body_TD::debugSF: Have not yet computed SF values")
+    }
+
     _AmpCalcs[ampNum]->setDalitzId(getFunctionIndex());
    return _AmpCalcs[ampNum]->debugSF(sfNum, evtNums); 
 }

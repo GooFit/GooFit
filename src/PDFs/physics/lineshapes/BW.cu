@@ -14,8 +14,8 @@ namespace GooFit {
 // should match DEFINE_LINESHAPE( BW ) in AmpGen file src/Lineshapes/BW.cpp
 __device__ auto BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -> fpcomplex {
     const int TID = blockIdx.x*blockDim.x + threadIdx.x;
-    //const bool PRINT_ME = TID == 0;
-    const bool PRINT_ME = false;
+    const bool PRINT_ME = TID == 0;
+    //const bool PRINT_ME = true;
 
     fptype resmass       = pc.getParameter(0);
     fptype reswidth      = pc.getParameter(1);
@@ -31,11 +31,11 @@ __device__ auto BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -
 
     if (PRINT_ME)
     {
-        printf("[MATCHES] mass = mass AmpGen = %f\n", mass);
-        printf("[MATCHES] meson_radius = radius AmpGen = %f\n", meson_radius);
-        printf("[MATCHES] mumsRecoMass2 = s AmpGen = s_cse AmpGen = %f\n", mumsRecoMass2);
-        printf("[MATCHES] m1^2 = s1 AmpGen = %f\n", m1*m1);
-        printf("[MATCHES] m2^2 = s2 AmpGen = %f\n", m2*m2);
+        printf("mass = mass AmpGen = %f\n", mass);
+        printf("meson_radius = radius AmpGen = %f\n", meson_radius);
+        printf("mumsRecoMass2 = s AmpGen = s_cse AmpGen = %f\n", mumsRecoMass2);
+        printf("m1^2 = s1 AmpGen = %f\n", m1*m1);
+        printf("m2^2 = s2 AmpGen = %f\n", m2*m2);
     }
 
     fptype mpsq        = (m1 + m2) * (m1 + m2);
@@ -49,8 +49,8 @@ __device__ auto BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -
 
     if (PRINT_ME)
     {
-        printf("[MATCHES] pABSq = q2 AmpGen = %f\n", pABSq);
-        printf("[MATCHES] prSqForGofM = q20 AmpGen = %f\n", prSqForGofM);
+        printf("pABSq = q2 AmpGen = %f\n", pABSq);
+        printf("prSqForGofM = q20 AmpGen = %f\n", prSqForGofM);
     }
 
     fptype pratio = sqrt(pABSq / prSqForGofM);
@@ -95,8 +95,8 @@ __device__ auto BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -
 
     if (PRINT_ME)
     {
-        printf("[MATCHES] thisFR = AmpGen BF %f\n", thisFR);
-        printf("[MATCHES] sqrt frFactor = AmpGen FormFactor = %f\n", sqrt(frFactor));
+        printf("thisFR = AmpGen BF %f\n", thisFR);
+        printf("sqrt frFactor = AmpGen FormFactor = %f\n", sqrt(frFactor));
     }
 
     fptype GofM = width * pratio_to_2Jplus1 * mratio * thisFR;

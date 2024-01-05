@@ -1073,7 +1073,7 @@ thrust::host_vector<fpcomplex> Amp4Body_TD::debugLS(
 {
     if (!_hasComputedCachedVals)
     {
-        throw GooFit::GeneralError("Amp4Body_TD::debugLS: Have not yet computed LS values")
+        throw GooFit::GeneralError("Amp4Body_TD::debugLS: Have not yet computed LS values");
     }
 
     _AmpCalcs[ampNum]->setDalitzId(getFunctionIndex());
@@ -1087,7 +1087,7 @@ thrust::host_vector<fptype> Amp4Body_TD::debugSF(
 {
     if (!_hasComputedCachedVals)
     {
-        throw GooFit::GeneralError("Amp4Body_TD::debugSF: Have not yet computed SF values")
+        throw GooFit::GeneralError("Amp4Body_TD::debugSF: Have not yet computed SF values");
     }
 
     _AmpCalcs[ampNum]->setDalitzId(getFunctionIndex());

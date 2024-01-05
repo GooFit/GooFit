@@ -14,8 +14,8 @@ namespace GooFit {
 // should match DEFINE_LINESHAPE( BW ) in AmpGen file src/Lineshapes/BW.cpp
 __device__ auto BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -> fpcomplex {
     const int TID = blockIdx.x*blockDim.x + threadIdx.x;
-    const bool PRINT_ME = TID == 0;
-    //const bool PRINT_ME = true;
+    //const bool PRINT_ME = TID == 0;
+    const bool PRINT_ME = false;
 
     fptype resmass       = pc.getParameter(0);
     fptype reswidth      = pc.getParameter(1);

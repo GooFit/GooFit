@@ -11,7 +11,7 @@ namespace GooFit {
 LSCalculator_TD::LSCalculator_TD() = default;
 
 __device__ auto LSCalculator_TD::operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex {
-    const int tid       = blockIdx.x * blockDim.x + threadIdx.x;
+    //const int tid       = blockIdx.x * blockDim.x + threadIdx.x;
     //const bool PRINT_ME = tid == 0;
     const bool PRINT_ME = false;
 
@@ -89,15 +89,26 @@ __device__ auto LSCalculator_TD::operator()(thrust::tuple<int, fptype *, int> t)
     } else {
         fptype vecs[16];
         get4Vecs(vecs, m12, m34, cos12, cos34, phi, M, m1, m2, m3, m4);
-        if(PRINT_ME) {
+        if(PRINT_ME) 
+        {
             printf("Got 4 vecs\n");
         }
+
         fptype d1, d2;
         fptype mres = getmass(pair, d1, d2, vecs, m1, m2, m3, m4);
-        if(PRINT_ME) {
+        if(PRINT_ME) 
+        {
+            const fptype *P1 = vecs;
+            const fptype *P2 = (vecs + 4);
+            const fptype *P3 = (vecs + 8);
+            const fptype *P4 = (vecs + 12);
             printf("mres from 4 vecs = %f\n", mres);
             printf("d1 from 4 vecs = %f\n", d1);
             printf("d2 from 4 vecs = %f\n", d2);
+            printf("P1: = %f, %f, %f, %f\n", P1[0], P1[1], P1[2], P1[3]);
+            printf("P2: = %f, %f, %f, %f\n", P2[0], P2[1], P2[2], P2[3]);
+            printf("P3: = %f, %f, %f, %f\n", P3[0], P3[1], P3[2], P3[3]);
+            printf("P4: = %f, %f, %f, %f\n", P4[0], P4[1], P4[2], P4[3]);
         }
         ret = getResonanceAmplitude(mres, d1, d2, pc);
         // printf("LS %i: mass:%f, %f i%f\n",_resonance_i, mres, ret.real, ret.imag );

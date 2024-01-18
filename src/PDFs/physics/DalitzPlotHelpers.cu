@@ -85,6 +85,25 @@ __device__ void get4Vecs(fptype *Vecs,
                          const fptype m2,
                          const fptype m3,
                          const fptype m4) {
+    //const int tid       = blockIdx.x * blockDim.x + threadIdx.x;
+    //const bool PRINT_ME = tid == 0;
+    const bool PRINT_ME = false;
+
+    if (PRINT_ME)
+    {
+        printf("In get4Vecs\n");
+        printf("M = %f\n", M);
+        printf("m1 = %f\n", m1);
+        printf("m2 = %f\n", m2);
+        printf("m3 = %f\n", m3);
+        printf("m4 = %f\n", m4);
+        printf("m12 = %f\n", m12);
+        printf("m34 = %f\n", m34);
+        printf("c12 = %f\n", cos12);
+        printf("c34 = %f\n", cos34);
+        printf("phi = %f\n", phi);
+    }
+    
     // printf("g4v %f, %f, %f, %f, %f\n",M, m1, m2, m3, m4 );
     fptype E1     = (m12 * m12 + m1 * m1 - m2 * m2) / (2 * m12);
     fptype E2     = (m12 * m12 - m1 * m1 + m2 * m2) / (2 * m12);
@@ -92,8 +111,10 @@ __device__ void get4Vecs(fptype *Vecs,
     fptype E4     = (m34 * m34 - m3 * m3 + m4 * m4) / (2 * m34);
     fptype p1     = sqrt(E1 * E1 - m1 * m1);
     fptype p3     = sqrt(E3 * E3 - m3 * m3);
+
     fptype sin12  = sqrt(1 - cos12 * cos12);
     fptype sin34  = sqrt(1 - cos34 * cos34);
+    
     fptype ED1    = (M * M + m12 * m12 - m34 * m34) / (2 * m12);
     fptype PD1    = sqrt(ED1 * ED1 - M * M);
     fptype beta1  = PD1 / ED1;
@@ -128,6 +149,20 @@ __device__ void get4Vecs(fptype *Vecs,
     Vecs[11] = E3;
     Vecs[15] = E4;
 
+    if (PRINT_ME)
+    {
+        printf("Before boost:\n");
+        printf("px, py, pz, E:\n");
+        printf("P1 = %f, %f, %f, %f\n", Vecs[0], Vecs[1], Vecs[2], Vecs[3]);
+        printf("P2 = %f, %f, %f, %f\n", Vecs[4], Vecs[5], Vecs[6], Vecs[7]);
+        printf("P3 = %f, %f, %f, %f\n", Vecs[8], Vecs[9], Vecs[10], Vecs[11]);
+        printf("P4 = %f, %f, %f, %f\n", Vecs[12], Vecs[13], Vecs[14], Vecs[15]);
+        printf("m(P1) = %f\n", Mass(&Vecs[0]));
+        printf("m(P2) = %f\n", Mass(&Vecs[4]));
+        printf("m(P3) = %f\n", Mass(&Vecs[8]));
+        printf("m(P4) = %f\n", Mass(&Vecs[12]));
+    }
+
     fptype tmpE = Vecs[3];
     fptype tmpX = Vecs[0];
     Vecs[3]     = gamma1 * (tmpE + beta1 * tmpX);
@@ -148,6 +183,16 @@ __device__ void get4Vecs(fptype *Vecs,
     Vecs[15] = gamma2 * (tmpE + beta2 * tmpX);
     Vecs[12] = gamma2 * (tmpX + beta2 * tmpE);
 
+    if (PRINT_ME)
+    {
+        printf("Before rotation:\n");
+        printf("px, py, pz, E:\n");
+        printf("P1 = %f, %f, %f, %f\n", Vecs[0], Vecs[1], Vecs[2], Vecs[3]);
+        printf("P2 = %f, %f, %f, %f\n", Vecs[4], Vecs[5], Vecs[6], Vecs[7]);
+        printf("P3 = %f, %f, %f, %f\n", Vecs[8], Vecs[9], Vecs[10], Vecs[11]);
+        printf("P4 = %f, %f, %f, %f\n", Vecs[12], Vecs[13], Vecs[14], Vecs[15]);
+    }
+
     // rotation around X-axis of the first two vectors.
     fptype cosphi = cos(phi);
     fptype sinphi = sin(phi);
@@ -158,6 +203,20 @@ __device__ void get4Vecs(fptype *Vecs,
 
     Vecs[6] = sinphi * Vecs[5];
     Vecs[5] = cosphi * Vecs[5];
+
+    if (PRINT_ME)
+    {
+        printf("Final vals:\n");
+        printf("px, py, pz, E:\n");
+        printf("P1 = %f, %f, %f, %f\n", Vecs[0], Vecs[1], Vecs[2], Vecs[3]);
+        printf("P2 = %f, %f, %f, %f\n", Vecs[4], Vecs[5], Vecs[6], Vecs[7]);
+        printf("P3 = %f, %f, %f, %f\n", Vecs[8], Vecs[9], Vecs[10], Vecs[11]);
+        printf("P4 = %f, %f, %f, %f\n", Vecs[12], Vecs[13], Vecs[14], Vecs[15]);
+        printf("m(P1) = %f\n", Mass(&Vecs[0]));
+        printf("m(P2) = %f\n", Mass(&Vecs[4]));
+        printf("m(P3) = %f\n", Mass(&Vecs[8]));
+        printf("m(P4) = %f\n", Mass(&Vecs[12]));
+    }
 }
 
 __device__ auto getmass(const unsigned int &pair,

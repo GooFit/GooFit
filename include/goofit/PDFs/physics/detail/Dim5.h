@@ -93,20 +93,49 @@ struct Dim5 : public mcbooster::IFunctionArray {
 
     __host__ __device__ void
     operator()(const mcbooster::GInt_t n, mcbooster::Vector4R **particles, mcbooster::GReal_t *variables) override {
+        // int tid = blockIdx.x*blockDim.x + threadIdx.x;
+        // bool PRINT_ME = tid == 0;
+        const bool PRINT_ME = false;
+
         mcbooster::Vector4R ppip  = *particles[0];
         mcbooster::Vector4R ppim  = *particles[1];
         mcbooster::Vector4R pK    = *particles[2];
         mcbooster::Vector4R ppip2 = *particles[3];
 
+        if (PRINT_ME)
+        {
+            printf("E, px, py, pz\n");
+            printf("ppip = %f, %f, %f, %f\n", ppip.get(0), ppip.get(1), ppip.get(2), ppip.get(3));
+            printf("ppim = %f, %f, %f, %f\n", ppim.get(0), ppim.get(1), ppim.get(2), ppim.get(3));
+            printf("pK = %f, %f, %f, %f\n", pK.get(0), pK.get(1), pK.get(2), pK.get(3));
+            printf("ppip2 = %f, %f, %f, %f\n", ppip2.get(0), ppip2.get(1), ppip2.get(2), ppip2.get(3));
+        }
+
         mcbooster::Vector4R pM    = ppip + ppim + pK + ppip2;
         mcbooster::Vector4R ppipi = ppip + ppim;
         mcbooster::Vector4R pKpi  = pK + ppip2;
+
+        if (PRINT_ME)
+        {
+            printf("pM = %f, %f, %f, %f\n", pM.get(0), pM.get(1), pM.get(2), pM.get(3));
+            printf("ppipi = %f, %f, %f, %f\n", ppipi.get(0), ppipi.get(1), ppipi.get(2), ppipi.get(3));
+            printf("pKpi = %f, %f, %f, %f\n", pKpi.get(0), pKpi.get(1), pKpi.get(2), pKpi.get(3));
+        }
 
         variables[0] = ppipi.mass();
         variables[1] = pKpi.mass();
         variables[2] = cosHELANG(pM, ppipi, ppip);
         variables[3] = cosHELANG(pM, pKpi, pK);
         variables[4] = phi(pM, ppip, ppim, pK, ppip2);
+
+        if (PRINT_ME)
+        {
+            printf("ppipi.mass() = %f\n", variables[0]);
+            printf("pKpi.mass() = %f\n", variables[1]);
+            printf("cosHELANG(pM, ppipi, ppip) = %f\n", variables[2]);
+            printf("cosHELANG(pM, pKpi, pK) = %f\n", variables[3]);
+            printf("phi = %f\n", variables[4]);
+        }
     }
 };
 

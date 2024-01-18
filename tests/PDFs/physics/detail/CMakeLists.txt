@@ -1,0 +1,1 @@
+goofit_catch_test(Dim5Test)

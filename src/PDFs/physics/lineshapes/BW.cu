@@ -13,7 +13,7 @@ namespace GooFit {
 // This function is modeled after BW_BW::getVal() in BW_BW.cpp from the MINT package written by Jonas Rademacker.
 // should match DEFINE_LINESHAPE( BW ) in AmpGen file src/Lineshapes/BW.cpp
 __device__ auto BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -> fpcomplex {
-    const int TID = blockIdx.x*blockDim.x + threadIdx.x;
+    //const int TID = blockIdx.x*blockDim.x + threadIdx.x;
     //const bool PRINT_ME = TID == 0;
     const bool PRINT_ME = false;
 

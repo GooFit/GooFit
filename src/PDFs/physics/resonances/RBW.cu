@@ -18,7 +18,7 @@ __device__ auto plainBW(fptype m13, fptype m23, fptype m12, ParameterContainer &
     fptype resmass  = pc.getParameter(0);
     fptype reswidth = pc.getParameter(1);
 
-    double phi1020_MASS  = 1.019461;
+    // double phi1020_MASS  = 1.019461;
     // if(resmass!=phi1020_MASS)
     //     printf("current resmass = %f\n", resmass);
 
@@ -30,20 +30,7 @@ __device__ auto plainBW(fptype m13, fptype m23, fptype m12, ParameterContainer &
     fptype m1= 0.0;
     fptype m2= 0.0;
     fptype m3= 0.0;
-
-    if(resmass < 0.) {
-        GOOFIT_TRACE("Resonance Mass zero!");
-        resmass *= -1.;
-        resmass2 = resmass*resmass;
-        //return result;
-    }
-
-    if(reswidth < 0.) {
-        GOOFIT_TRACE("Resonance Width zero!");
-        reswidth*= -1.;
-        //return result;
-    }
-
+    
 #pragma unroll
     for(size_t i = 0; i < I; i++) {
         

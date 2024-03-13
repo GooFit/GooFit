@@ -475,11 +475,11 @@ __host__ void Amp3BodySqDP::setDataSize(unsigned int dataSize, unsigned int evtS
                          cudaMemcpyHostToDevice);
     }
 
-    if(dev_fake_event_array==nullptr){
-        std::cout << "START: Fill normalization data array with " << NumNormEvents << " events. \n";
-        genNormFakeEvents(NumNormEvents);
-        std::cout << "END: Done! \n";
-    }
+    // if(dev_fake_event_array==nullptr){
+    //     std::cout << "START: Fill normalization data array with " << NumNormEvents << " events. \n";
+    //     genNormFakeEvents(NumNormEvents);
+    //     std::cout << "END: Done! \n";
+    // }
 
     setForceIntegrals();
 
@@ -498,9 +498,9 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
     host_normalizations.sync(d_normalizations);
     
     int totalBins = _mprime.getNumBins() * _thetaprime.getNumBins();
-    double binSizeFactor = 1;
-    binSizeFactor *= _mprime.getBinSize();
-    binSizeFactor *= _thetaprime.getBinSize();
+    // double binSizeFactor = 1;
+    // binSizeFactor *= _mprime.getBinSize();
+    // binSizeFactor *= _thetaprime.getBinSize();
 
     if(!dalitzNormRange) {
         gooMalloc((void **)&dalitzNormRange, 6 * sizeof(fptype));
@@ -533,12 +533,9 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
     forceRedoIntegrals = false;
 
     thrust::constant_iterator<fptype *> arrayAddress(dalitzNormRange);
-    thrust::counting_iterator<int> fakeEvtIndex(0);
+    thrust::counting_iterator<int> binIndex(0);
    
     thrust::constant_iterator<fptype *> dataArray(dev_event_array);
-    thrust::constant_iterator<fptype *> fakedataArray(dev_fake_event_array);
-
-    thrust::constant_iterator<int> fakeeventSize(totalEventSize);
     thrust::constant_iterator<int> eventSize(totalEventSize);
     thrust::counting_iterator<int> eventIndex(eventOffset);
 
@@ -565,14 +562,16 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
             //thrust::plus<fpcomplex> complexSum;
             
             integrals[index++] = thrust::transform_reduce(
-                thrust::make_zip_iterator(thrust::make_tuple(fakeEvtIndex, fakedataArray, fakeeventSize, effFunc)),
-                thrust::make_zip_iterator(thrust::make_tuple(fakeEvtIndex + NumNormEvents, arrayAddress, fakeeventSize, effFunc)),
+                thrust::make_zip_iterator(thrust::make_tuple(binIndex, arrayAddress, effFunc)),
+                thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, arrayAddress, effFunc)),
                 *(integrators[i][j]),
                 dummy,
                 reduce_func);
 
-            if(i==j)
-                std::cout << "integral " << i << "=" << thrust::get<0>(integrals[i*n_res + j]).real()/NumNormEvents << "\n";
+            if(i==j){
+                auto pars = decayInfo.resonances[i]->getParameters();
+                std::cout << "integral " << i << "=" << thrust::get<0>(integrals[i*n_res + j]).real()/NumNormEvents << " mass= " << pars[0].getValue() << "\n";
+            }
             
         }
     }
@@ -586,7 +585,6 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
         calculators[i]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
         calculators[i]->setDalitzIndex(getFunctionIndex());
         calculators[i]->setNorm(int_i.real());
-        //calculators[i]->setNorm(1.);
         thrust::transform(
                     thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                     thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
@@ -614,8 +612,6 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
     }
 
     fptype ret           = sumIntegral.real(); // That complex number is a square, so it's fully real
-  
-    //ret /= totalFakeEvent;
     host_normalizations[normalIdx + 1] = 1.0 / ret;
     cachedNormalization                = 1.0 / ret;
     return ret;
@@ -645,9 +641,9 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
     
     size_t n_res     = getDecayInfo().resonances.size();
     size_t totalBins = _mprime.getNumBins() * _thetaprime.getNumBins();
-    double binSizeFactor = 1;
-    binSizeFactor *= _mprime.getBinSize();
-    binSizeFactor *= _thetaprime.getBinSize();
+    // double binSizeFactor = 1;
+    // binSizeFactor *= _mprime.getBinSize();
+    // binSizeFactor *= _thetaprime.getBinSize();
 
     if(!dalitzNormRange) {
         gooMalloc((void **)&dalitzNormRange, 6 * sizeof(fptype));
@@ -671,10 +667,13 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
 
 
     // Only do this bit if masses or widths have changed.
-    thrust::constant_iterator<fptype *> arrayAddress(dalitzNormRange);
-    thrust::counting_iterator<int> fakeEvtIndex(0);
-    thrust::constant_iterator<fptype *> fakedataArray(dev_fake_event_array);
-    thrust::constant_iterator<int> fakeeventSize(totalEventSize);
+   thrust::constant_iterator<fptype *> arrayAddress(dalitzNormRange);
+    thrust::counting_iterator<int> binIndex(0);
+   
+    thrust::constant_iterator<fptype *> dataArray(dev_event_array);
+    thrust::constant_iterator<int> eventSize(totalEventSize);
+    thrust::counting_iterator<int> eventIndex(eventOffset);
+
 
      auto reduce_func = [] __host__ __device__ (const thrust::tuple<fpcomplex, fpcomplex>& x, const thrust::tuple<fpcomplex, fpcomplex>& y)
     {
@@ -692,8 +691,8 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
             auto dummy = thrust::make_tuple(fpcomplex(0.,0.), fpcomplex(0.,0.));
             
             integrals[index++] = thrust::transform_reduce(
-                thrust::make_zip_iterator(thrust::make_tuple(fakeEvtIndex, fakedataArray, fakeeventSize, effFunc)),
-                thrust::make_zip_iterator(thrust::make_tuple(fakeEvtIndex + NumNormEvents, arrayAddress, fakeeventSize, effFunc)),
+                   thrust::make_zip_iterator(thrust::make_tuple(binIndex, arrayAddress, effFunc)),
+                thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, arrayAddress, effFunc)),
                 *(integrators[i][j]),
                 dummy,
                 reduce_func);

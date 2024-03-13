@@ -52,7 +52,8 @@ __device__ auto SpecialSqDpResonanceCalculator::operator()(thrust::tuple<int, fp
         pc.incrementIndex();
 
     ret = getResonanceAmplitude(s13, s23 , s12 ,  pc);
-    
+       // fptype jacobian = calc_SqDp_Jacobian(mprime, thetaprime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
+
     return ret/sqrt(norm);
     // return ret;
 

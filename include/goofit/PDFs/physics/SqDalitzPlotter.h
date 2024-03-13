@@ -232,6 +232,7 @@ class SqDalitzPlotter {
 
         for(int i = 0; i < data->getNumEvents(); i++) {
             data->loadEvent(i);
+            auto jacobian = calc_SqDp_Jacobian(mprime.getValue(),  thetaprime.getValue(),mother_mass,d1_mass,d2_mass,d3_mass);
             Data_SqDP->Fill(mprime.getValue(), thetaprime.getValue());
             auto _m12 = calc_m12(mprime.getValue(),mother_mass,d1_mass,d2_mass,d3_mass);
             auto _m13 = calc_m13(_m12,cos(thetaprime.getValue()*M_PI),mother_mass,d1_mass,d2_mass,d3_mass);
@@ -242,13 +243,14 @@ class SqDalitzPlotter {
         }
 
         for(int i = 0; i < getNumEvents(); i++) {
-            Fitted_SqDP->Fill(getXval(i), getYval(i), getVal(i));
+            auto jacobian = 1.; //calc_SqDp_Jacobian(getXval(i), getYval(i),mother_mass,d1_mass,d2_mass,d3_mass);
+            Fitted_SqDP->Fill(getXval(i), getYval(i), getVal(i)*jacobian);
             auto _m12 = calc_m12(getXval(i),mother_mass,d1_mass,d2_mass,d3_mass);
             auto _m13 = calc_m13(_m12,cos(getYval(i)*M_PI),mother_mass,d1_mass,d2_mass,d3_mass);
-            auto _s12 = _m12*_m12; s12_pdf->Fill(_s12, getVal(i));
-            auto _s13 = _m13*_m13; s13_pdf->Fill(_s13, getVal(i));
-            auto _s23 = mother_mass*mother_mass + d1_mass*d1_mass + d2_mass*d2_mass + d3_mass*d3_mass - _s12 - _s13; s23_pdf->Fill(_s23, getVal(i));
-            Fitted_DP->Fill(_s13,_s23, getVal(i));
+            auto _s12 = _m12*_m12; s12_pdf->Fill(_s12, getVal(i)*jacobian);
+            auto _s13 = _m13*_m13; s13_pdf->Fill(_s13, getVal(i)*jacobian);
+            auto _s23 = mother_mass*mother_mass + d1_mass*d1_mass + d2_mass*d2_mass + d3_mass*d3_mass - _s12 - _s13; s23_pdf->Fill(_s23, getVal(i)*jacobian);
+            Fitted_DP->Fill(_s13,_s23, getVal(i)*jacobian);
         }
 
         double scale = Data_SqDP->GetEntries()/Fitted_SqDP->GetEntries();
@@ -267,16 +269,16 @@ class SqDalitzPlotter {
                     Chi2_SqDP->SetBinContent(i,res);
         }
 
-        auto mprime_data = (TH1D *)Data_DP->ProjectionX("mprime_data");
-        auto thetaprime_data = (TH1D *)Data_DP->ProjectionY("thetaprime_data");
+        auto mprime_data = (TH1D *)Data_SqDP->ProjectionX("mprime_data");
+        auto thetaprime_data = (TH1D *)Data_SqDP->ProjectionY("thetaprime_data");
         mprime_data->Sumw2();
         mprime_data->GetXaxis()->SetTitle("mprime_data");
         mprime_data->GetYaxis()->SetTitle("Candidates");
         thetaprime_data->GetXaxis()->SetTitle("thetaprime_data");
         thetaprime_data->GetYaxis()->SetTitle("Candidates");
 
-        auto mprime_pdf = (TH1D *)Fitted_DP->ProjectionX("mprime_pdf");
-        auto thetaprime_pdf = (TH1D *)Fitted_DP->ProjectionY("thetaprime_pdf");
+        auto mprime_pdf = (TH1D *)Fitted_SqDP->ProjectionX("mprime_pdf");
+        auto thetaprime_pdf = (TH1D *)Fitted_SqDP->ProjectionY("thetaprime_pdf");
 
         mprime_pdf->SetLineColor(kRed);
         mprime_pdf->SetLineWidth(2);

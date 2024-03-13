@@ -71,7 +71,7 @@ Variable Daughter2_Mass("DecayProduct_2_Mass", d2_MASS);
 Variable Daughter3_Mass("DecayProduct_3_Mass", d3_MASS);
 
 // Bins for grid normalization
-const int bins = 1000;
+const int bins = 700;
 
 // Dalitz Limits
 const fptype s12_min = (d1_MASS + d2_MASS) * (d1_MASS + d2_MASS);
@@ -116,8 +116,8 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
 
     double f2p_1525_MASS  = 1.525;
     double f2p_1525_WIDTH = 0.073;
-    double f2p_1525_amp   = 76.;
-    double f2p_1525_img   = 9.;
+    double f2p_1525_amp   = 0.;
+    double f2p_1525_img   = 1.;
 
     Variable v_f2p_1525_Mass("f2p_1525_MASS", f2p_1525_MASS);
     Variable v_f2p_1525_Width("f2p_1525_WIDTH", f2p_1525_WIDTH);
@@ -142,12 +142,12 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
 
     // If you want include a resonance in your model, just push into the vector 'vec_resonances'
 
-    auto nonres = new Resonances::NonRes("NonRes",Variable("re",23.,0.01,0,0),Variable("im",29.,0.01,0,0));
+    auto nonres = new Resonances::NonRes("NonRes",Variable("re",1.,0.01,0,0),Variable("im",0.,0.01,0,0));
 
     std::vector<ResonancePdf *> vec_resonances;
 
-    //vec_resonances.push_back(phi1020);
-    //vec_resonances.push_back(f2p_1525);
+    vec_resonances.push_back(phi1020);
+ vec_resonances.push_back(f2p_1525);
     vec_resonances.push_back(nonres);
 
     D2KKK.resonances = vec_resonances;
@@ -202,9 +202,9 @@ void to_root(UnbinnedDataSet &toyMC, std::string name) {
 
     double _mprime, _thetaprime,_s12,_s13,_s23,_jac;
     auto f     = new TFile(name.c_str(), "recreate");
-    auto t     = new TTree("DecayTree", "");
-    auto b_mprime = t->Branch("mprime", &_mprime, "mprime/D");
-    auto b_thetaprime = t->Branch("thetaprime", &_thetaprime, "thetaprime/D");
+    auto t     = new TTree("genResults", "");
+    auto b_mprime = t->Branch("mPrime", &_mprime, "mPrime/D");
+    auto b_thetaprime = t->Branch("thPrime", &_thetaprime, "thPrime/D");
     t->Branch("s12", &_s12, "s12/D");
     t->Branch("s13", &_s13, "s13/D");
     t->Branch("s23", &_s23, "s23/D");
@@ -249,7 +249,7 @@ Amp3BodySqDP *runFit(GooPdf *totalPdf, Amp3BodySqDP *signal, UnbinnedDataSet *da
 
     // Start fit
     auto func_min = datapdf.fit();
-    datapdf.printParams();
+    //datapdf.printParams();
     output = fmt::format("Fit/{0}/fit_result_fitted.txt", name.c_str());
     writeToFile(totalPdf, output.c_str());
 
@@ -307,7 +307,7 @@ int main(int argc, char **argv) {
     GooPdf *totalpdf = nullptr;
 
     auto signal = makesignalpdf(mprime, thetaprime, eventNumber, efficiency);
-    signal->setNumNormEvents(1000000);
+    signal->setNumNormEvents(5000000);
     totalpdf    = new ProdPdf("totalpdf", {signal});
 
     
@@ -404,20 +404,22 @@ int main(int argc, char **argv) {
         std::cout << "Num Entries Loaded =  " << data.getNumEvents() << std::endl;
         std::cout << "------------------------------------------" << std::endl;
         auto output_signal = runFit(totalpdf, signal, &data, fit_name);
-        data.clear();
+        auto  fullName = fmt::format("Fit/{0}/{1}",fit_name, "output_plots.root");
         SqDalitzPlotter dplotter{totalpdf, signal};
+        dplotter.Plot(fullName, &data);
+       
+        data.clear();
         dplotter.fillDataSetMC(data, Nevents);
         std::cout << "----------------------------------------------------------" << std::endl;
         std::cout << data.getNumEvents() << " events was generated!" << std::endl;
         std::cout << "----------------------------------------------------------" << std::endl;
-        auto fullName = fmt::format("Fit/{0}/{1}",fit_name, toyName);
+        fullName = fmt::format("Fit/{0}/{1}",fit_name, toyName);
         to_root(data, fullName);
         std::cout << toyName << " root file was saved in MC folder" << std::endl;
         std::cout << "----------------------------------------------------------" << std::endl;
         auto frac = signal->fit_fractions(true);
 
-        fullName = fmt::format("Fit/{0}/{1}",fit_name, "output_plots.root");
-        dplotter.Plot(fullName, &data);
+      
        
     }
 }

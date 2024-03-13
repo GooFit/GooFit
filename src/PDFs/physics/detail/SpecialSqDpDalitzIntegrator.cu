@@ -88,7 +88,7 @@ __device__ auto SpecialSqDpDalitzIntegrator::operator()(thrust::tuple<int, fptyp
     ParameterContainer pc;
 
     // TODO: should we pass in the evtSize?
-    auto *events = new fptype[10];
+    auto *events = new fptype[3];
 
     // increment until we are at tddp index
     while(pc.funcIdx < tddp)

@@ -71,7 +71,7 @@ Variable Daughter2_Mass("DecayProduct_2_Mass", d2_MASS);
 Variable Daughter3_Mass("DecayProduct_3_Mass", d3_MASS);
 
 // Bins for grid normalization
-const int bins = 700;
+const int bins = 800;
 
 // Dalitz Limits
 const fptype s12_min = (d1_MASS + d2_MASS) * (d1_MASS + d2_MASS);
@@ -147,7 +147,7 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
     std::vector<ResonancePdf *> vec_resonances;
 
     vec_resonances.push_back(phi1020);
- vec_resonances.push_back(f2p_1525);
+    vec_resonances.push_back(f2p_1525);
     vec_resonances.push_back(nonres);
 
     D2KKK.resonances = vec_resonances;
@@ -307,7 +307,6 @@ int main(int argc, char **argv) {
     GooPdf *totalpdf = nullptr;
 
     auto signal = makesignalpdf(mprime, thetaprime, eventNumber, efficiency);
-    signal->setNumNormEvents(5000000);
     totalpdf    = new ProdPdf("totalpdf", {signal});
 
     
@@ -338,57 +337,6 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    // if(*makeToy) {
-    //     long ngenerated = 0;
-    //     uint generationOffset = 0;
-    //     uint batchSize            = 2000000;
-    //     auto name= fmt::format("MC/{0}",toyName);
-    //     auto f = new TFile(name.c_str(),"recreate");
-    //     auto t = new TTree("DecayTree","toyMC");
-    //     double _s12, _s13,_s23;
-    //     auto b_s12 = t->Branch("mprime",&_s12,"s12/D");
-    //     auto b_s13 = t->Branch("thetaprime",&_s13,"s13/D");
-    //     auto b_s23 = t->Branch("s23",&_s23,"s23/D");
-
-    //     while(ngenerated<Nevents){
-
-            
-    //         printf("ngenerated = %d \n",ngenerated);
-
-    //         signal->setGenerationOffset(generationOffset);
-    //         auto tuple = signal->GenerateSig(batchSize,721863);
-       
-    //         auto variables = std::get<1>(tuple);
-    //         auto flags     = std::get<3>(tuple);
-    //         long accepted  = thrust::count_if(flags.begin(), flags.end(), thrust::identity<bool>());
-            
-    //         for(int i = 0; i < flags.size(); i++){
-    //             if(ngenerated<Nevents && flags[i] == 1) {
-    //                 t->GetEntry(i+ngenerated);
-    //                 _s12 = (*(variables[0]))[i];
-    //                 _s13 = (*(variables[2]))[i];
-    //                 _s23 = (*(variables[1]))[i];
-                   
-    //                 t->Fill();
-    //             }
-    //         }
-
-    //         generationOffset += batchSize;
-    //         ngenerated+=accepted;
-    //         delete variables[0];
-    //         delete variables[1];
-    //         delete variables[2];
-        
-    //     }
-
-    //     t->Write("",TObject::kOverwrite);
-    //     f->Write("",TObject::kOverwrite);
-    //     f->Close();
-    //     std::cout << "------------------------------------------" << std::endl;
-    //     std::cout << "toyMC --> " << name.c_str() << " was saved!" << std::endl;
-    //     std::cout << "------------------------------------------" << std::endl;
-    //     return 0;
-    // }
 
     if(*fit) {
         auto command = fmt::format("mkdir -p Fit/{0}", fit_name);
@@ -407,7 +355,7 @@ int main(int argc, char **argv) {
         auto  fullName = fmt::format("Fit/{0}/{1}",fit_name, "output_plots.root");
         SqDalitzPlotter dplotter{totalpdf, signal};
         dplotter.Plot(fullName, &data);
-       
+    
         data.clear();
         dplotter.fillDataSetMC(data, Nevents);
         std::cout << "----------------------------------------------------------" << std::endl;
@@ -419,7 +367,9 @@ int main(int argc, char **argv) {
         std::cout << "----------------------------------------------------------" << std::endl;
         auto frac = signal->fit_fractions(true);
 
-      
+        std::cout << "----------------------------------------------------------" << std::endl;
+        std::cout << "Norm: " << signal->normalize() << std::endl;
+            
        
     }
 }

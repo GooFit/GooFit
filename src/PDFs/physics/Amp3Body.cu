@@ -316,7 +316,6 @@ __host__ auto Amp3Body::normalize() -> fptype {
 
             integrators[i][j]->setDalitzIndex(getFunctionIndex());
             integrators[i][j]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
-            // integrators[i][j]->setEfficiencyIndex(efficiencyFunction);
             integrators[i][j]->setEfficiencyIndex(decayInfo.resonances[j]->getFunctionIndex());
             thrust::constant_iterator<int> effFunc(efficiencyFunction);
             fpcomplex dummy(0, 0);

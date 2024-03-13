@@ -64,7 +64,6 @@ class Amp3BodySqDP : public Amp3BodyBase {
     // normalization will get *really* confused and give wrong answers.
 
     __host__ auto normalize() -> fptype override;
-    __host__ void setNumNormEvents(unsigned int N =1000000){NumNormEvents=N;};
     __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 3, unsigned int offset = 0);
     __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
 
@@ -104,10 +103,8 @@ class Amp3BodySqDP : public Amp3BodyBase {
 
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
-    thrust::device_vector<fpcomplex> *cachedWaves[16]; // Caches the BW values for each event.
+    thrust::device_vector<fpcomplex> *cachedWaves[20]; // Caches the BW values for each event.
     //fpcomplex ***integrals; // Caches the integrals of the BW waves for each combination of resonances.
-    fpcomplex ***integrals_ff;
-
     thrust::host_vector<thrust::tuple<fpcomplex,fpcomplex>> integrals;
     mutable bool generation_no_norm{false};
     bool *redoIntegral;
@@ -124,7 +121,6 @@ class Amp3BodySqDP : public Amp3BodyBase {
     SpecialSqDpResonanceCalculator **calculators;
     unsigned int efficiencyFunction;
     fptype totalFF_integral;
-    fptype NumNormEvents;
     
 };
 

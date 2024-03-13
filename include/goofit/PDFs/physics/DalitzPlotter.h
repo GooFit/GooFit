@@ -49,7 +49,6 @@ class DalitzPlotter {
             m13.setValue(m13.getLowerLimit() + m13.getBinSize() * (i + 0.5));
             for(size_t j = 0; j < m23.getNumBins(); ++j) {
                 m23.setValue(m23.getLowerLimit() + m23.getBinSize() * (j + 0.5));
-                  //if(m12.getValue()>m13.getValue()) continue;
                 if(inDalitz2(m13.getValue(),
                             m23.getValue(),
                             signalDalitz->decayInfo.motherMass,
@@ -63,6 +62,35 @@ class DalitzPlotter {
                 }
             }
         }
+
+
+        //
+        // int nexp = 1e+6;
+        // std::random_device rd; 
+        // std::mt19937 gen(rd());
+        // auto _m13rand = std::uniform_real_distribution<double>(m13.getLowerLimit(), m13.getUpperLimit());
+        // auto _m23rand = std::uniform_real_distribution<double>(m23.getLowerLimit(), m23.getUpperLimit());
+        // auto unihalf  = std::uniform_real_distribution<double>(-.5, .5);
+
+        // while(data.getNumEvents() < nexp) {
+        //     auto _m13val = _m13rand(gen) + m13.getBinSize() * unihalf(gen);
+        //     auto _m23val = _m23rand(gen);
+
+        //     m13.setValue(_m13val );
+        //     m23.setValue(_m23val );
+
+        //     if(inDalitz2(m13.getValue(),
+        //                  m23.getValue(),
+        //                  signalDalitz->decayInfo.motherMass,
+        //                  signalDalitz->decayInfo.daug1Mass,
+        //                  signalDalitz->decayInfo.daug2Mass,
+        //                  signalDalitz->decayInfo.daug3Mass)) {
+        //         xbins.push_back(m13.getValue());
+        //         ybins.push_back(m23.getValue());
+        //         data.addEvent();
+        //         eventNumber.setValue(eventNumber.getValue() + 1);
+        //     }
+        // }
 
         auto old_data = overallSignal->getData();
         overallSignal->setData(&data);

@@ -19,31 +19,30 @@ __host__ __device__ auto inDalitz2(const fptype &s13, const fptype &s23, const f
 	// defined in the constructor of this class. Here
 	// m_13Sq = square of invariant mass of daughters 1 and 3 
 	// m_23Sq = square of invariant mass of daughters 2 and 3.
-    fptype s12 = bigM*bigM + dm1*dm1 + dm2*dm2 + dm3*dm3 - s13 -s23;
-    fptype m12_min = dm1+dm2;
-    fptype m12_max = bigM-dm3;
-    if (!((s12 > m12_min*m12_min) && (s12 < m12_max*m12_max))) {
+   
+    fptype m13_min = dm1+dm3;
+    fptype m13_max = bigM-dm2;
+    if (!((s13 > m13_min*m13_min) && (s13 < m13_max*m13_max))) {
 		return false;
 	}
 
 
     bool withinDP = false;
 
-    fptype m13_min = dm1+dm3;
-    fptype m13_max = bigM-dm2;
-
-    if (!((s13 > m13_min*m13_min) && (s13 < m13_max*m13_max))) {
-		return false;
-	}
 
     fptype m13 = sqrt(s13);
-    fptype m23 = sqrt(s23);
 
     fptype e3Cms13 = (s13 - dm1*dm1 + dm3*dm3)/(2.0*m13);
-	fptype p3Cms13 = sqrt(e3Cms13*e3Cms13 - dm3*dm3);
+	fptype p3Cms13 = e3Cms13*e3Cms13 - dm3*dm3;
+
+    if(p3Cms13>0.)
+        p3Cms13 = sqrt(p3Cms13);;
 
 	fptype e2Cms13 = (bigM*bigM - s13 - dm2*dm2)/(2.0*m13);
-	fptype p2Cms13 = sqrt(e2Cms13*e2Cms13 - dm2*dm2);
+	fptype p2Cms13 = e2Cms13*e2Cms13 - dm2*dm2;
+
+    if(p2Cms13>0.)
+        p2Cms13 = sqrt(p2Cms13);
 
     fptype term = 2.0*e2Cms13*e3Cms13 + dm2*dm2 + dm3*dm3;
 

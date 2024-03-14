@@ -20,6 +20,17 @@ namespace GooFit {
         return width*(POW2(m0)/(POW2(q0)*q0))*(POW2(q)*(h(m,q)-h(m0,q0)) + (POW2(m0)-POW2(m))*q0*q0*h_prime(m0,q0));
     }
 
+
+__device__ auto calc_q(fptype s12, fptype m1, fptype m2)-> fptype{
+
+    fptype EiCmsij = (s12 - m1*m1 + m2*m2)/(2.*sqrt(s12));
+
+    double q = sqrt(EiCmsij*EiCmsij - m2*m2);
+
+    return q;
+}
+
+
 __device__ auto DaugDecayMomResFrame(fptype rMassSq, fptype d1m, fptype d2m) -> fptype {
   // Decay momentum of either daughter in the resonance rest frame
 	// when resonance mass = rest-mass value, m_0 (PDG value)
@@ -34,7 +45,7 @@ __device__ auto DaugDecayMomResFrame(fptype rMassSq, fptype d1m, fptype d2m) -> 
         q = sqrt(term12)/(2.0*sqrt(rMassSq));
     }else{
         GOOFIT_TRACE("term12 < zero!");
-        q = 1.0;
+        q = 0.0;
     }
 
 
@@ -52,7 +63,7 @@ __device__ auto BachMomResFrame(fptype M, fptype rMassSq, fptype mBach) -> fptyp
       fptype p      = 1.0;
 
         if ( eBach<0.0 || termBach<0.0 ) {
-            p = 1.0;
+            p = 0.0;
             GOOFIT_TRACE("eBach<0.0 || termBach<0.0");
         } else {
             p = sqrt( termBach );
@@ -70,7 +81,7 @@ __device__ auto BachMomResFrame(fptype M, fptype rMassSq, fptype mBach) -> fptyp
       fptype pstar      = 1.0;
 
         if ( eStarBach<0.0 || termStarBach<0.0 ) {
-            pstar = 1.0;
+            pstar = 0.0;
             GOOFIT_TRACE("eStarBach<0.0 || termStarBach<0.0");
         } else {
             pstar = sqrt( termStarBach );

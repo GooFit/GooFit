@@ -18,6 +18,8 @@ __device__ auto d(const fptype &m0,const fptype &q0)->fptype;
 
 __device__ auto f(const fptype &m, const fptype &m0,const fptype &width , const fptype &q, const fptype &q0)->fptype;
 
+__device__ auto calc_q(fptype s12, fptype m1, fptype m2)-> fptype;
+
 __device__ auto DaugDecayMomResFrame(fptype rMassSq, fptype d1m, fptype d2m) -> fptype;
 
 __device__ auto BachMomResFrame(fptype M, fptype rMassSq, fptype mBach) -> fptype;

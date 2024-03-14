@@ -52,11 +52,10 @@ __device__ auto gouSak(fptype m13, fptype m23, fptype m12, ParameterContainer &p
         if(PAIR_13 == cyclic_index){
             s    = m13 ;
             m    = sqrt(s);
-            m1 = c_daug3Mass;
-            m2 = c_daug1Mass;
+            m1 = c_daug1Mass;
+            m2 = c_daug3Mass;
             m3 = c_daug2Mass;
         }
-
          if(PAIR_23 == cyclic_index){
             s    = m23 ;
             m    = sqrt(s);
@@ -64,6 +63,7 @@ __device__ auto gouSak(fptype m13, fptype m23, fptype m12, ParameterContainer &p
             m2 = c_daug3Mass;
             m3 = c_daug1Mass;
         }
+   
 
         fptype q0_ = DaugDecayMomResFrame(resmass2, m1, m2);
 
@@ -71,7 +71,7 @@ __device__ auto gouSak(fptype m13, fptype m23, fptype m12, ParameterContainer &p
                     BachMomParentFrame(c_motherMass, m3 ,resmass2) :
                     BachMomResFrame(c_motherMass , resmass2, m3);
 
-        fptype q_  = DaugDecayMomResFrame(s, m1, m2);
+        fptype q_ = calc_q(s, m1, m2);
 
         fptype p_  =  bachPframe? 
                     BachMomParentFrame(c_motherMass, m3 ,s) : //p*

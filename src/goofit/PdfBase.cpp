@@ -30,6 +30,7 @@ namespace GooFit {
 __host__ void PdfBase::recursiveSetNormalization(fptype norm, bool subpdf) {
     host_normalizations.at(normalIdx + 1) = norm;
     cachedNormalization                   = norm;
+    GOOFIT_TRACE("host_normalizations_values[{}] = {}", normalIdx + 1, cachedNormalization);
 
     for(auto component : components) {
         component->recursiveSetNormalization(norm, true);
@@ -68,6 +69,8 @@ __host__ auto PdfBase::getParameters() const -> std::vector<Variable> {
 
     return ret;
 }
+
+
 
 __host__ auto PdfBase::getParameterByName(std::string n) -> Variable * {
     for(Variable &p : parametersList) {

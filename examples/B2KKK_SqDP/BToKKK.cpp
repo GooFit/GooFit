@@ -71,7 +71,7 @@ Variable Daughter2_Mass("DecayProduct_2_Mass", d2_MASS);
 Variable Daughter3_Mass("DecayProduct_3_Mass", d3_MASS);
 
 // Bins for grid normalization
-const int bins = 800;
+const int bins = 400;
 
 // Dalitz Limits
 const fptype s12_min = (d1_MASS + d2_MASS) * (d1_MASS + d2_MASS);
@@ -114,18 +114,18 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
     D2KKK.mother_meson_radius = 5.0; // GeV^-1
 
 
-    double f2p_1525_MASS  = 1.525;
+    double f2p_1525_MASS  = 1.525+0.5;
     double f2p_1525_WIDTH = 0.073;
-    double f2p_1525_amp   = 0.;
-    double f2p_1525_img   = 1.;
+    double f2p_1525_amp   = 1;
+    double f2p_1525_img   = 0;
 
-    Variable v_f2p_1525_Mass("f2p_1525_MASS", f2p_1525_MASS);
+    Variable v_f2p_1525_Mass("f2p_1525_MASS", f2p_1525_MASS,0.01,1.4,1.6);
     Variable v_f2p_1525_Width("f2p_1525_WIDTH", f2p_1525_WIDTH);
     Variable v_f2p_1525_real("f2p_1525_REAL", f2p_1525_amp,0.01,0,0);
     Variable v_f2p_1525_img("f2p_1525_IMAG", f2p_1525_img,0.01,0,0);
 
     auto f2p_1525 = new Resonances::RBW(
-        "f2p_1525", v_f2p_1525_real, v_f2p_1525_img, v_f2p_1525_Mass, v_f2p_1525_Width, 2, PAIR_13, true, false);
+        "f2p_1525", v_f2p_1525_real, v_f2p_1525_img, v_f2p_1525_Mass, v_f2p_1525_Width, 2, PAIR_13, true, true);
 
     double phi1020_MASS  = 1.019461;
     double phi1020_WIDTH = 0.004266;
@@ -138,11 +138,11 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
     Variable v_phi1020_img("phi1020_IMAG", phi1020_img);
 
     auto phi1020 = new Resonances::RBW(
-        "phi1020", v_phi1020_real, v_phi1020_img, v_phi1020_Mass, v_phi1020_Width, 1, PAIR_13, true, false);
+        "phi1020", v_phi1020_real, v_phi1020_img, v_phi1020_Mass, v_phi1020_Width, 1, PAIR_13, true, true);
 
     // If you want include a resonance in your model, just push into the vector 'vec_resonances'
 
-    auto nonres = new Resonances::NonRes("NonRes",Variable("re",1.,0.01,0,0),Variable("im",0.,0.01,0,0));
+    auto nonres = new Resonances::NonRes("NonRes",Variable("re",-10.,0.01,0,0),Variable("im",  10.,0.01,0,0));
 
     std::vector<ResonancePdf *> vec_resonances;
 

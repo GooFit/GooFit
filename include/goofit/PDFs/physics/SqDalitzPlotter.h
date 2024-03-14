@@ -243,7 +243,7 @@ class SqDalitzPlotter {
         }
 
         for(int i = 0; i < getNumEvents(); i++) {
-            auto jacobian = 1.; //calc_SqDp_Jacobian(getXval(i), getYval(i),mother_mass,d1_mass,d2_mass,d3_mass);
+            auto jacobian = calc_SqDp_Jacobian(getXval(i), getYval(i),mother_mass,d1_mass,d2_mass,d3_mass);
             Fitted_SqDP->Fill(getXval(i), getYval(i), getVal(i)*jacobian);
             auto _m12 = calc_m12(getXval(i),mother_mass,d1_mass,d2_mass,d3_mass);
             auto _m13 = calc_m13(_m12,cos(getYval(i)*M_PI),mother_mass,d1_mass,d2_mass,d3_mass);

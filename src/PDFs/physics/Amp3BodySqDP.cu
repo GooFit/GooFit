@@ -177,23 +177,6 @@ __host__ __device__  auto calc_SqDp_Jacobian(const fptype &mprime ,const fptype 
     return jacobian;
 }
 
-struct prg
-{
-    fptype a, b;
-
-    __host__ __device__
-    prg(fptype _a=0., fptype _b=1.) : a(_a), b(_b) {};
-
-    __host__ __device__
-        fptype operator()(const unsigned int n) const
-        {
-            thrust::default_random_engine rng(n);
-            thrust::uniform_real_distribution<fptype> dist(a, b);
-            rng.discard(n);
-
-            return dist(rng);
-        }
-};
 
 // Functor used for fit fraction sum
 struct CoefSumFunctor {
@@ -463,42 +446,43 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
     int index=0;
     for(int i = 0; i < n_res; ++i) {
         for(int j = 0; j < n_res; ++j) {
-            if((!redoIntegral[i]) && (!redoIntegral[j]))
-                continue;
-        
-            integrators[i][j]->setDalitzIndex(getFunctionIndex());
-            integrators[i][j]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
-            integrators[i][j]->setEfficiencyIndex(decayInfo.resonances[j]->getFunctionIndex());
-            thrust::constant_iterator<int> effFunc(efficiencyFunction);
-            auto dummy = thrust::make_tuple(fpcomplex(0.,0.), fpcomplex(0.,0.));
-            
-            integrals[index++] = thrust::transform_reduce(
-                thrust::make_zip_iterator(thrust::make_tuple(binIndex, arrayAddress, effFunc)),
-                thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, arrayAddress, effFunc)),
-                *(integrators[i][j]),
-                dummy,
-                reduce_func);
-
-            
+            if(redoIntegral[i]){
+                std::cout << "redoIntegral " << i << " " << j << " " << redoIntegral[i] << " " << redoIntegral[j] << " index = " << index << "\n";
+                integrators[i][j]->setDalitzIndex(getFunctionIndex());
+                integrators[i][j]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
+                integrators[i][j]->setEfficiencyIndex(decayInfo.resonances[j]->getFunctionIndex());
+                thrust::constant_iterator<int> effFunc(efficiencyFunction);
+                auto dummy = thrust::make_tuple(fpcomplex(0.,0.), fpcomplex(0.,0.));
+                
+                integrals[index] = thrust::transform_reduce(
+                    thrust::make_zip_iterator(thrust::make_tuple(binIndex, arrayAddress, effFunc)),
+                    thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, arrayAddress, effFunc)),
+                    *(integrators[i][j]),
+                    dummy,
+                    reduce_func);
+            }
+            index++;
         }
     }
 
     
     for(int i = 0; i < n_res; ++i){
-        if((!redoIntegral[i]))
-            continue;
         fptype binSizeFactor = _mprime.getBinSize() * _thetaprime.getBinSize();
         fpcomplex int_i = thrust::get<0>(integrals[i*n_res + i])*binSizeFactor; //int |F_i|^2 dmdth
-        std::cout << "Integral " << decayInfo.resonances[i]->getName() << "= "<< int_i.real() << "," << int_i.imag() << "\n";
         calculators[i]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
         calculators[i]->setDalitzIndex(getFunctionIndex());
         calculators[i]->setNorm(int_i.real());
-        thrust::transform(
-                    thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
-                    thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
-                    strided_range<thrust::device_vector<fpcomplex>::iterator>(cachedWaves[i]->begin(), cachedWaves[i]->end(), 1).begin(),
-                    *(calculators[i])
-        );
+        if(redoIntegral[i]){
+          
+            
+            std::cout << "Integral " << decayInfo.resonances[i]->getName() << "= "<< int_i.real() << "," << int_i.imag() <<  "\n";
+            thrust::transform(
+                        thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
+                        thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
+                        strided_range<thrust::device_vector<fpcomplex>::iterator>(cachedWaves[i]->begin(), cachedWaves[i]->end(), 1).begin(),
+                        *(calculators[i])
+            );
+        }
     }
 
     
@@ -598,12 +582,14 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
             thrust::constant_iterator<int> effFunc(efficiencyFunction);
             auto dummy = thrust::make_tuple(fpcomplex(0.,0.), fpcomplex(0.,0.));
             
-            integrals[index++] = thrust::transform_reduce(
+            integrals[index] = thrust::transform_reduce(
                    thrust::make_zip_iterator(thrust::make_tuple(binIndex, arrayAddress, effFunc)),
                 thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, arrayAddress, effFunc)),
                 *(integrators[i][j]),
                 dummy,
                 reduce_func);
+
+            index++;
         }
     }
 

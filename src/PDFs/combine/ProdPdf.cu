@@ -88,7 +88,7 @@ __host__ auto ProdPdf::normalize() -> fptype {
         fptype ret = GooPdf::normalize();
 
         // if (cpuDebug & 1)
-        // std::cout << "ProdPdf " << getName() << " has normalization " << ret << " " << host_callnumber << std::endl;
+        std::cout << "ProdPdf " << getName() << " has normalization " << ret << " " << host_callnumber << std::endl;
         return ret;
     }
 

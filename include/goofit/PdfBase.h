@@ -174,6 +174,7 @@ class PdfBase {
 
     auto getObservables() const -> std::vector<Observable>;
     auto getParameters() const -> std::vector<Variable>;
+  
     auto getParameterByName(std::string n) -> Variable *;
 
     // User level setup

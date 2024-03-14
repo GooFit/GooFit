@@ -9,3 +9,7 @@ Laura++:
 FitFraction for component 0 (phi(1020)) = 33.7541626
 FitFraction for component 1 (f'_2(1525)) = 33.17394972
 FitFraction for component 2 (NonReson) = 33.34959817
+
+integrals:
+phi         F2p         NR
+1379.895907 2709.071493 1175.233209 

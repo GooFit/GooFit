@@ -449,7 +449,7 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
             if((!redoIntegral[i]) && (!redoIntegral[j])){
                 continue;
             }
-                std::cout << "redoIntegral " << decayInfo.resonances[i]->getName() << " " << decayInfo.resonances[j]->getName()<< " " << redoIntegral[i] << " " << redoIntegral[j] << " index = " << i*n_res + j << "\n";
+                //std::cout << "redoIntegral " << decayInfo.resonances[i]->getName() << " " << decayInfo.resonances[j]->getName()<< " " << redoIntegral[i] << " " << redoIntegral[j] << " index = " << i*n_res + j << "\n";
                 integrators[i][j]->setDalitzIndex(getFunctionIndex());
                 integrators[i][j]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
                 integrators[i][j]->setEfficiencyIndex(decayInfo.resonances[j]->getFunctionIndex());
@@ -477,7 +477,7 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
         calculators[i]->setDalitzIndex(getFunctionIndex());
         calculators[i]->setNorm(int_i.real());
         if(redoIntegral[i]){
-            std::cout << "Integral " << decayInfo.resonances[i]->getName() << "= "<< int_i.real() << "," << int_i.imag() <<  "\n";
+            //std::cout << "Integral " << decayInfo.resonances[i]->getName() << "= "<< int_i.real() << "," << int_i.imag() <<  "\n";
             thrust::transform(
                         thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                         thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),

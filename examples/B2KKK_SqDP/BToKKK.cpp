@@ -114,7 +114,7 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
     D2KKK.mother_meson_radius = 5.0; // GeV^-1
 
 
-    double f2p_1525_MASS  = 1.525;
+    double f2p_1525_MASS  = 1.525-0.3;
     double f2p_1525_WIDTH = 0.073;
     double f2p_1525_amp   = 1;
     double f2p_1525_img   = 0;

@@ -1,0 +1,12 @@
+This is example test square Dalitz fit on B+->K- K+ K+ channel.
+
+A simulation sample was generated using Laura++ ( example GenFit3K.cpp) and fitted with GooFit.
+
+The model consists of phi(1020), F'2(1525) and Flat NonRes amplitudes.
+
+The simulated resonances complex coefs are:
+
+- c_phi = 1.0 + 0.i
+- c_f2  = 0.  + 1.i
+- c_nr  = 1.0 + 0.i
+

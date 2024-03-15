@@ -81,7 +81,7 @@ __device__ auto plainBW(fptype m13, fptype m23, fptype m12, ParameterContainer &
         
         fptype gamma = ignoreMom ? reswidth : reswidth*pow(q_/q0_,2.0*spin + 1.0)*(resmass/m)*POW2(FR/FR0);
                   
-        fptype A = (-resmass2 + s);
+        fptype A = (resmass2 - s);
         fptype B = gamma*resmass;
         fptype C = 1.0 / (A*A + B*B);
 

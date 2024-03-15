@@ -443,28 +443,32 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
         return thrust::make_tuple(thrust::get<0>(x) + thrust::get<0>(y), thrust::get<1>(x) + thrust::get<1>(y));
     };
    
-    int index=0;
+    // int index=0;
     for(int i = 0; i < n_res; ++i) {
-        for(int j = 0; j < n_res; ++j) {
-            if(redoIntegral[i]){
-                std::cout << "redoIntegral " << i << " " << j << " " << redoIntegral[i] << " " << redoIntegral[j] << " index = " << index << "\n";
+        for(int j = 0; j <= i; ++j) {
+            if((!redoIntegral[i]) && (!redoIntegral[j])){
+                continue;
+            }
+                std::cout << "redoIntegral " << decayInfo.resonances[i]->getName() << " " << decayInfo.resonances[j]->getName()<< " " << redoIntegral[i] << " " << redoIntegral[j] << " index = " << i*n_res + j << "\n";
                 integrators[i][j]->setDalitzIndex(getFunctionIndex());
                 integrators[i][j]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
                 integrators[i][j]->setEfficiencyIndex(decayInfo.resonances[j]->getFunctionIndex());
                 thrust::constant_iterator<int> effFunc(efficiencyFunction);
                 auto dummy = thrust::make_tuple(fpcomplex(0.,0.), fpcomplex(0.,0.));
                 
-                integrals[index] = thrust::transform_reduce(
+                integrals[i*n_res + j] = thrust::transform_reduce(
                     thrust::make_zip_iterator(thrust::make_tuple(binIndex, arrayAddress, effFunc)),
                     thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, arrayAddress, effFunc)),
                     *(integrators[i][j]),
                     dummy,
                     reduce_func);
-            }
-            index++;
+
+                if(i!=j){
+                    integrals[j*n_res + i] = integrals[i*n_res + j];
+                }
         }
     }
-
+    cudaDeviceSynchronize();
     
     for(int i = 0; i < n_res; ++i){
         fptype binSizeFactor = _mprime.getBinSize() * _thetaprime.getBinSize();
@@ -473,8 +477,6 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
         calculators[i]->setDalitzIndex(getFunctionIndex());
         calculators[i]->setNorm(int_i.real());
         if(redoIntegral[i]){
-          
-            
             std::cout << "Integral " << decayInfo.resonances[i]->getName() << "= "<< int_i.real() << "," << int_i.imag() <<  "\n";
             thrust::transform(
                         thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
@@ -485,6 +487,7 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
         }
     }
 
+    cudaDeviceSynchronize();
     
 
     fpcomplex sumIntegral(0, 0);
@@ -572,9 +575,8 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
         return thrust::make_tuple(thrust::get<0>(x) + thrust::get<0>(y), thrust::get<1>(x) + thrust::get<1>(y));
     };
 
-   int index=0;
     for(int i = 0; i < n_res; ++i) {
-        for(int j = 0; j < n_res; ++j) {
+        for(int j = 0; j <=i; ++j) {
 
             integrators[i][j]->setDalitzIndex(getFunctionIndex());
             integrators[i][j]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
@@ -582,16 +584,20 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
             thrust::constant_iterator<int> effFunc(efficiencyFunction);
             auto dummy = thrust::make_tuple(fpcomplex(0.,0.), fpcomplex(0.,0.));
             
-            integrals[index] = thrust::transform_reduce(
+            integrals[i*n_res + j] = thrust::transform_reduce(
                    thrust::make_zip_iterator(thrust::make_tuple(binIndex, arrayAddress, effFunc)),
                 thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, arrayAddress, effFunc)),
                 *(integrators[i][j]),
                 dummy,
                 reduce_func);
 
-            index++;
+            if(i!=j){
+                integrals[j*n_res + i] = integrals[i*n_res + j];
+            }
         }
     }
+
+    cudaDeviceSynchronize();
 
     // // End of time-consuming integrals.
     fpcomplex sumIntegral(0, 0);

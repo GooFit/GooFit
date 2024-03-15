@@ -114,13 +114,13 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
     D2KKK.mother_meson_radius = 5.0; // GeV^-1
 
 
-    double f2p_1525_MASS  = 1.525+0.5;
+    double f2p_1525_MASS  = 1.525;
     double f2p_1525_WIDTH = 0.073;
     double f2p_1525_amp   = 1;
     double f2p_1525_img   = 0;
 
-    Variable v_f2p_1525_Mass("f2p_1525_MASS", f2p_1525_MASS,0.01,1.4,1.6);
-    Variable v_f2p_1525_Width("f2p_1525_WIDTH", f2p_1525_WIDTH);
+    Variable v_f2p_1525_Mass("f2p_1525_MASS", f2p_1525_MASS,0.01,0,0);
+    Variable v_f2p_1525_Width("f2p_1525_WIDTH", f2p_1525_WIDTH,0.01,0,0);
     Variable v_f2p_1525_real("f2p_1525_REAL", f2p_1525_amp,0.01,0,0);
     Variable v_f2p_1525_img("f2p_1525_IMAG", f2p_1525_img,0.01,0,0);
 
@@ -132,8 +132,8 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
     double phi1020_amp   = 1.;
     double phi1020_img   = 0.;
 
-    Variable v_phi1020_Mass("phi1020_MASS", phi1020_MASS);
-    Variable v_phi1020_Width("phi1020_WIDTH", phi1020_WIDTH);
+    Variable v_phi1020_Mass("phi1020_MASS", phi1020_MASS,0.01,0,0);
+    Variable v_phi1020_Width("phi1020_WIDTH", phi1020_WIDTH,0.01,0,0);
     Variable v_phi1020_real("phi1020_REAL", phi1020_amp);
     Variable v_phi1020_img("phi1020_IMAG", phi1020_img);
 
@@ -365,10 +365,10 @@ int main(int argc, char **argv) {
         to_root(data, fullName);
         std::cout << toyName << " root file was saved in MC folder" << std::endl;
         std::cout << "----------------------------------------------------------" << std::endl;
+        //std::cout << "Norm: " << signal->normalize() << std::endl;
         auto frac = signal->fit_fractions(true);
 
-        std::cout << "----------------------------------------------------------" << std::endl;
-        std::cout << "Norm: " << signal->normalize() << std::endl;
+        
             
        
     }

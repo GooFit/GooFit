@@ -26,6 +26,7 @@ class SqDalitzPlotter {
     std::vector<size_t> xbins;
     std::vector<size_t> ybins;
     std::vector<std::vector<fptype>> pdfValues;
+    std::vector<fptype> jacobianValues;
     Observable mprime;
     Observable thetaprime;
     EventNumber eventNumber;
@@ -70,6 +71,9 @@ class SqDalitzPlotter {
            
             // if(_thetaprime>0.5)
             //     _thetaprime = 1.0-_thetaprime;
+
+            auto jac = calc_SqDp_Jacobian(_mprime, _thetaprime, mother_mass, d1_mass, d2_mass, d3_mass);
+            jacobianValues.push_back(jac);
             
             mprime.setValue(_mprime);
             thetaprime.setValue(_thetaprime);
@@ -83,7 +87,8 @@ class SqDalitzPlotter {
         signalDalitz->setDataSize(data.getNumEvents());
         signalDalitz->normalise();
         pdfValues = overallSignal->getCompProbsAtDataPoints();
-
+        std::transform(pdfValues[0].begin(), pdfValues[0].end(), jacobianValues.begin(), pdfValues[0].begin(), std::multiplies<fptype>());
+      
         overallSignal->setData(old);
     }
 
@@ -232,7 +237,7 @@ class SqDalitzPlotter {
 
         for(int i = 0; i < data->getNumEvents(); i++) {
             data->loadEvent(i);
-            auto jacobian = calc_SqDp_Jacobian(mprime.getValue(),  thetaprime.getValue(),mother_mass,d1_mass,d2_mass,d3_mass);
+            auto jacobian = 1.;//calc_SqDp_Jacobian(mprime.getValue(),  thetaprime.getValue(),mother_mass,d1_mass,d2_mass,d3_mass);
             Data_SqDP->Fill(mprime.getValue(), thetaprime.getValue());
             auto _m12 = calc_m12(mprime.getValue(),mother_mass,d1_mass,d2_mass,d3_mass);
             auto _m13 = calc_m13(_m12,cos(thetaprime.getValue()*M_PI),mother_mass,d1_mass,d2_mass,d3_mass);
@@ -243,7 +248,7 @@ class SqDalitzPlotter {
         }
 
         for(int i = 0; i < getNumEvents(); i++) {
-            auto jacobian = calc_SqDp_Jacobian(getXval(i), getYval(i),mother_mass,d1_mass,d2_mass,d3_mass);
+            auto jacobian = 1.;//calc_SqDp_Jacobian(getXval(i), getYval(i),mother_mass,d1_mass,d2_mass,d3_mass);
             Fitted_SqDP->Fill(getXval(i), getYval(i), getVal(i)*jacobian);
             auto _m12 = calc_m12(getXval(i),mother_mass,d1_mass,d2_mass,d3_mass);
             auto _m13 = calc_m13(_m12,cos(getYval(i)*M_PI),mother_mass,d1_mass,d2_mass,d3_mass);

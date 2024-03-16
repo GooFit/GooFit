@@ -27,6 +27,11 @@
 #include <array>
 #include <vector>
 
+#include <mcbooster/GContainers.h>
+#include <mcbooster/GFunctional.h>
+#include <mcbooster/GTypes.h>
+#include <mcbooster/Vector4R.h>
+
 #include <TCanvas.h>
 #include <TH2F.h>
 
@@ -445,7 +450,7 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
    
     // int index=0;
     for(int i = 0; i < n_res; ++i) {
-        for(int j = 0; j <= i; ++j) {
+        for(int j = 0; j < n_res; ++j) {
             if((!redoIntegral[i]) && (!redoIntegral[j])){
                 continue;
             }
@@ -463,9 +468,9 @@ __host__ auto Amp3BodySqDP::normalize() -> fptype {
                     dummy,
                     reduce_func);
 
-                if(i!=j){
-                    integrals[j*n_res + i] = integrals[i*n_res + j];
-                }
+                // if(i!=j){
+                //     integrals[j*n_res + i] = integrals[i*n_res + j];
+                // }
         }
     }
     cudaDeviceSynchronize();
@@ -576,7 +581,7 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
     };
 
     for(int i = 0; i < n_res; ++i) {
-        for(int j = 0; j <=i; ++j) {
+        for(int j = 0; j < n_res; ++j) {
 
             integrators[i][j]->setDalitzIndex(getFunctionIndex());
             integrators[i][j]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
@@ -591,9 +596,9 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
                 dummy,
                 reduce_func);
 
-            if(i!=j){
-                integrals[j*n_res + i] = integrals[i*n_res + j];
-            }
+            // if(i!=j){
+            //     integrals[j*n_res + i] = integrals[i*n_res + j];
+            // }
         }
     }
 
@@ -660,6 +665,32 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
     return AmpIntegral;
 }
 
+
+struct DimSqDP : public mcbooster::IFunctionArray {
+    DimSqDP() { dim = 2; }
+
+    __host__ __device__ void
+    operator()(const mcbooster::GInt_t n, mcbooster::Vector4R **particles, mcbooster::GReal_t *variables) override {
+        mcbooster::Vector4R p1 = *particles[0];
+        mcbooster::Vector4R p2 = *particles[1];
+        mcbooster::Vector4R p3 = *particles[2];
+
+        mcbooster::Vector4R p12 = p1 + p2;
+        mcbooster::Vector4R p23 = p2 + p3;
+        mcbooster::Vector4R p13 = p1 + p3;
+
+        double mprime = calc_mprime(p12.mass(), c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
+        double thprime = calc_thetaprime(p12.mass(), p13.mass(), c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
+
+        variables[0] = mprime;
+        variables[1] = thprime;
+        variables[2] = p13.mass2();
+        variables[3] = p23.mass2();
+        variables[4] = p12.mass2();
+         
+    }
+};
+
 __host__ auto Amp3BodySqDP::GenerateSig(unsigned int numEvents, int seed) -> std::
     tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h> {
     // Must configure our functions before any calculations!
@@ -694,21 +725,29 @@ __host__ auto Amp3BodySqDP::GenerateSig(unsigned int numEvents, int seed) -> std
     auto SigGen_M12_d = mcbooster::RealVector_d(numEvents);
     auto SigGen_M13_d = mcbooster::RealVector_d(numEvents);
     auto SigGen_M23_d = mcbooster::RealVector_d(numEvents);
+    auto SigGen_Mprime = mcbooster::RealVector_d(numEvents);
+    auto SigGen_Thprime = mcbooster::RealVector_d(numEvents);
 
-    mcbooster::VariableSet_d VarSet_d(3);
-    VarSet_d[0] = &SigGen_M12_d;
-    VarSet_d[1] = &SigGen_M23_d;
+    mcbooster::VariableSet_d VarSet_d(5);
     VarSet_d[2] = &SigGen_M13_d;
+    VarSet_d[3] = &SigGen_M23_d;
+    VarSet_d[4] = &SigGen_M12_d;
+    VarSet_d[0] = &SigGen_Mprime;
+    VarSet_d[1] = &SigGen_Thprime;
 
     // Evaluating invariant masses for each event
     
-    Dim2 eval = Dim2();
-    mcbooster::EvaluateArray<Dim2>(eval, pset, VarSet_d);
+    // Dim2 eval = Dim2();
+    DimSqDP eval = DimSqDP();
+    mcbooster::EvaluateArray<DimSqDP>(eval, pset, VarSet_d);
 
-    mcbooster::VariableSet_d GooVarSet_d(3);
+    mcbooster::VariableSet_d GooVarSet_d(5);
     GooVarSet_d[0] = VarSet_d[0];
-    GooVarSet_d[1] = VarSet_d[2];
-    GooVarSet_d[2] = VarSet_d[1];
+    GooVarSet_d[1] = VarSet_d[1];
+    GooVarSet_d[2] = VarSet_d[2];
+    GooVarSet_d[3] = VarSet_d[3];
+    GooVarSet_d[4] = VarSet_d[4];
+
 
     auto h1 = new mcbooster::Particles_h(d1);
     auto h2 = new mcbooster::Particles_h(d2);
@@ -722,11 +761,17 @@ __host__ auto Amp3BodySqDP::GenerateSig(unsigned int numEvents, int seed) -> std
     auto SigGen_M12_h = new mcbooster::RealVector_h(SigGen_M12_d);
     auto SigGen_M23_h = new mcbooster::RealVector_h(SigGen_M23_d);
     auto SigGen_M13_h = new mcbooster::RealVector_h(SigGen_M13_d);
+    auto SigGen_Mprime_h = new mcbooster::RealVector_h(SigGen_Mprime);
+    auto SigGen_Thprime_h = new mcbooster::RealVector_h(SigGen_Thprime);
+    
 
-    mcbooster::VariableSet_h VarSet(3);
-    VarSet[0] = SigGen_M12_h;
-    VarSet[1] = SigGen_M23_h;
+    mcbooster::VariableSet_h VarSet(5);
+    VarSet[4] = SigGen_M12_h;
+    VarSet[3] = SigGen_M23_h;
     VarSet[2] = SigGen_M13_h;
+    VarSet[0] = SigGen_Mprime_h;
+    VarSet[1] = SigGen_Thprime_h;
+
 
     mcbooster::RealVector_d weights(phsp.GetWeights());
     phsp.FreeResources();

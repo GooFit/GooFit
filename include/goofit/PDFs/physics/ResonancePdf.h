@@ -15,6 +15,8 @@
 #include <goofit/PDFs/physics/resonances/PolarFFNR.h>
 #include <goofit/PDFs/physics/resonances/Rescattering2.h>
 #include <goofit/PDFs/physics/resonances/ScatteringAmp.h>
+#include <goofit/PDFs/physics/resonances/Pole.h>
+#include <goofit/PDFs/physics/resonances/BelleNR.h>
 #if GOOFIT_KMATRIX
 #include <goofit/PDFs/physics/resonances/kMatrix.h>
 #endif

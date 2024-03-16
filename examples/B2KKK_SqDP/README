@@ -10,3 +10,6 @@ The simulated resonances complex coefs are:
 - c_f2  = 0.  + 1.i
 - c_nr  = 1.0 + 0.i
 
+Running fit
+
+./B2KKK_SqDP fit

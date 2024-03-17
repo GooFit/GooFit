@@ -97,58 +97,12 @@ Observable s23("s23", s23_min, s23_max);
 Observable category("category", 0., 1.);
 EventNumber eventNumber("eventNumber");
 
-GooPdf *polyEff(Observable s12, Observable s13,  bool charge_plus=true ) {
-
-    std::string Charge = charge_plus ? "_Plus" : "_Minus";
-    vector<Variable> offsets;
-    vector<Observable> observables;
-    vector<Variable> coefficients;
-    Variable constantOne("c1"+Charge, 1);
-    Variable constantZero("c0"+Charge, 0);
-    observables.push_back(mprime);
-    observables.push_back(thetaprime);
-    offsets.push_back(constantZero);
-    offsets.push_back(constantZero);
-    coefficients.push_back(constantOne);
-    PolynomialPdf *eff = new PolynomialPdf("constantEff"+Charge, observables, coefficients, offsets, 0); // No efficiency
-
-    return eff;
-}
-
-
-ResonancePdf *loadPWAResonance(std::string name = "pwa_coefs.txt") {
-	
-        //resonante region < 2GeV
-        std::ifstream file(name.c_str());
-        double m=0, mag=0, phs=0;
-        int index =0;
-        while(file >> m >> mag >> phs){
-            HH_bin_limits.push_back(m*m);
-            Variable va(fmt::format("pwa_coef_{}_real", index), mag ,0.001,0,0);
-            Variable vp(fmt::format("pwa_coef_{}_imag", index), phs ,0.001,0,0);
-            pwa_coefs_amp.push_back(va);
-            pwa_coefs_phs.push_back(vp);
-            index++;
-
-        }
-        file.close();
-
-        std::cout << "------------------------------------------" << std::endl;
-	    std::cout << pwa_coefs_amp.size() << " QMIPWA points loaded!" << std::endl;
-	    std::cout << "------------------------------------------" << std::endl;
-
-        for(int i=0; i< HH_bin_limits.size() ; i++){
-            std::cout << HH_bin_limits[i]<< " " << pwa_coefs_amp[i].getValue() << " " << pwa_coefs_phs[i].getValue() << std::endl;
-        }
-				
-	    Variable swave_amp_real("swave_real_coef", 1.0);
-	    Variable swave_amp_imag("swave_imag_coef", 0.0);
-
-		auto swave = new Resonances::Spline("MIPWA", swave_amp_real, swave_amp_imag, HH_bin_limits, pwa_coefs_amp, pwa_coefs_phs, PAIR_12, true, true);
-		
-        return swave;
-    
-} 
+GooPdf *polyEff(Observable s12, Observable s13,  bool charge_plus=true );
+ResonancePdf *loadPWAResonance(std::string name = "pwa_coefs.txt");
+void genToyMCB(size_t Nevents, std::string toyName, Amp3BodySqDP *signal, bool charge_pos=true);
+void getData(std::string toyFileName, GooFit::Application &app, DataSet &data, bool charge_plus=true);
+void mergeDatasets(UnbinnedDataSet &data1, UnbinnedDataSet &data2, UnbinnedDataSet &data_out);
+void plotGOF(std::string fit_path="Fit", std::string data_path="MC");
 
 Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumber eventNumber, GooPdf *eff = 0, bool charge_plus=true) {
     // set up the decay channel
@@ -201,8 +155,8 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
 
     double rho1450_MASS  = 1.465;
     double rho1450_WIDTH = 0.4;
-    double rho1450_amp   = charge_plus ? 0.37*cos(1.99) : 0.37*cos(1.99+0.7);//-0.15060229;
-    double rho1450_img   = charge_plus ? 0.37*sin(1.99) : 0.37*sin(1.99+0.7);//0.33796294;
+    double rho1450_amp   = charge_plus ? 0.37*cos(1.99) : 0.37*cos(1.99- M_PI);//-0.15060229;
+    double rho1450_img   = charge_plus ? 0.37*sin(1.99) : 0.37*sin(1.99- M_PI);//0.33796294;
 
     Variable v_rho1450_Mass("rho1450_MASS"+Charge, rho1450_MASS);
     Variable v_rho1450_Width("rho1450_WIDTH"+Charge, rho1450_WIDTH);
@@ -243,104 +197,6 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
     D2KKK.resonances = vec_resonances;
 
     return new Amp3BodySqDP("signalPDF"+Charge, mprime, thetaprime, eventNumber, D2KKK, eff);
-}
-
-void genToyMCB(size_t Nevents, std::string toyName, Amp3BodySqDP *signal, bool charge_pos=true){
-    
-            auto name= fmt::format("{0}",toyName);
-            double _s12, _s13,_s23, mp, th, _jac;
-            double fg, wt;
-            auto f = new TFile(name.c_str(),"recreate");
-            auto t = new TTree("genResults","toyMC");
-            auto b_mp  = t->Branch("mPrime",&mp,"mPrime/D");
-            auto b_th  = t->Branch("thPrime",&th,"thPrime/D");	
-            auto b_s12 = t->Branch("s12",&_s12,"s12/D");
-            auto b_s13 = t->Branch("s13",&_s13,"s13/D");
-            auto b_s23 = t->Branch("s23",&_s23,"s23/D");
-            auto b_flags = t->Branch("flags",&fg,"flags/D");
-            auto b_wt = t->Branch("weights",&wt,"weights/D");
-            //auto b_jac = t->Branch("jac",&_jac,"jac/D");
-            
-            std::srand(std::time(nullptr)); // use current time as seed for random generator
-           
-            int accepted = 0;
-            while(t->GetEntries() < Nevents){
-            
-                int random_value = std::rand();
-                auto tuple = signal->GenerateSig(1000000,random_value);
-                auto variables = std::get<1>(tuple);
-                auto weights   = std::get<2>(tuple);
-                auto flags     = std::get<3>(tuple);
-                 
-                std::cout << "events = " << t->GetEntries() << "\n";
-                for(int i = 0; i < weights.size(); i++){
-                        if(flags[i]==1){
-                            t->GetEntry(accepted);
-                            _s12 = (*(variables[4]))[i];
-                            _s13 = (*(variables[2]))[i];
-                            _s23 = (*(variables[3]))[i];
-                            mp = (*(variables[0]))[i];
-                            th = (*(variables[1]))[i];
-                            fg = flags[i];
-                            wt = weights[i];
-                            //_jac = calc_SqDp_Jacobian(mp, th, Decay_MASS, d1_MASS, d2_MASS, d3_MASS);
-                            t->Fill();   
-                            accepted++;
-                        }
-                }
-            }
-
-            t->Write("",TObject::kOverwrite);
-            f->Close();
-            std::cout << "------------------------------------------" << std::endl;
-            if(charge_pos)
-                std::cout << "toyMC Plus --> " << name.c_str() << " was saved!" << std::endl;
-            else
-                std::cout << "toyMC Minus --> " << name.c_str() << " was saved!" << std::endl;
-            std::cout << "------------------------------------------" << std::endl;
-
-            auto frac = signal->fit_fractions(true);
-}
-
-void getData(std::string toyFileName, GooFit::Application &app, DataSet &data, bool charge_plus=true) {
-    // load data in a GooFit::dataset
-
-    auto obs = data.getObservables();
-    Observable mprime         = obs.at(0);
-    Observable thetaprime         = obs.at(1);
-    Observable category = obs.at(2);
-    Observable eventNumber = obs.at(3);
-
-    auto openRoot = new TFile(toyFileName.c_str());
-    auto tree     = (TTree *)openRoot->Get("genResults");
-    auto mprime_val(0.);
-    auto thetaprime_val(0.);
-    auto flags_val(0.);
-
-    tree->SetBranchAddress("mPrime", &mprime_val);
-    tree->SetBranchAddress("thPrime", &thetaprime_val);
-
-
-    for(size_t i = 0; i < tree->GetEntries(); i++) {
-        tree->GetEntry(i);
-        mprime.setValue(mprime_val);
-        thetaprime.setValue(thetaprime_val);
-        eventNumber.setValue(data.getNumEvents());
-        category.setValue(charge_plus? 0 : 1);
-        data.addEvent();
-    }
-}
-
-void mergeDatasets(UnbinnedDataSet &data1, UnbinnedDataSet &data2, UnbinnedDataSet &data_out){
-    // merge two datasets
-    auto data1_M = data1.to_matrix<MatrixXd>();
-    auto data2_M = data2.to_matrix<MatrixXd>();
-
-    MatrixXd concatenated_matrix(data1_M.rows(), data1_M.cols() + data2_M.cols());
-    concatenated_matrix << data1_M, data2_M;
-
-    data_out.from_matrix(concatenated_matrix);
-
 }
 
 int main(int argc, char **argv) {
@@ -446,19 +302,21 @@ int main(int argc, char **argv) {
 
 
         {
+            writeToFile(totalpdf_plus, fmt::format("Fit/{0}/FittedParameters_Plus.txt", fit_name).c_str());
             signal_plus->resetCacheCounter();
             std::cout << "Fit fractions plus: " << std::endl;
-            //signal_plus->fit_fractions(true);
             toyName = fmt::format("Fit/{0}/MC_Plus.root", fit_name);
             genToyMCB(Nevents, toyName, signal_plus, true);
         }
         std::cout << "------------------------------------------" << std::endl;
         {
+            writeToFile(totalpdf_minus, fmt::format("Fit/{0}/FittedParameters_Minus.txt", fit_name).c_str());
             std::cout << "Fit fractions minus: " << std::endl;
-            //signal_minus->fit_fractions(true);
             toyName = fmt::format("Fit/{0}/MC_Minus.root", fit_name);
             genToyMCB(Nevents, toyName, signal_minus, false);
         }
+
+        plotGOF(fmt::format("Fit/{0}",fit_name) , "MC");
 
     }
 
@@ -488,7 +346,316 @@ int main(int argc, char **argv) {
 
     }
 
+}
+
+GooPdf *polyEff(Observable s12, Observable s13,  bool charge_plus) {
+
+    std::string Charge = charge_plus ? "_Plus" : "_Minus";
+    vector<Variable> offsets;
+    vector<Observable> observables;
+    vector<Variable> coefficients;
+    Variable constantOne("c1"+Charge, 1);
+    Variable constantZero("c0"+Charge, 0);
+    observables.push_back(mprime);
+    observables.push_back(thetaprime);
+    offsets.push_back(constantZero);
+    offsets.push_back(constantZero);
+    coefficients.push_back(constantOne);
+    PolynomialPdf *eff = new PolynomialPdf("constantEff"+Charge, observables, coefficients, offsets, 0); // No efficiency
+
+    return eff;
+}
+
+ResonancePdf *loadPWAResonance(std::string name) {
+	
+        //resonante region < 2GeV
+        std::ifstream file(name.c_str());
+        double m=0, mag=0, phs=0;
+        int index =0;
+        while(file >> m >> mag >> phs){
+            HH_bin_limits.push_back(m*m);
+            Variable va(fmt::format("pwa_coef_{}_real", index), mag ,0.001,0,0);
+            Variable vp(fmt::format("pwa_coef_{}_imag", index), phs ,0.001,0,0);
+            pwa_coefs_amp.push_back(va);
+            pwa_coefs_phs.push_back(vp);
+            index++;
+
+        }
+        file.close();
+
+        std::cout << "------------------------------------------" << std::endl;
+	    std::cout << pwa_coefs_amp.size() << " QMIPWA points loaded!" << std::endl;
+	    std::cout << "------------------------------------------" << std::endl;
+
+        for(int i=0; i< HH_bin_limits.size() ; i++){
+            std::cout << HH_bin_limits[i]<< " " << pwa_coefs_amp[i].getValue() << " " << pwa_coefs_phs[i].getValue() << std::endl;
+        }
+				
+	    Variable swave_amp_real("swave_real_coef", 1.0);
+	    Variable swave_amp_imag("swave_imag_coef", 0.0);
+
+		auto swave = new Resonances::Spline("MIPWA", swave_amp_real, swave_amp_imag, HH_bin_limits, pwa_coefs_amp, pwa_coefs_phs, PAIR_12, true, true);
+		
+        return swave;
+    
+} 
+
+void genToyMCB(size_t Nevents, std::string toyName, Amp3BodySqDP *signal, bool charge_pos){
+    
+            auto name= fmt::format("{0}",toyName);
+            double _s12, _s13,_s23, mp, th, _jac;
+            double fg, wt;
+            auto f = new TFile(name.c_str(),"recreate");
+            auto t = new TTree("genResults","toyMC");
+            auto b_mp  = t->Branch("mPrime",&mp,"mPrime/D");
+            auto b_th  = t->Branch("thPrime",&th,"thPrime/D");	
+            auto b_s12 = t->Branch("s12",&_s12,"s12/D");
+            auto b_s13 = t->Branch("s13",&_s13,"s13/D");
+            auto b_s23 = t->Branch("s23",&_s23,"s23/D");
+            auto b_flags = t->Branch("flags",&fg,"flags/D");
+            auto b_wt = t->Branch("weights",&wt,"weights/D");
+            //auto b_jac = t->Branch("jac",&_jac,"jac/D");
+            
+            std::srand(std::time(nullptr)); // use current time as seed for random generator
+           
+            int accepted = 0;
+            while(t->GetEntries() < Nevents){
+            
+                int random_value = std::rand();
+                auto tuple = signal->GenerateSig(1000000,random_value);
+                auto variables = std::get<1>(tuple);
+                auto weights   = std::get<2>(tuple);
+                auto flags     = std::get<3>(tuple);
+                 
+                std::cout << "events = " << t->GetEntries() << "\n";
+                for(int i = 0; i < weights.size(); i++){
+                        if(flags[i]==1){
+                            t->GetEntry(accepted);
+                            _s12 = (*(variables[4]))[i];
+                            _s13 = (*(variables[2]))[i];
+                            _s23 = (*(variables[3]))[i];
+                            mp = (*(variables[0]))[i];
+                            th = (*(variables[1]))[i];
+                            fg = flags[i];
+                            wt = weights[i];
+                            //_jac = calc_SqDp_Jacobian(mp, th, Decay_MASS, d1_MASS, d2_MASS, d3_MASS);
+                            t->Fill();   
+                            accepted++;
+                        }
+                }
+            }
+
+            t->Write("",TObject::kOverwrite);
+            f->Close();
+            std::cout << "------------------------------------------" << std::endl;
+            if(charge_pos)
+                std::cout << "toyMC Plus --> " << name.c_str() << " was saved!" << std::endl;
+            else
+                std::cout << "toyMC Minus --> " << name.c_str() << " was saved!" << std::endl;
+            std::cout << "------------------------------------------" << std::endl;
+
+            auto frac = signal->fit_fractions(true);
+}
+
+void getData(std::string toyFileName, GooFit::Application &app, DataSet &data, bool charge_plus) {
+    // load data in a GooFit::dataset
+
+    auto obs = data.getObservables();
+    Observable mprime         = obs.at(0);
+    Observable thetaprime         = obs.at(1);
+    Observable category = obs.at(2);
+    Observable eventNumber = obs.at(3);
+
+    auto openRoot = new TFile(toyFileName.c_str());
+    auto tree     = (TTree *)openRoot->Get("genResults");
+    auto mprime_val(0.);
+    auto thetaprime_val(0.);
+    auto flags_val(0.);
+
+    tree->SetBranchAddress("mPrime", &mprime_val);
+    tree->SetBranchAddress("thPrime", &thetaprime_val);
+
+
+    for(size_t i = 0; i < tree->GetEntries(); i++) {
+        tree->GetEntry(i);
+        mprime.setValue(mprime_val);
+        thetaprime.setValue(thetaprime_val);
+        eventNumber.setValue(data.getNumEvents());
+        category.setValue(charge_plus? 0 : 1);
+        data.addEvent();
+    }
+}
+
+void mergeDatasets(UnbinnedDataSet &data1, UnbinnedDataSet &data2, UnbinnedDataSet &data_out){
+    // merge two datasets
+    auto data1_M = data1.to_matrix<MatrixXd>();
+    auto data2_M = data2.to_matrix<MatrixXd>();
+
+    MatrixXd concatenated_matrix(data1_M.rows(), data1_M.cols() + data2_M.cols());
+    concatenated_matrix << data1_M, data2_M;
+
+    data_out.from_matrix(concatenated_matrix);
+
+}
+
+void plotGOF(std::string fit_path, std::string data_path){
+
+    double s13, s23, s12;
+
+    //fitted samples
+    auto fplus = new TFile(fmt::format("{0}/MC_Plus.root", fit_path).c_str());
+    auto tplus = (TTree *)fplus->Get("genResults");
+    tplus->SetBranchAddress("s13", &s13);
+    tplus->SetBranchAddress("s23", &s23);
+    tplus->SetBranchAddress("s12", &s12);
+
+    auto fminus = new TFile(fmt::format("{0}/MC_Minus.root", fit_path).c_str());
+    auto tminus = (TTree *)fminus->Get("genResults");
+    tminus->SetBranchAddress("s13", &s13);
+    tminus->SetBranchAddress("s23", &s23);
+    tminus->SetBranchAddress("s12", &s12);
+
+    //data samples
+    auto plus_data = new TFile(fmt::format("{0}/MC_Plus.root", data_path).c_str());
+    auto tplus_data = (TTree *)plus_data->Get("genResults");
+    tplus_data->SetBranchAddress("s13", &s13);
+    tplus_data->SetBranchAddress("s23", &s23);
+    tplus_data->SetBranchAddress("s12", &s12);
+
+    auto minus_data = new TFile(fmt::format("{0}/MC_Minus.root", data_path).c_str());
+    auto tminus_data = (TTree *)minus_data->Get("genResults");
+    tminus_data->SetBranchAddress("s13", &s13);
+    tminus_data->SetBranchAddress("s23", &s23);
+    tminus_data->SetBranchAddress("s12", &s12);
+
+    auto fDP_plus = new TH2D("fDP_plus", "Fitted DP Plus", 100, s13_min, 14, 100, s23_min, s23_max);
+    auto DP_plus_data = new TH2D("fDP_data", "Data DP Plus", 100, s13_min, 14, 100, s23_min, s23_max);
+
+    auto fDP_minus = new TH2D("fDP_minus", "Fitted DP Minus", 100, s13_min, 14, 100, s23_min, s23_max);
+    auto DP_minus_data = new TH2D("fDP_data", "Data DP Minus", 100, s13_min, 14, 100, s23_min, s23_max);
+    
+    auto fs12_plus = new TH1D("fs12_plus", "s12 Plus", 100, s12_min, s12_max);
+    auto fs12_minus = new TH1D("fs12_minus", "s12 Minus", 100, s12_min, s12_max);
+    auto s12_plus_data = new TH1D("s12_plus_data", "s12 Plus Data", 100, s12_min, s12_max);
+    auto s12_minus_data = new TH1D("s12_minus_data", "s12 Minus Data", 100, s12_min, s12_max);
+
+    for(int i = 0; i < tplus->GetEntries(); i++){
+        tplus->GetEntry(i);
+        fs12_plus->Fill(s12);
+        if(s13<s23)
+            fDP_plus->Fill(s13, s23);
+        else
+            fDP_plus->Fill(s23, s13);
+    }
+
+    fDP_plus->Scale(0.5);
+
+    for(int i = 0; i < tminus->GetEntries(); i++){
+        tminus->GetEntry(i);
+        fs12_minus->Fill(s12);
+        if(s13<s23)
+            fDP_minus->Fill(s13, s23);
+        else
+            fDP_minus->Fill(s23, s13);
+    }
+
+    fDP_minus->Scale(0.5);
+
+    for(int i = 0; i < tplus_data->GetEntries(); i++){
+        tplus_data->GetEntry(i);
+        s12_plus_data->Fill(s12);
+        if(s13<s23)
+            DP_plus_data->Fill(s13, s23);
+        else
+            DP_plus_data->Fill(s23, s13);
+    }
+    
+    DP_plus_data->Scale(0.5);
+
+    for(int i = 0; i < tminus_data->GetEntries(); i++){
+        tminus_data->GetEntry(i);
+        s12_minus_data->Fill(s12);
+        if(s13<s23)
+            DP_minus_data->Fill(s13, s23);
+        else
+            DP_minus_data->Fill(s23, s13);
+    }
+
+    DP_minus_data->Scale(0.5);
 
 
 
+    auto c1 = new TCanvas("c1", "c1", 1500, 1000);
+    gStyle->SetOptStat(0);
+
+    DP_plus_data->Draw("colz");
+    c1->SaveAs(fmt::format("{0}/Data_DP_Plus.png",fit_path.c_str()).c_str());
+    c1->Clear();
+    
+    DP_minus_data->Draw("colz");
+    c1->SaveAs(fmt::format("{0}/Data_DP_minus.png",fit_path.c_str()).c_str());
+    c1->Clear();
+
+    c1->Divide(3,2);
+    {
+        c1->cd(1);
+        auto s13_data = DP_plus_data->ProjectionX("s13");
+        s13_data->SetXTitle("s13 [GeV^{2}]");
+        s13_data->SetTitle("B^{+} #rightarrow #pi^{-} #pi^{+} #pi^{+} MC");
+        s13_data->DrawNormalized("hist");
+        auto fs13 = fDP_plus->ProjectionX("s13");
+        fs13->SetTitle("B^{+} #rightarrow #pi^{-} #pi^{+} #pi^{+} Fit");
+        fs13->SetLineColor(kRed);
+        fs13->DrawNormalized("Esame");
+        gPad->BuildLegend(0.6,0.8,0.9,0.9);
+        c1->cd(2);
+        auto s23_data = DP_plus_data->ProjectionY("s23");
+        s23_data->SetXTitle("s23 [GeV^{2}]");
+        s23_data->SetTitle("B^{+} #rightarrow #pi^{-} #pi^{+} #pi^{+} MC");
+        s23_data->DrawNormalized("hist");
+        auto fs23 = fDP_plus->ProjectionY("s23");
+        fs23->SetTitle("B^{+} #rightarrow #pi^{-} #pi^{+} #pi^{+} Fit");
+        fs23->SetLineColor(kRed);
+        fs23->DrawNormalized("Esame");
+        c1->cd(3);
+        s12_plus_data->SetXTitle("s23 [GeV^{2}]");
+        s12_plus_data->SetTitle("B^{+} #rightarrow #pi^{-} #pi^{+} #pi^{+} MC");
+        s12_plus_data->DrawNormalized("hist");
+        fs12_plus->SetTitle("B^{+} #rightarrow #pi^{-} #pi^{+} #pi^{+} Fit");
+        fs12_plus->SetLineColor(kRed);
+        fs12_plus->DrawNormalized("Esame");
+    }
+
+    {
+        c1->cd(4);
+        auto s13_data = DP_minus_data->ProjectionX("s13");
+        s13_data->SetXTitle("s13 [GeV^{2}]");
+        s13_data->SetTitle("B^{-} #rightarrow #pi^{+} #pi^{-} #pi^{-} MC");
+        s13_data->DrawNormalized("hist");
+        auto fs13 = fDP_minus->ProjectionX("s13");
+        fs13->SetTitle("B^{-} #rightarrow #pi^{+} #pi^{-} #pi^{-} Fit");
+        fs13->SetLineColor(kRed);
+        fs13->DrawNormalized("Esame");
+        gPad->BuildLegend(0.6,0.8,0.9,0.9);
+        c1->cd(5);
+        auto s23_data = DP_minus_data->ProjectionY("s23");
+        s23_data->SetXTitle("s23 [GeV^{2}]");
+        s23_data->SetTitle("B^{-} #rightarrow #pi^{+} #pi^{-} #pi^{-} MC");
+        s23_data->DrawNormalized("hist");
+        auto fs23 = fDP_minus->ProjectionY("s23");
+        fs23->SetTitle("B^{-} #rightarrow #pi^{+} #pi^{-} #pi^{-} Fit");
+        fs23->SetLineColor(kRed);
+        fs23->DrawNormalized("Esame");
+        c1->cd(6);
+        s12_minus_data->SetXTitle("s23 [GeV^{2}]");
+        s12_minus_data->SetTitle("B^{+} #rightarrow #pi^{-} #pi^{+} #pi^{+} MC");
+        s12_minus_data->DrawNormalized("hist");
+        fs12_minus->SetTitle("B^{+} #rightarrow #pi^{-} #pi^{+} #pi^{+} Fit");
+        fs12_minus->SetLineColor(kRed);
+        fs12_minus->DrawNormalized("Esame");
+    }
+
+    c1->SaveAs(fmt::format("{0}/FitProjections.png",fit_path.c_str()).c_str());
+
+     
 }

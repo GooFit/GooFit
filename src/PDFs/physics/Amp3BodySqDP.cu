@@ -212,8 +212,9 @@ constexpr int resonanceOffset_DP = 4; // Offset of the first resonance into the 
 // this needs to be large enough to hold all samples
 
 constexpr int NUMRES = 20;
+constexpr int NUMPDFS = 20;
 
-__device__ fpcomplex *cSqDpResonances[NUMRES * 20];
+__device__ fpcomplex *cSqDpResonances[NUMRES * NUMPDFS];
 
 __device__ inline auto parIndexFromResIndex_DP(int resIndex) -> int {
     return resonanceOffset_DP + resIndex * resonanceSize;
@@ -371,7 +372,7 @@ __host__ void Amp3BodySqDP::setDataSize(unsigned int dataSize, unsigned int evtS
     numEntries  = dataSize;
     eventOffset = offset;
 
-    for(int i = 0; i < 16; i++) {
+    for(int i = 0; i < NUMRES; i++) {
 #ifdef GOOFIT_MPI
         cachedWaves[i] = new thrust::device_vector<fpcomplex>(m_iEventsPerTask);
 #else
@@ -381,7 +382,7 @@ __host__ void Amp3BodySqDP::setDataSize(unsigned int dataSize, unsigned int evtS
         MEMCPY_TO_SYMBOL(cSqDpResonances,
                          &dummy,
                          sizeof(fpcomplex *),
-                         ((16 * cacheToUse) + i) * sizeof(fpcomplex *),
+                         ((NUMRES * cacheToUse) + i) * sizeof(fpcomplex *),
                          cudaMemcpyHostToDevice);
     }
 

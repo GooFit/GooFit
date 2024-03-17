@@ -108,24 +108,28 @@ GooPdf *polyEff(Observable s12, Observable s13) {
 }
 
 
-ResonancePdf *loadPWAResonance(size_t npts=10) {
+ResonancePdf *loadPWAResonance(std::string name = "pwa_coefs.txt") {
 	
-        for(int i = 0; i < npts; i++){
-            HH_bin_limits.push_back(s13_min + (s13_max - s13_min) * i / npts);
-        }
-
-        for(int i = 0; i < npts; i++){
-            Variable va(fmt::format("pwa_coef_{}_real", i), 1.,0.001,0,0);
-            Variable vp(fmt::format("pwa_coef_{}_imag", i), 0.,0.001,0,0);
+        //resonante region < 2GeV
+        std::ifstream file(name.c_str());
+        double m=0, mag=0, phs=0;
+        int index =0;
+        while(file >> m >> mag >> phs){
+            HH_bin_limits.push_back(m*m);
+            Variable va(fmt::format("pwa_coef_{}_real", index), mag ,0.001,0,0);
+            Variable vp(fmt::format("pwa_coef_{}_imag", index), phs ,0.001,0,0);
             pwa_coefs_amp.push_back(va);
             pwa_coefs_phs.push_back(vp);
+            index++;
+
         }
+        file.close();
 
         std::cout << "------------------------------------------" << std::endl;
 	    std::cout << pwa_coefs_amp.size() << " QMIPWA points loaded!" << std::endl;
 	    std::cout << "------------------------------------------" << std::endl;
 
-        for(int i=0; i<npts ; i++){
+        for(int i=0; i< HH_bin_limits.size() ; i++){
             std::cout << HH_bin_limits[i]<< " " << pwa_coefs_amp[i].getValue() << " " << pwa_coefs_phs[i].getValue() << std::endl;
         }
 				
@@ -178,8 +182,8 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
 
     Variable v_rho770_Mass("rho770_MASS", rho770_MASS);
     Variable v_rho770_Width("rho770_WIDTH", rho770_WIDTH);
-    Variable v_rho770_real("rho770_REAL", rho770_amp);
-    Variable v_rho770_img("rho770_IMAG", rho770_img);
+    Variable v_rho770_real("rho770_REAL", rho770_amp, 0.01, 0, 0);
+    Variable v_rho770_img("rho770_IMAG", rho770_img, 0.01, 0, 0);
 
     auto rho770 = new Resonances::RBW(
         "rho770", v_rho770_real, v_rho770_img, v_rho770_Mass, v_rho770_Width, 1, PAIR_13, true, true);
@@ -201,19 +205,19 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
     // D-wave
     double f2_1270_MASS  = 1.2751;
     double f2_1270_WIDTH = 0.1851;
-    double f2_1270_amp   = 0.53*cos(1.39);
-    double f2_1270_img   = 0.53*sin(1.39);
+    double f2_1270_amp   = 1.0;//0.53*cos(1.39);
+    double f2_1270_img   = 0.0;//0.53*sin(1.39);
 
     Variable v_f2_1270_Mass("f2_1270_MASS", f2_1270_MASS);
     Variable v_f2_1270_Width("f2_1270_WIDTH", f2_1270_WIDTH);
-    Variable v_f2_1270_real("f2_1270_REAL", f2_1270_amp,0.001,0,0);
-    Variable v_f2_1270_img("f2_1270_IMAG", f2_1270_img,0.001,0,0);
+    Variable v_f2_1270_real("f2_1270_REAL", f2_1270_amp);//,0.001,0,0);
+    Variable v_f2_1270_img("f2_1270_IMAG", f2_1270_img);//,0.001,0,0);
 
     auto f2_1270 = new Resonances::RBW(
         "f2", v_f2_1270_real, v_f2_1270_img, v_f2_1270_Mass, v_f2_1270_Width, 2, PAIR_13, true, true);
 
     //swave
-    // auto swave = loadPWAResonance();
+    auto swave = loadPWAResonance("PWAFile.bin");
 
     
     std::vector<ResonancePdf *> vec_resonances;
@@ -471,9 +475,9 @@ int main(int argc, char **argv) {
         TGraph gr_phs(HH_bin_limits.size(),HH_bin_limits.data(),pwa_coefs_phs_fitted.data());
 
         TCanvas c;
-        gr_mag.Draw("APL");
+        gr_mag.Draw("APL*");
         c.SaveAs("pwa_coefs_amp_fitted.png");
-        gr_phs.Draw("APL");
+        gr_phs.Draw("APL*");
         c.SaveAs("pwa_coefs_phs_fitted.png");
        
     }

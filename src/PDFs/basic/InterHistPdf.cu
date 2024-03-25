@@ -135,7 +135,7 @@ __device__ device_function_ptr ptr_to_InterHistogram = device_InterHistogram;
 __host__
 InterHistPdf::InterHistPdf(std::string n, BinnedDataSet *x, std::vector<Variable> params, std::vector<Observable> obses)
     : GooPdf("InterHistPdf", n)
-    , numVars(x->numVariables()) {
+    , numVars(x -> numVariables()) {
     static unsigned int totalHistograms = 0;
     totalEvents                         = 0;
 

@@ -52,8 +52,10 @@ class Amp3Body : public Amp3BodyBase {
 
     __host__ void setGenerationOffset(int off) { generation_offset = off; }
     __host__ auto getGenerationOffset() -> int { return generation_offset; }
-    __host__ auto GenerateSig(unsigned int numEvents, int seed = 0) -> std::
-        tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h>;
+    __host__ auto GenerateSig(unsigned int numEvents, int seed = 0) -> std::tuple<mcbooster::ParticlesSet_h,
+                                                                                  mcbooster::VariableSet_h,
+                                                                                  mcbooster::RealVector_h,
+                                                                                  mcbooster::RealVector_h>;
 
     __host__ void populateArrays() override;
 

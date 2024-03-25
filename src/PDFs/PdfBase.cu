@@ -184,8 +184,7 @@ __host__ void PdfBase::status() {
     }
 
     std::cout << "\n"
-              << "  functionPtrToNameMap contains "
-              << "\n";
+              << "  functionPtrToNameMap contains " << "\n";
     std::map<void *, std::string>::iterator it = functionPtrToNameMap.begin();
     while(it != functionPtrToNameMap.end()) {
         std::cout << it->first << " :: " << it->second << std::endl;
@@ -253,8 +252,7 @@ __host__ void PdfBase::status(std::string caller) {
     }
 
     std::cout << "\n"
-              << "  functionPtrToNameMap contains "
-              << "\n";
+              << "  functionPtrToNameMap contains " << "\n";
     std::map<void *, std::string>::iterator it = functionPtrToNameMap.begin();
     while(it != functionPtrToNameMap.end()) {
         std::cout << it->first << " :: " << it->second << std::endl;

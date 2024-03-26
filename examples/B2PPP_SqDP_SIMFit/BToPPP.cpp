@@ -80,7 +80,7 @@ std::vector<Variable> pwa_coefs_amp;
 std::vector<Variable> pwa_coefs_phs; 
 
 // Bins for grid normalization
-const int bins = 500;
+const int bins = 300;
 
 // Dalitz Limits
 const fptype s12_min = (d1_MASS + d2_MASS) * (d1_MASS + d2_MASS);
@@ -120,15 +120,15 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
 
     //S-wave
     auto NR = new Resonances::BelleNR("BelleNR"+Charge,
-                                        Variable("BelleNR_amp"+Charge,0.36042993,0.01,0,0), 
-                                        Variable("BelleNR_img"+Charge,-0.40210728,0.01,0,0), 
+                                        Variable("BelleNR_amp"+Charge,0.54*cos(-0.84),0.01,0,0), 
+                                        Variable("BelleNR_img"+Charge,0.54*sin(-0.84),0.01,0,0), 
                                         Variable("BelleNR_alpha"+Charge,0.2), PAIR_13, true);
 
     double f0_980_MASS = 0.965;
     double f0_980_GPP  = 0.2;
     double f0_980_GKK  = 1.0;
-    double f0_980_re   =  -0.0051846731;
-    double f0_980_img  = -0.26995022;
+    double f0_980_re   =  0.27*cos(-1.59);
+    double f0_980_img  = 0.27*sin(-1.59);
 
     Variable v_f0_980_Mass("f0_980_MASS"+Charge, f0_980_MASS);
     Variable v_f0_980_GPP("f0_980_GPP"+Charge, f0_980_GPP);
@@ -170,8 +170,8 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
     // D-wave
     double f2_1270_MASS  = 1.2751;
     double f2_1270_WIDTH = 0.1851;
-    double f2_1270_amp   = 0.095300878;
-    double f2_1270_img   = 0.52136143;
+    double f2_1270_amp   = 0.53*cos(1.39);
+    double f2_1270_img   = 0.53*sin(1.39);
 
     Variable v_f2_1270_Mass("f2_1270_MASS"+Charge, f2_1270_MASS);
     Variable v_f2_1270_Width("f2_1270_WIDTH"+Charge, f2_1270_WIDTH);
@@ -300,20 +300,28 @@ int main(int argc, char **argv) {
         // Start fit
         auto func_min = datapdf.fit();
 
+        {
+            std::cout << "norm B+ + B-: " << finalPDF_comb.normalize() << std::endl;
+            
+        }
+
 
         {
             writeToFile(totalpdf_plus, fmt::format("Fit/{0}/FittedParameters_Plus.txt", fit_name).c_str());
             signal_plus->resetCacheCounter();
             std::cout << "Fit fractions plus: " << std::endl;
             toyName = fmt::format("Fit/{0}/MC_Plus.root", fit_name);
-            genToyMCB(Nevents, toyName, signal_plus, true);
+            std::cout << "norm B+: " << signal_plus->normalize() << std::endl;
+           // genToyMCB(Nevents, toyName, signal_plus, true);
         }
         std::cout << "------------------------------------------" << std::endl;
         {
             writeToFile(totalpdf_minus, fmt::format("Fit/{0}/FittedParameters_Minus.txt", fit_name).c_str());
+            signal_minus->resetCacheCounter();
             std::cout << "Fit fractions minus: " << std::endl;
             toyName = fmt::format("Fit/{0}/MC_Minus.root", fit_name);
-            genToyMCB(Nevents, toyName, signal_minus, false);
+            std::cout << "norm B-: " << signal_minus->normalize() << std::endl;
+            //genToyMCB(Nevents, toyName, signal_minus, false);
         }
 
         plotGOF(fmt::format("Fit/{0}",fit_name) , "MC");

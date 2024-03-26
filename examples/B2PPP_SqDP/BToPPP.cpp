@@ -138,7 +138,7 @@ ResonancePdf *loadPWAResonance(std::string name = "pwa_coefs.txt") {
 
 
 
-		auto swave = new Resonances::Spline("MIPWA", swave_amp_real, swave_amp_imag, HH_bin_limits, pwa_coefs_amp, pwa_coefs_phs, PAIR_12, true, true);
+		auto swave = new Resonances::Spline("MIPWA", swave_amp_real, swave_amp_imag, HH_bin_limits, pwa_coefs_amp, pwa_coefs_phs, PAIR_12, true, false);
 		
         return swave;
     
@@ -221,13 +221,13 @@ Amp3BodySqDP *makesignalpdf(Observable mprime, Observable thetaprime, EventNumbe
 
     
     std::vector<ResonancePdf *> vec_resonances;
-    vec_resonances.push_back(rho770);
-    vec_resonances.push_back(rho1450);
-    vec_resonances.push_back(f0_980);
-    vec_resonances.push_back(f2_1270);
-    vec_resonances.push_back(NR);
+    // vec_resonances.push_back(rho770);
+    // vec_resonances.push_back(rho1450);
+    // vec_resonances.push_back(f0_980);
+    // vec_resonances.push_back(f2_1270);
+    // vec_resonances.push_back(NR);
 
-    //vec_resonances.push_back(swave);
+    vec_resonances.push_back(swave);
 
     D2KKK.resonances = vec_resonances;
 

@@ -81,6 +81,22 @@ __device__ auto g00(const fptype sqr_t, const fptype *sqr_tmin,const fptype *sqr
 	return 0;
 }
 
+__device__ auto qh(const fptype s, const fptype m) -> fptype 
+{ //p9 
+  if ( s < 4. * m * m){
+  return 0.0;
+  }
+
+  if (s >= 4. * m * m){
+    fptype q = (sqrt(s-4*m*m) /2. );
+  return q;
+  }
+
+  return 0;
+
+}
+ 
+
 template <int I>
 __device__ auto func_Rescattering2(fptype m13, fptype m23, fptype m12, ParameterContainer &pc) -> fpcomplex {
   
@@ -104,16 +120,17 @@ __device__ auto func_Rescattering2(fptype m13, fptype m23, fptype m12, Parameter
     fptype F4_ = pc.getParameter(15);
 
     fptype B0_ = 0.;
-    fptype C0_ = 0.;
-    fptype F0_ = 0.;
+    fptype C0_ = 295.39;
+    fptype F0_ = 0.151;
  
     fptype s  = 0.0;
     fptype mass = 0.0;
 
     fpcomplex ret(0.,0.);
 
-    fptype sqr_tmin[3] = {0.,0.,0.};
-    fptype sqr_tmax[3] = {0.,0.,0.};
+    const fptype k_MASS = 0.493677;
+    const fptype sqr_tmin[3] = {0.,2.*k_MASS,sqrt(2)};
+    const fptype sqr_tmax[3] = {0.,sqrt(2),2.};
 
 #pragma unroll
     for(size_t j = 0; j < I; j++) {
@@ -131,38 +148,40 @@ __device__ auto func_Rescattering2(fptype m13, fptype m23, fptype m12, Parameter
         }
        
         mass = sqrt(s);
-        fptype k_MASS = 0.493677;
-        sqr_tmin[1] = 2.*k_MASS;
-        sqr_tmin[2] = 1.47;
-        sqr_tmax[1] = 1.47;
-        sqr_tmax[2] = 2.;
+  
 
-        
-        B0_ = 226.5*M_PI/180.0 + B1_ - B2_ + B3_;
+        B0_ = 226.5 + B1_ - B2_ + B3_;
 
         const fptype coefs_phi00[10] = {B0_,B1_,B2_,B3_,C0_,C1_,C2_,C3_,C4_,C5_};
 
-        C0_ = phi00(sqr_tmax[1]*sqr_tmax[1],sqr_tmin, sqr_tmax, 1, coefs_phi00) + C1_ - C2_ + C3_ - C4_ + C5_;
+        //C0_ = phi00(sqr_tmax[1],sqr_tmin, sqr_tmax, 1, coefs_phi00) + C1_ - C2_ + C3_ - C4_ + C5_;
 
         const fptype coefs_g00[9] = {D0_,D1_,D2_,D3_,F0_,F1_,F2_,F3_,F4_};
 
-        F0_ = g00(sqr_tmax[1]*sqr_tmax[1], sqr_tmin, sqr_tmax, 1, coefs_g00) + F1_ - F2_ + F3_ - F4_;
+        //F0_ = g00(sqr_tmax[1], sqr_tmin, sqr_tmax, 1, coefs_g00) + F1_ - F2_ + F3_ - F4_;
+
+        // printf("g00(sqr_tmax[1],1)= %f \n",g00(sqr_tmax[1], sqr_tmin, sqr_tmax, 1, coefs_g00));
+        // printf("g00(sqr_tmin[1],1)= %f \n",g00(sqr_tmin[1], sqr_tmin, sqr_tmax, 1, coefs_g00));
+        // printf("g00(sqr_tmax[2],2)= %f \n",g00(sqr_tmax[2], sqr_tmin, sqr_tmax, 2, coefs_g00));
+        // printf("ph00(sqr_tmax[1],1)= %f \n",phi00(sqr_tmax[1], sqr_tmin, sqr_tmax, 1, coefs_phi00));
+        // printf("ph00(sqr_tmin[1],1)= %f \n",phi00(sqr_tmin[1], sqr_tmin, sqr_tmax, 1, coefs_phi00));
+        // printf("ph00(sqr_tmax[2],2)= %f \n",phi00(sqr_tmax[2], sqr_tmin, sqr_tmax, 2, coefs_phi00));
+
 
         int i=0 ; 
-
         if (mass < sqr_tmax[1]) i = 1;
         if (mass > sqr_tmax[1] && mass < sqr_tmax[2]) i = 2;
         if (i == 0) {
-          return fpcomplex(0,0);
+            return fpcomplex(0,0);
         }
-
-    
+        fptype NR1_s = 1.0/(1.0+s);
         fptype mag   = g00(mass, sqr_tmin, sqr_tmax, i, coefs_g00);
-        fptype phase = phi00(mass, sqr_tmin, sqr_tmax, i, coefs_phi00);
+        if (mass > sqr_tmin[2]) mag=0.0;
+        fptype phase = phi00(mass, sqr_tmin, sqr_tmax, i, coefs_phi00)*M_PI/180.0;
 
-        ret+= fpcomplex(mag*cos(phase), mag*sin(phase));
+        ret+= fpcomplex(mag*cos(phase)*NR1_s, mag*sin(phase)*NR1_s);
 
-        if(I != 0) {
+         if(I != 0) {
             fptype swpmass = m13;
             m13            = m23;
             m23            = swpmass;

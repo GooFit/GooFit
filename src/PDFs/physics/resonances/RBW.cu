@@ -19,10 +19,6 @@ __device__ auto plainBW(fptype m13, fptype m23, fptype m12, ParameterContainer &
     fptype resmass  = pc.getParameter(0);
     fptype reswidth = pc.getParameter(1);
 
-    // double phi1020_MASS  = 1.019461;
-    // if(resmass!=phi1020_MASS)
-    //     printf("current resmass = %f\n", resmass);
-
     fpcomplex result{0.0, 0.0};
     fptype resmass2 = resmass*resmass;
 
@@ -31,6 +27,18 @@ __device__ auto plainBW(fptype m13, fptype m23, fptype m12, ParameterContainer &
     fptype m1= 0.0;
     fptype m2= 0.0;
     fptype m3= 0.0;
+
+    if(reswidth<0.){
+        reswidth *= -1.;
+    }
+
+    if(resmass<0.){
+        resmass *= -1.;
+    }
+
+    if(resmass<=0. || reswidth<=0.){
+        return result;
+    }
     
 #pragma unroll
     for(size_t i = 0; i < I; i++) {
@@ -58,8 +66,6 @@ __device__ auto plainBW(fptype m13, fptype m23, fptype m12, ParameterContainer &
             m3 = c_daug1Mass;
         }
 
-        
-       
 
         fptype q0_ = DaugDecayMomResFrame(resmass2, m1, m2);
 
@@ -78,6 +84,10 @@ __device__ auto plainBW(fptype m13, fptype m23, fptype m12, ParameterContainer &
 
         fptype FR = BlattWeisskopfPrime(q_*c_meson_radius,spin);
         fptype FP = BlattWeisskopfPrime(p_*c_mother_meson_radius,spin);
+
+        if(q0_<=0 || q_<=0 || p_<=0){
+            ignoreMom = true;
+        }
         
         fptype gamma = ignoreMom ? reswidth : reswidth*pow(q_/q0_,2.0*spin + 1.0)*(resmass/m)*POW2(FR/FR0);
                   

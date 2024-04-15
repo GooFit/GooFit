@@ -129,8 +129,8 @@ __device__ auto func_Rescattering2(fptype m13, fptype m23, fptype m12, Parameter
     fpcomplex ret(0.,0.);
 
     const fptype k_MASS = 0.493677;
-    const fptype sqr_tmin[3] = {0.,2.*k_MASS,sqrt(2)};
-    const fptype sqr_tmax[3] = {0.,sqrt(2),2.};
+    const fptype sqr_tmin[3] = {0.,2.*k_MASS,sqrt(2.)};
+    const fptype sqr_tmax[3] = {0.,sqrt(2.),2.};
 
 #pragma unroll
     for(size_t j = 0; j < I; j++) {

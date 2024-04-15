@@ -25,7 +25,13 @@ __device__ auto calc_q(fptype s12, fptype m1, fptype m2)-> fptype{
 
     fptype EiCmsij = (s12 - m1*m1 + m2*m2)/(2.*sqrt(s12));
 
-    double q = sqrt(EiCmsij*EiCmsij - m2*m2);
+    auto arg = (EiCmsij*EiCmsij - m2*m2);
+
+    if(arg<0.0){
+        return 0.0;
+    }
+
+    double q = sqrt(arg);
 
     return q;
 }

@@ -203,8 +203,8 @@ class SqDalitzPlotter {
 
         auto s12_min = pow(d1_mass+d2_mass,2);
         auto s12_max = pow(mother_mass-d3_mass,2);
-        auto s12_data = new TH1D("s12_data", "", nbins, s12_min, s12_max);
-        auto s12_pdf  = new TH1D("s12_pdf", "", nbins, s12_min, s12_max);
+        auto s12_data = new TH1D("s12_data", "", nbins, 0., s12_max);
+        auto s12_pdf  = new TH1D("s12_pdf", "", nbins, 0., s12_max);
 
         auto s13_min = pow(d1_mass+d3_mass,2);
         auto s13_max = pow(mother_mass-d2_mass,2);

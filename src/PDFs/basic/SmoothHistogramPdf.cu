@@ -1,6 +1,7 @@
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/basic/SmoothHistogramPdf.h>
 #include <goofit/Variable.h>
+#include <goofit/PDFs/physics/Amp3BodySqDP.h>
 
 namespace GooFit {
 
@@ -41,12 +42,33 @@ __device__ auto device_EvalHistogram(fptype *evt, ParameterContainer &pc) -> fpt
         previous *= offset;
     }
 
+    int Mp_varIndex      = pc.getObservable(0);
+    fptype currMP = evt[Mp_varIndex];
+    int Tp_varIndex      = pc.getObservable(1);
+    fptype currTP = evt[Tp_varIndex];
+
+    double B_MASS = 5.27934;
+    double k_MASS = 0.493677;
+    auto jac = calc_SqDp_Jacobian(currMP, currTP, B_MASS, k_MASS, k_MASS, k_MASS);
+  
+
+    
+
     fptype *myHistogram = dev_smoothed_histograms[myHistogramIndex];
     fptype ret          = myHistogram[globalBinNumber];
 
+  //printf("currMP %f currTP %f ret %f jac %f ret/jac %f\n", currMP, currTP,ret, jac,ret/jac);
+    if(pc.getConstant(numCons-1)==true)
+         ret/=jac;
+    
+
+
     pc.incrementIndex(1, numParms, numCons, numObs, 1);
 
-    return ret;
+   
+  
+        return ret;
+ 
 }
 
 struct Smoother {
@@ -110,7 +132,7 @@ struct Smoother {
 
 __device__ device_function_ptr ptr_to_EvalHistogram = device_EvalHistogram;
 
-__host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet *hist, Variable smoothing)
+__host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet *hist, Variable smoothing, bool bkg)
     : GooPdf("SmoothHistogramPdf", n, smoothing) {
     int numVars = hist->numVariables();
     totalEvents = 0;
@@ -132,6 +154,8 @@ __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet *hi
         // the offset in MEMCPY_TO_SYMBOL below.
         varIndex++;
     }
+
+    registerConstant(bkg);
 
     unsigned int numbins = hist->getNumBins();
     thrust::host_vector<fptype> host_histogram;

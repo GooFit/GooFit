@@ -26,6 +26,8 @@
 #include <thrust/system/cuda/execution_policy.h>
 #include <array>
 #include <vector>
+#include <string>
+#include <fstream>
 
 #include <mcbooster/GContainers.h>
 #include <mcbooster/GFunctional.h>
@@ -297,8 +299,7 @@ __host__ Amp3BodySqDP::Amp3BodySqDP(
     MEMCPY_TO_SYMBOL(c_daug3Mass, &decay.daug3Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_meson_radius, &decay.meson_radius, sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_mother_meson_radius, &decay.mother_meson_radius, sizeof(fptype), 0, cudaMemcpyHostToDevice);
-
-    
+    MEMCPY_TO_SYMBOL(c_SquareDp, &decay.SquareDP, sizeof(bool), 0, cudaMemcpyHostToDevice);
 
     // registered to 0 position
     registerConstant(decayInfo.resonances.size());
@@ -534,7 +535,7 @@ __host__ auto Amp3BodySqDP::getCachedWave(size_t i) const -> const std::vector<s
     return ret;
 }
 
-__host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector<fptype>> {
+__host__ auto Amp3BodySqDP::fit_fractions(bool print, std::string print_to_file_path) -> std::vector<std::vector<fptype>> {
    
      recursiveSetNormalization(1.0);
 
@@ -639,17 +640,22 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
         }
     }
 
-    if(print) {
+  
+   
+    Eigen::MatrixXd m(n_res, n_res);
+    for(int i = 0; i < n_res; i++)
+        m.row(i) = Eigen::Map<Eigen::VectorXd>(&AmpIntegral[i][0], n_res);
+
+    if(print){
         std::cout << "Fit Fractions Matrix (%): \n";
         std::cout << "*Note: the order of diag FFs is equal to the order that which resonances are pushed into the "
-                     "resonance vector. \n";
-        Eigen::MatrixXd m(n_res, n_res);
-        for(int i = 0; i < n_res; i++)
-            m.row(i) = Eigen::Map<Eigen::VectorXd>(&AmpIntegral[i][0], n_res);
-
+                        "resonance vector. \n";
         std::cout << std::fixed << m << std::endl;
-        fptype sumdiagffs = 0.;
+    }
+  
+    fptype sumdiagffs = 0.;
 
+    if(print){
         std::cout << "\n ";
         std::cout << "Diagonal Fit Fractions (%): \n";
 
@@ -661,6 +667,24 @@ __host__ auto Amp3BodySqDP::fit_fractions(bool print) -> std::vector<std::vector
         }
         std::cout << "Sum of Diag FFs: " << sumdiagffs << "\n";
         std::cout << "\n";
+    }
+
+    if(!print_to_file_path.empty()){
+        std::ofstream file(print_to_file_path);
+        file << "Fit Fractions Matrix (%): \n";
+        file << "*Note: the order of diag FFs is equal to the order that which resonances are pushed into the "
+                "resonance vector. \n";
+        file << std::fixed << m << std::endl;
+        file << "\n ";
+        file << "Diagonal Fit Fractions (%): \n";
+
+        for(int i = 0; i < n_res; i++){
+            auto name = decayInfo.resonances[i]->getName();
+            file << name << "\t" << std::fixed << m(i, i) << '\n';
+        }
+        file << "Sum of Diag FFs: " << sumdiagffs << "\n";
+        file << "\n";
+        file.close();
     }
 
     return AmpIntegral;

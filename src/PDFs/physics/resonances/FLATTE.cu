@@ -22,11 +22,29 @@ __device__ auto flatte(fptype m13, fptype m23, fptype m12, ParameterContainer &p
     // indices[1] is unused constant index, for consistency with other function types.
     fptype resmass            = pc.getParameter(0);
     fptype g1                 = pc.getParameter(1);
-    fptype g2                 = pc.getParameter(2);
+    fptype g2                 = pc.getParameter(2)*g1;
     unsigned int particle     = pc.getConstant(0);
     unsigned int cyclic_index = pc.getConstant(1);
 
-    
+    fpcomplex ret(0., 0.);
+
+    if(resmass<0.){
+        resmass *= -1.;
+    }
+
+    if(g1<0.){
+        g1 *= -1.;
+    }
+
+    if(g2<0.){
+        g2 *= -1.;
+    }
+
+    if(resmass<1.e-10 || g1<1.e-10 || g2<1.e-10){
+        return ret;
+    }
+
+    fptype resmass2 = POW2(resmass);
 
 
     const fptype pipmass = 0.13957018;
@@ -54,29 +72,51 @@ __device__ auto flatte(fptype m13, fptype m23, fptype m12, ParameterContainer &p
         mSumSq2_ = (kpmass+kpmass)*(kpmass+kpmass);
         mSumSq3_ = (k0mass+k0mass)*(k0mass+k0mass);
     }
-
-    fpcomplex ret(0., 0.);
     
     fptype rho1(0.0), rho2(0.0);
 
     fptype s  = 0.0;
+    fptype m = 0.0;
+    fptype m1= 0.0;
+    fptype m2= 0.0;
+    fptype m3= 0.0;
 
 #pragma unroll    
     for(int i = 0; i < I; i++) {
 
         if(PAIR_12 == cyclic_index){
             s    = m12 ;
+            m    = sqrt(s);
+            m1 = c_daug1Mass;
+            m2 = c_daug2Mass;
+            m3 = c_daug3Mass;
         }
 
         if(PAIR_13 == cyclic_index){
             s    = m13 ;
+            m    = sqrt(s);
+            m1 = c_daug1Mass;
+            m2 = c_daug3Mass;
+            m3 = c_daug2Mass;
         }
-
-        if(PAIR_23 == cyclic_index){
+         if(PAIR_23 == cyclic_index){
             s    = m23 ;
+            m    = sqrt(s);
+            m1 = c_daug2Mass;
+            m2 = c_daug3Mass;
+            m3 = c_daug1Mass;
         }
 
-        fptype resmass2 = POW2(resmass);
+        if ( resmass - (m1+m2) < 0.0 ) {
+            fptype minMass = (m1+m2);
+            fptype maxMass = c_motherMass - m3;
+            fptype tanhTerm = std::tanh( (resmass - ((minMass + maxMass)/2))/(maxMass-minMass));
+            resmass = minMass + (maxMass-minMass)*(1.+tanhTerm)/2.;
+            resmass2 = resmass*resmass;
+	    }
+        
+
+        
         fptype dMSq = resmass2 - s;
 
         if (s > mSumSq0_) {

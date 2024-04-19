@@ -90,7 +90,7 @@ class Amp3BodySqDP : public Amp3BodyBase {
     __host__ static void resetCacheCounter() { cacheCount = 0; }
 
     /// Calculate fit fractions (Cache should be pre-filled)
-    __host__ auto fit_fractions(bool print = false) -> std::vector<std::vector<fptype>>;
+    __host__ auto fit_fractions(bool print = true, std::string print_to_file_path = "FitFractions.txt") -> std::vector<std::vector<fptype>>;
 
     friend SqDalitzPlotter;
 

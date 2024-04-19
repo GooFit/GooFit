@@ -93,7 +93,7 @@ struct DecayInfo3 {
     fptype daug3Mass;
     fptype meson_radius;
     fptype mother_meson_radius;
-    fptype SetSizeNormSample = 1000000;
+    bool SquareDp=false;
     std::vector<ResonancePdf *> resonances;
 };
 

@@ -7,7 +7,6 @@
 namespace GooFit {
 
 
-
 template <int I>
 __device__ auto plainBW(fptype m13, fptype m23, fptype m12, ParameterContainer &pc) -> fpcomplex {
     unsigned int spin         = pc.getConstant(0);
@@ -20,8 +19,7 @@ __device__ auto plainBW(fptype m13, fptype m23, fptype m12, ParameterContainer &
     fptype reswidth = pc.getParameter(1);
 
     fpcomplex result{0.0, 0.0};
-    fptype resmass2 = resmass*resmass;
-
+   
     fptype s  = 0.0;
     fptype m = 0.0;
     fptype m1= 0.0;
@@ -36,9 +34,11 @@ __device__ auto plainBW(fptype m13, fptype m23, fptype m12, ParameterContainer &
         resmass *= -1.;
     }
 
-    if(resmass<=0. || reswidth<=0.){
+    if(resmass<1.e-10 || reswidth<1.e-10){
         return result;
     }
+
+    fptype resmass2 = resmass*resmass;
     
 #pragma unroll
     for(size_t i = 0; i < I; i++) {
@@ -65,6 +65,14 @@ __device__ auto plainBW(fptype m13, fptype m23, fptype m12, ParameterContainer &
             m2 = c_daug3Mass;
             m3 = c_daug1Mass;
         }
+
+        if ( resmass - (m1+m2) < 0.0 ) {
+            fptype minMass = (m1+m2);
+            fptype maxMass = c_motherMass - m3;
+            fptype tanhTerm = std::tanh( (resmass - ((minMass + maxMass)/2))/(maxMass-minMass));
+            resmass = minMass + (maxMass-minMass)*(1.+tanhTerm)/2.;
+            resmass2 = resmass*resmass;
+	    }
 
 
         fptype q0_ = DaugDecayMomResFrame(resmass2, m1, m2);

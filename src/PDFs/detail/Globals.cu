@@ -32,6 +32,7 @@ __constant__ fptype c_daug2Mass;
 __constant__ fptype c_daug3Mass;
 __constant__ fptype c_meson_radius;
 __constant__ fptype c_mother_meson_radius;
+__constant__ fptype c_SquareDp;
 
 /// Clear all device memory (call before exit!)
 __host__ void cleanup() {

@@ -46,6 +46,7 @@ class DalitzVetoPdf : public GooPdf {
                            Variable d1m,
                            Variable d2m,
                            Variable d3m,
-                           std::vector<VetoInfo> vetos);
+                           std::vector<VetoInfo> vetos,
+                           bool _useSqDp=false);
 };
 } // namespace GooFit

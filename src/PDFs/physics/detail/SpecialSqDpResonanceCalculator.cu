@@ -31,7 +31,7 @@ __device__ auto SpecialSqDpResonanceCalculator::operator()(thrust::tuple<int, fp
     // if(thetaprime>0.5)
     //     thetaprime = 1.0-thetaprime;
 
-    if(!inSqDalitz(mprime, thetaprime)){
+    if(!inSqDalitz(mprime, thetaprime, c_SymDp)){
         return ret;
     }
 
@@ -44,15 +44,20 @@ __device__ auto SpecialSqDpResonanceCalculator::operator()(thrust::tuple<int, fp
     fptype s23 = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass
                  + c_daug3Mass * c_daug3Mass - s12 - s13;
   
+    //printf("Estou rodando o SpecialSqDpResonanceCalculator \n");
 
-     if(!inDalitz2(s13, s23,c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass ))
+    if(!inDalitz(s13, s23,c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass ))
+        return ret;
+
+    if(norm < 1E-10)
         return ret;
 
     while(pc.funcIdx < resonance_i)
         pc.incrementIndex();
 
     ret = getResonanceAmplitude(s13, s23 , s12 ,  pc);
-    //fptype jacobian = calc_SqDp_Jacobian(mprime, thetaprime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
+    // fptype jacobian = calc_SqDp_Jacobian(mprime, thetaprime, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
+    // ret*=jacobian;
 
     return ret/sqrt(norm);
     // return ret;

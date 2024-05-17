@@ -38,7 +38,7 @@ of GooFit::ResonancePdf's as well as some global information like the
 mother and daughter masses, and the efficiency function.
 **/
 
-__host__ __device__  auto inSqDalitz(const fptype &mprime,const fptype &thetaprime)-> bool;
+__host__ __device__  auto inSqDalitz(const fptype &mprime,const fptype &thetaprime, bool SymDp = false)-> bool;
 
 __host__ __device__  auto calc_mprime(const fptype &m12, const fptype &m_mother, const fptype &m1, const fptype &m2, const fptype &m3)->fptype;
 
@@ -121,6 +121,7 @@ class Amp3BodySqDP : public Amp3BodyBase {
     SpecialSqDpResonanceCalculator **calculators;
     unsigned int efficiencyFunction;
     fptype totalFF_integral;
+    mutable bool SymDp;
     
 };
 

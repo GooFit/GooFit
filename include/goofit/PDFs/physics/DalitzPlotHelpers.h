@@ -93,8 +93,8 @@ struct DecayInfo3 {
     fptype daug3Mass;
     fptype meson_radius;
     fptype mother_meson_radius;
-    bool SquareDp=false;
     std::vector<ResonancePdf *> resonances;
+    bool SymDp;
 };
 
 struct DecayInfo3t : public DecayInfo3 {

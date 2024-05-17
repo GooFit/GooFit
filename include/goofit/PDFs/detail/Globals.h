@@ -39,6 +39,7 @@ extern __constant__ fptype c_daug2Mass;
 extern __constant__ fptype c_daug3Mass;
 extern __constant__ fptype c_meson_radius;
 extern __constant__ fptype c_mother_meson_radius;
+extern __constant__ bool c_SymDp;
 
 extern __constant__ unsigned int c_totalEvents;
 

@@ -35,6 +35,7 @@ class SqDalitzPlotter {
     fptype d1_mass;
     fptype d2_mass;
     fptype d3_mass;
+    bool SymDP;
     std::vector<fptype> m12_vec;
     std::vector<fptype> m13_vec;
     
@@ -48,7 +49,8 @@ class SqDalitzPlotter {
         , mother_mass(signalDalitz->decayInfo.motherMass)
         , d1_mass(signalDalitz->decayInfo.daug1Mass)
         , d2_mass(signalDalitz->decayInfo.daug2Mass)
-        , d3_mass(signalDalitz->decayInfo.daug3Mass) {
+        , d3_mass(signalDalitz->decayInfo.daug3Mass)
+        , SymDP(signalDalitz->decayInfo.SymDp) {
         eventNumber.setValue(0);
 
         fptype m23_min = d2_mass+d3_mass;   
@@ -58,7 +60,7 @@ class SqDalitzPlotter {
         fptype m23 = 0.0;
         fptype m13 = 0.0;
         fptype m12 = 0.0;
-        fptype NPTs = 10000000;
+        fptype NPTs = 1000000;
 
         std::random_device rd;  
         std::mt19937 gen(rd()); 
@@ -71,6 +73,11 @@ class SqDalitzPlotter {
            
             // if(_thetaprime>0.5)
             //     _thetaprime = 1.0-_thetaprime;
+
+            if(!inSqDalitz(_mprime,_thetaprime,SymDP))
+                continue;
+
+            if(SymDP && _thetaprime>0.5) _thetaprime = 1.-_thetaprime;
 
             auto jac = calc_SqDp_Jacobian(_mprime, _thetaprime, mother_mass, d1_mass, d2_mass, d3_mass);
             jacobianValues.push_back(jac);
@@ -206,8 +213,8 @@ class SqDalitzPlotter {
         auto s12_data = new TH1D("s12_data", "", nbins, 0., s12_max);
         auto s12_pdf  = new TH1D("s12_pdf", "", nbins, 0., s12_max);
 
-        auto s13_min = pow(d1_mass+d3_mass,2);
-        auto s13_max = pow(mother_mass-d2_mass,2);
+        auto s13_min = 0.5;//pow(d1_mass+d3_mass,2);
+        auto s13_max = 14.;//pow(mother_mass-d2_mass,2);
         auto s13_data = new TH1D("s13_data", "", nbins, s13_min, s13_max);
         auto s13_pdf  = new TH1D("s13_pdf", "", nbins, s13_min, s13_max);
 

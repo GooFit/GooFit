@@ -19,7 +19,7 @@ __device__ auto device_SqDalitzPlot_calcIntegrals(fptype mprime, fptype thetapri
 
     fpcomplex ret(0.,0.);
 
-    if(!inSqDalitz(mprime, thetaprime))
+    if(!inSqDalitz(mprime, thetaprime, c_SymDp))
         return ret;
 
 
@@ -30,7 +30,7 @@ __device__ auto device_SqDalitzPlot_calcIntegrals(fptype mprime, fptype thetapri
     fptype s23 = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass
                  + c_daug3Mass * c_daug3Mass - s12 - s13;
 
-    if(!inDalitz2(s13, s23,c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass ))
+    if(!inDalitz(s13, s23,c_motherMass,c_daug1Mass,c_daug2Mass,c_daug3Mass ))
         return ret;
 
     ParameterContainer ipc = pc;
@@ -43,7 +43,7 @@ __device__ auto device_SqDalitzPlot_calcIntegrals(fptype mprime, fptype thetapri
     while(jpc.funcIdx < res_j)
         jpc.incrementIndex();
 
-    ret *= conj(getResonanceAmplitude(s13, s23 , s12 , jpc));
+    ret *= thrust::conj(getResonanceAmplitude(s13, s23 , s12 , jpc));
 
     return ret;
 }
@@ -77,34 +77,36 @@ __device__ auto SpecialSqDpResonanceIntegrator::operator()(thrust::tuple<int, fp
     binCenterTHPRIME *= (globalBinNumber + 0.5);
     binCenterTHPRIME += lowerBoundTHPRIME;
 
-    if(!inSqDalitz(binCenterMPRIME, binCenterTHPRIME))
-        return fpcomplex(0.,0.);
-
     ParameterContainer pc;
     fptype events[3];
+
+    if(!inSqDalitz(binCenterMPRIME, binCenterTHPRIME, c_SymDp)){
+        printf("%f, %f Not in Dalitz plot\n",binCenterMPRIME, binCenterTHPRIME);
+        return fpcomplex(0.,0.);
+    }
 
     while(pc.funcIdx < dalitz_i)
         pc.incrementIndex();
 
+    fpcomplex ret = device_SqDalitzPlot_calcIntegrals(binCenterMPRIME, binCenterTHPRIME, resonance_i, resonance_j, pc);
+    fptype jacobian = calc_SqDp_Jacobian(binCenterMPRIME, binCenterTHPRIME, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
+
+    //printf("Estou rodando o SpecialSqDpResonanceIntegrator \n");
+
     int id_mprime = pc.getObservable(0);
     int id_thetaprime = pc.getObservable(1);
-
-    fptype jacobian = calc_SqDp_Jacobian(binCenterMPRIME, binCenterTHPRIME, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass);
 
     events[0] = 2;
     events[id_mprime] = binCenterMPRIME;
     events[id_thetaprime] = binCenterMPRIME;
 
-    fpcomplex ret = device_SqDalitzPlot_calcIntegrals(binCenterMPRIME, binCenterTHPRIME, resonance_i, resonance_j, pc);
-
     int effFunc = thrust::get<2>(t);
-
     while(pc.funcIdx < effFunc)
          pc.incrementIndex();
 
     fptype eff = callFunction(events, pc);
 
-    return thrust::make_tuple(ret*jacobian,ret*eff*jacobian);
+    return thrust::make_tuple(ret,ret*eff*jacobian);
 
 
     

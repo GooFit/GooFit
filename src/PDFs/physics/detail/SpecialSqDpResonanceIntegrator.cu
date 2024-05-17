@@ -81,7 +81,7 @@ __device__ auto SpecialSqDpResonanceIntegrator::operator()(thrust::tuple<int, fp
     fptype events[3];
 
     if(!inSqDalitz(binCenterMPRIME, binCenterTHPRIME, c_SymDp)){
-        printf("%f, %f Not in Dalitz plot\n",binCenterMPRIME, binCenterTHPRIME);
+        //printf("%f, %f Not in Dalitz plot\n",binCenterMPRIME, binCenterTHPRIME);
         return fpcomplex(0.,0.);
     }
 

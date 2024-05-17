@@ -190,7 +190,7 @@ __device__ auto cFromM(
             cosHel = -1.0;
         }
 
-        if(cyclic_index==PAIR_12 || cyclic_index==PAIR_13 )
+        if(cyclic_index==PAIR_23 )
             cosHel *= -1.0;
 
         return cosHel;

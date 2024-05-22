@@ -22,7 +22,7 @@ jobs:
       image: rootproject/root:6.24.06-ubuntu20.04
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
@@ -42,7 +42,7 @@ jobs:
     steps:
     - name: Get Git
       run: apt update && apt install -y git
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
     - name: Configure
@@ -70,7 +70,7 @@ jobs:
 
     container: "nvidia/cuda:${{matrix.cuda}}"
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v4
       with:
         submodules: true
     - name: Add wget and python3
@@ -89,7 +89,7 @@ jobs:
     name: Configure
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 

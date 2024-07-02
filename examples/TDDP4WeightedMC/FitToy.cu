@@ -34,7 +34,7 @@ struct genExp {
     __host__ __device__ genExp(unsigned int c, fptype d, unsigned int _seed)
         : gamma(d)
         , offset(c)
-        , seed(_seed){};
+        , seed(_seed) {};
 
     __host__ __device__ auto operator()(unsigned int x) const -> fptype {
         thrust::random::default_random_engine rand(seed);
@@ -50,7 +50,7 @@ struct evalInvExp {
     fptype gamma;
 
     __host__ __device__ evalInvExp(fptype d)
-        : gamma(d){};
+        : gamma(d) {};
 
     __host__ __device__ fptype operator()(fptype t) const {
         fptype pdf = gamma * exp(-t * gamma);

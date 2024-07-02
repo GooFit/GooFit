@@ -430,8 +430,9 @@ __host__ auto Amp3Body::fit_fractions() -> std::vector<std::vector<fptype>> {
     return ff;
 }
 
-__host__ auto Amp3Body::GenerateSig(unsigned int numEvents, int seed) -> std::
-    tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h> {
+__host__ auto Amp3Body::GenerateSig(unsigned int numEvents, int seed)
+    -> std::
+        tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h> {
     // Must configure our functions before any calculations!
     // setupObservables();
     // setIndices();

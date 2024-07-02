@@ -26,9 +26,12 @@ constexpr auto enum_to_underlying(E e) -> typename std::underlying_type<E>::type
     return static_cast<typename std::underlying_type<E>::type>(e);
 }
 
-__host__ __device__ auto inDalitz(
-    const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3)
-    -> bool;
+__host__ __device__ auto inDalitz(const fptype &m12,
+                                  const fptype &m13,
+                                  const fptype &bigM,
+                                  const fptype &dm1,
+                                  const fptype &dm2,
+                                  const fptype &dm3) -> bool;
 
 __device__ auto getResonanceAmplitude(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex;
 

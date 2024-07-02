@@ -11,9 +11,12 @@ Helper functions
 
 namespace GooFit {
 
-__host__ __device__ auto inDalitz(
-    const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3)
-    -> bool {
+__host__ __device__ auto inDalitz(const fptype &m12,
+                                  const fptype &m13,
+                                  const fptype &bigM,
+                                  const fptype &dm1,
+                                  const fptype &dm2,
+                                  const fptype &dm3) -> bool {
     fptype dm1pdm2  = dm1 + dm2;
     fptype bigMmdm3 = bigM - dm3;
     fptype bigMmdm1 = bigM - dm1;

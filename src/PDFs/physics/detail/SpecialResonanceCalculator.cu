@@ -30,6 +30,9 @@ __device__ auto SpecialResonanceCalculator::operator()(thrust::tuple<int, fptype
     if(!inDalitz2(m13, m23, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass))
         return fpcomplex(0.0,0.0);
 
+    if(norm < 1E-10)
+        return ret;
+
     // m12, m23 and m13 stand for the squared invariant masses.
     // Now fixed.
     fptype m12 = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass
@@ -45,7 +48,7 @@ __device__ auto SpecialResonanceCalculator::operator()(thrust::tuple<int, fptype
 
   //  printf("Resonance norm = %f \n",sqrt(ret.real()*ret.real() + ret.imag()*ret.imag()));
 
-    return ret;
+    return ret/sqrt(norm);
 }
 
 } // namespace GooFit

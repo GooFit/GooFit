@@ -46,7 +46,7 @@ SpecialResonanceIntegrator::SpecialResonanceIntegrator(int pIdx, unsigned int ri
     , resonance_j(rj)
     , parameters(pIdx) {}
 
-__device__ auto SpecialResonanceIntegrator::operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex {
+__device__ auto SpecialResonanceIntegrator::operator()(thrust::tuple<int, fptype *, int> t) const -> thrust::tuple<fpcomplex, fpcomplex> {
     //(brad): new indexing plan: bin number, function id, parameter id (not required), fptype with actual
     // bins(needed???)
     // Bin index, base address [lower, upper,getNumBins]
@@ -110,16 +110,12 @@ __device__ auto SpecialResonanceIntegrator::operator()(thrust::tuple<int, fptype
     // (accessing stack memory is not allowed with ldg)
     fptype eff = callFunction(events, pc);
 
-    if(m_no_eff)
-        eff = 1.;
-
     // Multiplication by eff, not sqrt(eff), is correct:
     // These complex numbers will not be squared when they
     // go into the integrals. They've been squared already,
     // as it were.
-    ret *= eff;
-    // printf("ret %f %f %f %f %f\n",binCenterM12, binCenterM13, ret.real, ret.imag, eff );
-    return ret;
+    return thrust::make_tuple(ret,ret*eff);
+   
 }
 
 } // namespace GooFit

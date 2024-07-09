@@ -18,6 +18,7 @@ __device__ auto device_DalitzPlot_calcIntegrals(fptype m13, fptype m23, int res_
     fptype daug2Mass  = c_daug2Mass;  // RO_CACHE(pc.constants[pc.constantIdx + 6]);
     fptype daug3Mass  = c_daug3Mass;  // RO_CACHE(pc.constants[pc.constantIdx + 7]);
 
+
     fpcomplex ret;
 
     if(!inDalitz2(m13, m23, motherMass, daug1Mass, daug2Mass, daug3Mass)){
@@ -68,7 +69,7 @@ __device__ auto SpecialResonanceIntegrator::operator()(thrust::tuple<int, fptype
     globalBinNumber /= numBinsM13;
     fptype lowerBoundM23 = thrust::get<1>(t)[3];
     fptype upperBoundM23 = thrust::get<1>(t)[4];
-    auto numBinsM23      = static_cast<int>(floor(thrust::get<1>(t)[2] + 0.5));
+    auto numBinsM23      = static_cast<int>(floor(thrust::get<1>(t)[5] + 0.5));
     fptype binCenterM23  = upperBoundM23 - lowerBoundM23;
     binCenterM23 /= numBinsM23;
     binCenterM23 *= (globalBinNumber + 0.5);
@@ -80,6 +81,10 @@ __device__ auto SpecialResonanceIntegrator::operator()(thrust::tuple<int, fptype
 
     while(pc.funcIdx < dalitz_i)
         pc.incrementIndex();
+
+    
+    if(c_SymDp && binCenterM13<binCenterM23)
+        return thrust::make_tuple(fpcomplex(0.,0.),fpcomplex(0.,0.));
 
     fpcomplex ret = device_DalitzPlot_calcIntegrals(binCenterM13, binCenterM23, resonance_i, resonance_j, pc);
 

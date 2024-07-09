@@ -84,6 +84,9 @@ __device__ auto device_DalitzPlot(fptype *evt, ParameterContainer &pc) -> fptype
         return 0;
     }
 
+    // if(c_SymDp && m13<m23)
+    //     return 0;
+
     fptype evtIndex = evt[id_num];
 
     auto evtNum = static_cast<int>(floor(0.5 + evtIndex));
@@ -233,6 +236,7 @@ __host__ auto Amp3Body::normalize() -> fptype {
     host_normalizations.sync(d_normalizations);
 
     int totalBins = _m13.getNumBins() * _m23.getNumBins();
+    fptype binSizeFactor = _m13.getBinSize() * _m23.getBinSize();
 
     if(!dalitzNormRange) {
         gooMalloc((void **)&dalitzNormRange, 6 * sizeof(fptype));
@@ -300,13 +304,19 @@ __host__ auto Amp3Body::normalize() -> fptype {
                     dummy,
                     reduce_func);
 
+                auto int_i = thrust::get<0>(integrals[i*n_res + j]);
+
+                // if(i==j)
+                //     std::cout << "Integral " << i << j << "= "<< int_i.real()*binSizeFactor << "," << int_i.imag()*binSizeFactor <<  "\n";
+                // if(i<j)
+                //     std::cout << "Integral " << i << j << "= "<< 2.*int_i.real()*binSizeFactor << "," << 2.*int_i.imag()*binSizeFactor <<  "\n";
          
         }
     }
     cudaDeviceSynchronize();
 
     for(int i = 0; i < n_res; ++i){
-        fptype binSizeFactor = _m13.getBinSize() * _m23.getBinSize();
+        
         fpcomplex int_i = thrust::get<0>(integrals[i*n_res + i])*binSizeFactor; //int |F_i|^2 dmdth
         calculators[i]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
         calculators[i]->setDalitzIndex(getFunctionIndex());
@@ -457,7 +467,7 @@ __host__ auto Amp3Body::fit_fractions(bool print, std::string print_to_file_path
 
             fptype fNorm_i = 1./(thrust::get<0>(integrals[i*n_res + i]).real());
             fptype fNorm_j = 1./(thrust::get<0>(integrals[j*n_res + j]).real());
-            fpcomplex int_ij = thrust::get<1>(integrals[i*n_res + j]);
+            fpcomplex int_ij = thrust::get<0>(integrals[i*n_res + j]);
 
             // if(i==j)
             //      buffer = thrust::norm(amplitude_i*int_ij.real());

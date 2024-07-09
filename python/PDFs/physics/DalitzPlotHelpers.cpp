@@ -46,6 +46,7 @@ void init_DalitzPlotHelpers(py::module &m) {
         .def_readwrite("daug3Mass", &DecayInfo3::daug3Mass)
         .def_readwrite("meson_radius", &DecayInfo3::meson_radius)
         .def_readwrite("mother_meson_radius", &DecayInfo3::mother_meson_radius)
+        .def_readwrite("SymDp", &DecayInfo3::SymDp)
         .def_property(
             "resonances",
             [](DecayInfo3 &self) { return self.resonances; },

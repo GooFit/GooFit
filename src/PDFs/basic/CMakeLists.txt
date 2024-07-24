@@ -21,7 +21,7 @@ goofit_add_pdf_library(
   PolynomialPdf.cu
   ScaledGaussianPdf.cu
   SmoothHistogramPdf.cu
-  SqDpHistogramPdf.cu
+  #SqDpHistogramPdf.cu
   StepPdf.cu
   TrigThresholdPdf.cu
   VoigtianPdf.cu

@@ -94,8 +94,9 @@ __device__ auto device_DalitzPlot(fptype *evt, ParameterContainer &pc) -> fptype
     fpcomplex totalAmp(0, 0);
 
     for(int i = 0; i < numResonances; ++i) {
-        fptype mag = abs(pc.getParameter(i * 2));
+        fptype mag = pc.getParameter(i * 2);
         fptype phs = pc.getParameter(i * 2 + 1);
+
         fpcomplex amp = thrust::polar(mag, phs);
         fpcomplex me = RO_CACHE(cResonances[i + (NUMRES * cacheToUse)][evtNum]);
 
@@ -153,6 +154,8 @@ __host__ Amp3Body::Amp3Body(
     registerConstant(cacheToUse);
 
     for(auto &resonance : decayInfo.resonances) {
+        
+
         // registering 2 parameters
         registerParameter(resonance->amp_real);
         registerParameter(resonance->amp_imag);
@@ -233,6 +236,7 @@ __host__ auto Amp3Body::normalize() -> fptype {
     // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency,
     // don't get zeroes through multiplying by the normFactor.
     // we need to update the normal here, as values are used at this point.
+
     host_normalizations.sync(d_normalizations);
 
     int totalBins = _m13.getNumBins() * _m23.getNumBins();
@@ -338,18 +342,25 @@ __host__ auto Amp3Body::normalize() -> fptype {
     fpcomplex sumIntegral(0, 0);
     for(unsigned int i = 0; i < n_res; ++i) {
         // int param_i = parameters + resonanceOffset_DP + resonanceSize * i;
-        fptype mag = abs(host_parameters[parametersIdx + i * 2 + 1]);
+        fptype mag = host_parameters[parametersIdx + i * 2 + 1];
         fptype phs = host_parameters[parametersIdx + i * 2 + 2];
+
         const fpcomplex amplitude_i = thrust::polar(mag,phs);
 
         for(unsigned int j = 0; j < n_res; ++j) {
             // int param_j = parameters + resonanceOffset_DP + resonanceSize * j;
-            mag = abs(host_parameters[parametersIdx + j * 2 + 1]);
+            mag = host_parameters[parametersIdx + j * 2 + 1];
             phs = -host_parameters[parametersIdx + j * 2 + 2];
             const fpcomplex amplitude_j = thrust::polar(mag,phs);
 
-            fptype fNorm_i = 1./(thrust::get<0>(integrals[i*n_res + i]).real()); // get<0> returns integral of RBW widthout eff
-            fptype fNorm_j = 1./(thrust::get<0>(integrals[j*n_res + j]).real());
+            fptype int_i = thrust::get<0>(integrals[i*n_res + i]).real();
+            fptype int_j = thrust::get<0>(integrals[j*n_res + j]).real();
+
+            if(int_i<1e-10 || int_j<1e-10)
+                return 0;
+
+            fptype fNorm_i = 1./int_i; // get<0> returns integral of RBW widthout eff
+            fptype fNorm_j = 1./int_j;
             fpcomplex int_ij = thrust::get<1>(integrals[i*n_res + j]); // int_ij= integral_{ij}*eff
 
             sumIntegral += amplitude_i*amplitude_j*int_ij*sqrt(fNorm_i)*sqrt(fNorm_j);
@@ -453,13 +464,13 @@ __host__ auto Amp3Body::fit_fractions(bool print, std::string print_to_file_path
     std::vector<std::vector<fptype>> AmpIntegral(n_res, std::vector<fptype>(n_res));
     
     for(unsigned int i = 0; i < n_res; ++i) {
-        fptype mag = abs(host_parameters[parametersIdx + i * 2 + 1]);
+        fptype mag = host_parameters[parametersIdx + i * 2 + 1];
         fptype phs = host_parameters[parametersIdx + i * 2 + 2];
         const fpcomplex amplitude_i = thrust::polar(mag,phs);
         fpcomplex buffer(0.,0.);
 
         for(unsigned int j = 0; j < n_res; ++j) {
-            mag = abs(host_parameters[parametersIdx + j * 2 + 1]);
+            mag = host_parameters[parametersIdx + j * 2 + 1];
             phs = -host_parameters[parametersIdx + j * 2 + 2];
             const fpcomplex amplitude_j = thrust::polar(mag,phs);
 

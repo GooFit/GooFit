@@ -16,8 +16,7 @@ class Spline : public ResonancePdf {
            std::vector<Variable> &pwa_coefs_reals,
            std::vector<Variable> &pwa_coefs_imags,
            unsigned int cyc,
-           bool symmDP = false,
-           bool linear = false);
+           bool symmDP = false);
     ~Spline() override = default;
 
     /// Recacluate the CACHE values before running

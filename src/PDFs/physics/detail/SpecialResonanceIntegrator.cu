@@ -83,7 +83,7 @@ __device__ auto SpecialResonanceIntegrator::operator()(thrust::tuple<int, fptype
         pc.incrementIndex();
 
     
-    if(c_SymDp && binCenterM13<binCenterM23)
+    if(c_SymDp && binCenterM13>binCenterM23)
         return thrust::make_tuple(fpcomplex(0.,0.),fpcomplex(0.,0.));
 
     fpcomplex ret = device_DalitzPlot_calcIntegrals(binCenterM13, binCenterM23, resonance_i, resonance_j, pc);
@@ -119,6 +119,7 @@ __device__ auto SpecialResonanceIntegrator::operator()(thrust::tuple<int, fptype
     // These complex numbers will not be squared when they
     // go into the integrals. They've been squared already,
     // as it were.
+
     return thrust::make_tuple(ret,ret*eff);
    
 }

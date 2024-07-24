@@ -5,9 +5,9 @@
 
 namespace GooFit {
 __device__ fptype Deriatives[2 * 100];
-__device__ fptype phi00_s[2*100];
-__device__ fptype phi00_real[2*100];
-__device__ fptype phi00_imag[2*100];
+__device__ fptype phi_s[2*100];
+__device__ fptype phi_real[2*100];
+__device__ fptype phi_imag[2*100];
 
 ///////////Amp PIPI->PIPI equation 7b (PHYSICAL REVIEW LETTERS 131, 051802 (2023))
 
@@ -134,18 +134,158 @@ __device__ fptype linear_interpolation(const fptype &s, const fptype *s0, const 
     // return aa*coef_loAB + bb*coef_hiAB; 
 }
 
+__device__ fpcomplex f0980_RBW(fptype s, fpcomplex scale){
+        fptype resmass = 0.965;
+        fptype gamma0 = 0.165;
+        fptype resmass2 = resmass*resmass;
+
+        fptype A = (resmass2 - s);
+        fptype B = gamma0*resmass;
+        fptype C = 1.0 / (A*A + B*B);
+
+        fpcomplex ret(A * C, B * C);
+
+        ret*= B;
+
+        return ret*scale;
+}
+
+__device__ auto f0980_Flatte(fptype s, fpcomplex scale) -> fpcomplex {
+    // indices[1] is unused constant index, for consistency with other function types.
+    fptype resmass            = 0.984;
+    fptype g1                 = 0.165;
+    fptype g2                 = 4.21*g1;
+    unsigned int particle     = 0;
+
+    fpcomplex ret(0., 0.);
+
+    if(resmass<0.){
+        resmass *= -1.;
+    }
+
+    if(g1<0.){
+        g1 *= -1.;
+    }
+
+    if(g2<0.){
+        g2 *= -1.;
+    }
+
+    if(resmass<1.e-10 || g1<1.e-10 || g2<1.e-10){
+        return ret;
+    }
+
+    fptype resmass2 = POW2(resmass);
+
+
+    const fptype pipmass = 0.13957018;
+    const fptype pi0mass = 0.1349766;
+    const fptype kpmass  = 0.493677;
+    const fptype k0mass  = 0.497614;
+    const fptype mEta		= 0.547862; 
+
+    fptype mSumSq0_  = 1.;
+    fptype mSumSq1_ = 1.;
+    fptype mSumSq2_   = 1.;
+    fptype mSumSq3_  = 1.;
+
+    //f0(980)
+    if(particle==0){
+        mSumSq0_ = 4*pi0mass*pi0mass;
+        mSumSq1_ = 4*pipmass*pipmass;
+        mSumSq2_ = 4*kpmass*kpmass;
+        mSumSq3_ = 4*k0mass*k0mass;
+    }
+    //a0(980)
+    if(particle==1){
+        mSumSq0_ = (mEta+pi0mass)*(mEta+pi0mass);
+        mSumSq1_ = (mEta+pi0mass)*(mEta+pi0mass);
+        mSumSq2_ = (kpmass+kpmass)*(kpmass+kpmass);
+        mSumSq3_ = (k0mass+k0mass)*(k0mass+k0mass);
+    }
+    
+    fptype rho1(0.0), rho2(0.0);
+
+    fptype m = 0.0;
+    fptype m1= 0.0;
+    fptype m2= 0.0;
+    fptype m3= 0.0;
+        
+    fptype dMSq = resmass2 - s;
+
+    if (s > mSumSq0_) {
+        rho1 = sqrt(1.0 - mSumSq0_/s)/3.0;
+        if (s > mSumSq1_) {
+            rho1 += 2.0*sqrt(1.0 - mSumSq1_/s)/3.0;
+            if (s > mSumSq2_) {
+                rho2 = 0.5*sqrt(1.0 - mSumSq2_/s);
+                if (s > mSumSq3_) {
+                    rho2 += 0.5*sqrt(1.0 - mSumSq3_/s);
+                } else {
+                    // Continue analytically below higher channel thresholds
+                    // This contributes to the real part of the amplitude denominator
+                    dMSq += g2*resmass*0.5*sqrt(mSumSq3_/s - 1.0);
+                }
+            } else {
+                // Continue analytically below higher channel thresholds
+                // This contributes to the real part of the amplitude denominator
+                rho2 = 0.0;
+                dMSq += g2*resmass*(0.5*sqrt(mSumSq2_/s - 1.0) + 0.5*sqrt(mSumSq3_/s - 1.0));
+            }
+        } else {
+            // Continue analytically below higher channel thresholds
+            // This contributes to the real part of the amplitude denominator
+            dMSq += g1*resmass*2.0*sqrt(mSumSq1_/s - 1.0)/3.0;
+        }
+    }
+    
+        //the Adler-zero term fA = (m2 − sA)/(m20 − sA) can be used to suppress false 
+        //kinematic singularities when m goes below threshold. For f(0)(980), sA = 0.
+        
+    fptype massFactor = 1.;//resmass;
+    
+    fptype width1 = g1*rho1*massFactor;
+    fptype width2 = g2*rho2*massFactor;
+    fptype widthTerm = width1 + width2;
+
+    fpcomplex resAmplitude(dMSq, widthTerm);
+
+    fptype denomFactor = dMSq*dMSq + widthTerm*widthTerm;
+
+    fptype invDenomFactor = 1.0/denomFactor;
+
+    resAmplitude *= invDenomFactor;
+
+    ret += resAmplitude;
+       
+    
+    return ret*scale ;
+}
+
 __device__ fpcomplex pelaez_pipi2pipi_interpolation(fptype m13, fptype m23, fptype m12, ParameterContainer &pc) {
     fpcomplex ret(0.,0.);
 
-    fptype akk = pc.getParameter(0);
-    fptype apipi = pc.getParameter(1);
-    unsigned int charge_pos = pc.getConstant(0);
-    unsigned int cyclic_index        = pc.getConstant(1);
-    unsigned int symmDP       = pc.getConstant(2);
-    unsigned int phi00_nKnobs = pc.getConstant(3);
+    fptype akk_mag = pc.getConstant(0);
+    fptype akk_phs = pc.getConstant(1);
+    auto akk = thrust::polar(akk_mag,akk_phs);
 
-    fpcomplex Lambda_d(-0.21874,-2.51e-5); // Lambda_q = V_{cq}V_{uq}^* (this the D0bar CKM matrix element)
-    fpcomplex Lambda_s(0.21890,-0.13e-5);
+    fptype apipi_mag = pc.getConstant(2);
+    fptype apipi_phs = pc.getConstant(3);
+    auto apipi = thrust::polar(apipi_mag,apipi_phs);
+
+    fptype f0Scale_mag = pc.getConstant(4);
+    fptype f0Scale_phs = pc.getConstant(5);
+    auto f0Scale = thrust::polar(f0Scale_mag,f0Scale_phs);
+
+    unsigned int charge_pos = pc.getConstant(6);
+    unsigned int cyclic_index        = pc.getConstant(7);
+    unsigned int symmDP       = pc.getConstant(8);
+    unsigned int phi_nKnobs = pc.getConstant(9);
+
+    //fpcomplex Lambda_d(-0.21874,2.51e-5); // Lambda_q = V_{cq}^*V_{uq} (this the D0bar CKM matrix element)
+    auto Lambda_d = thrust::polar(0.21874000,3.1414779);
+    // auto Lambda_s = thrust::polar(0.21890000,5.9387848e-06); 
+    fpcomplex Lambda_s(0.21890,0.); 
     
     fptype sAB;
     fptype sAC;
@@ -167,30 +307,84 @@ __device__ fpcomplex pelaez_pipi2pipi_interpolation(fptype m13, fptype m23, fpty
             break;
     }
 
+    const fptype mk  = 0.496;
+    const fptype mpi  = 0.13957018; 
+            
+
     #pragma unroll
     for(size_t i = 0; i < 1 + symmDP; i++) {
 
-                fptype phase_KK_pipi = 0.; //phase \delta_{KK}
-                fpcomplex amp_kk = 0.; //amplitude KK
-                
-                if(sAB>phi00_s[0])
-                    phase_KK_pipi = linear_interpolation(sAB, phi00_s, phi00_real, phi00_nKnobs);
-
+              
                 if(charge_pos){
-                    fpcomplex eta(Inela(sAB),0.);
-                    fpcomplex amp_pipi = eta*thrust::conj(Lambda_d)*thrust::exp(2.*im*argument(sAB)*M_PI/180.)*apipi; //amplitude pipi
-                    if(sAB>phi00_s[0])
-                        amp_kk = im*thrust::sqrt(1.-eta*eta)*thrust::exp(im*(phase_KK_pipi))*thrust::conj(Lambda_s)*akk; 
-                    fpcomplex amp = amp_pipi + amp_kk; 
+                    fptype eta_13 = Inela(sAB);
+                    fptype arg_13 = argument(sAB)*M_PI/180.;
+                    fpcomplex amp_pipi_13 =  eta_13*Lambda_d*thrust::polar(1.,2*arg_13)*apipi; 
+                    
+                    fptype eta_23 = Inela(sAC);
+                    fptype arg_23 = argument(sAC)*M_PI/180.;
+                    fpcomplex amp_pipi_23 =  eta_23*Lambda_d*thrust::polar(1.,2*arg_23)*apipi; 
+
+
+                    fpcomplex amp_kk_13(0.,0.);    
+                    fpcomplex amp_kk_23(0.,0.);  
+
+                    if(sAB> 4.*mk*mk){
+
+                        auto phase_KK_pipi = linear_interpolation(sAB, phi_s, phi_real, phi_nKnobs);
+                        amp_kk_13 = im*sqrt(1.-eta_13*eta_13)*thrust::polar(1.,phase_KK_pipi)*Lambda_s*akk; 
+
+                    }else if(sAC> 4.*mk*mk){
+
+                        auto phase_KK_pipi = linear_interpolation(sAC, phi_s, phi_real, phi_nKnobs);
+                        amp_kk_13 = im*sqrt(1.-eta_23*eta_23)*thrust::polar(1.,phase_KK_pipi)*Lambda_s*akk;
+
+                    }else{
+                        amp_kk_13 = fpcomplex(0.,0.);
+                    }
+
+                    //amp_pipi_13 *= f0980_Flatte(sAB,f0Scale);
+
+                    fpcomplex amp = (amp_pipi_13+amp_kk_13); 
+
                     ret+=amp;
+
+                   
                 }else{
-                    fpcomplex eta(Inela(sAB),0.);
-                    fpcomplex amp_pipi = eta*Lambda_d*thrust::exp(2.*im*argument(sAB)*M_PI/180.)*apipi; //amplitude pipi
-                    if(sAB>phi00_s[0])
-                        amp_kk = im*thrust::sqrt(1.-eta*eta)*thrust::exp(im*(phase_KK_pipi))*Lambda_s*akk; 
-                    fpcomplex amp = amp_pipi + amp_kk; 
+
+                    fptype eta_13 = Inela(sAB);
+                    fptype arg_13 = argument(sAB)*M_PI/180.;
+                    fpcomplex amp_pipi_13 =  eta_13*thrust::conj(Lambda_d)*apipi*thrust::polar(1.,2*arg_13); //amplitude pipi
+                    
+                    fptype eta_23 = Inela(sAC);
+                    fptype arg_23 = argument(sAC)*M_PI/180.;
+                    fpcomplex amp_pipi_23 =  eta_23*thrust::conj(Lambda_d)*apipi*thrust::polar(1.,2*arg_23); //amplitude pipi
+
+
+                    fpcomplex amp_kk_13(0.,0.);    
+                    fpcomplex amp_kk_23(0.,0.);  
+
+                    if(sAB> 4.*mk*mk){
+
+                        auto phase_KK_pipi = linear_interpolation(sAB, phi_s, phi_real, phi_nKnobs);
+                        amp_kk_13 = im*sqrt(1.-eta_13*eta_13)*thrust::polar(1.,phase_KK_pipi)*thrust::conj(Lambda_s)*akk;
+
+                    }else if(sAC> 4.*mk*mk){
+
+                        auto phase_KK_pipi = linear_interpolation(sAC, phi_s, phi_real, phi_nKnobs);
+                        amp_kk_13 = im*sqrt(1.-eta_23*eta_23)*thrust::polar(1.,phase_KK_pipi)*thrust::conj(Lambda_s)*akk;
+
+                    }else{
+                        amp_kk_13 = fpcomplex(0.,0.);
+                    }
+
+                    //amp_pipi_13 *= f0980_Flatte(sAB,f0Scale);
+
+                    fpcomplex amp = (amp_pipi_13+amp_kk_13); 
+
                     ret+=amp;
+
                 }
+
 
                 fptype swpmass = sAB;
                 sAB            = sAC;
@@ -209,45 +403,58 @@ namespace Resonances {
     ScatteringAmp::ScatteringAmp(std::string name,
                             Variable ar,
                             Variable ai,
-                            Variable akk,
-                            Variable apipi,
-                            std::vector<std::pair<fptype,fpcomplex>> &_phi00, // \delta_{KK}
-                            bool charge_pos,
+                            std::complex<fptype> akk,
+                            std::complex<fptype> apipi,
+                            std::complex<fptype> f0scale,
+                            std::vector<std::pair<fptype,std::complex<fptype>>> _phi00, // \delta_{KK}
+                            unsigned int charge_pos,
                             unsigned int cyc,
                             bool symmDP)
-            : ResonancePdf("ScatteringAmp",name, ar, ai) {
+            : ResonancePdf("ScatteringAmp",name, ar, ai){
         
             std::vector<unsigned int> pindices;
 
             //flags and constants
-            registerParameter(akk);
-            registerParameter(apipi);
+
+            registerConstant(abs(akk));
+            registerConstant(arg(akk));
+
+            registerConstant(abs(apipi));
+            registerConstant(arg(apipi));
+
+            registerConstant(abs(f0scale));
+            registerConstant(arg(f0scale));
+
             registerConstant(charge_pos);
             registerConstant(cyc);
             registerConstant((unsigned int)symmDP);
-            unsigned int phi00_nKnobs = _phi00.size();
-            printf("phi00_nKnobs %d \n",phi00_nKnobs);
-            registerConstant(phi00_nKnobs);
-
-            //load deltaKK
-            std::vector<fptype> host_phi00_s;
-            std::vector<fptype> host_phi00_real;
-            std::vector<fptype> host_phi00_imag;
-            std::vector<fpcomplex> host_phi;
-            for(auto &v : _phi00){
-                host_phi00_s.push_back(v.first);
-                host_phi00_real.push_back(v.second.real());
-                host_phi00_imag.push_back(v.second.imag());
-                host_phi.push_back(fpcomplex(v.second.real(),v.second.imag()));
-            }
-            MEMCPY_TO_SYMBOL(phi00_s, host_phi00_s.data(), host_phi00_s.size()*sizeof(fptype), 0, cudaMemcpyHostToDevice);
-            MEMCPY_TO_SYMBOL(phi00_real, host_phi00_real.data(), host_phi00_s.size()*sizeof(fptype), 0, cudaMemcpyHostToDevice);
-            MEMCPY_TO_SYMBOL(phi00_imag, host_phi00_imag.data(), host_phi00_s.size()*sizeof(fptype), 0, cudaMemcpyHostToDevice);
-
-            std::vector<fptype> y2_flat = make_flatten(calc_complex_derivative(host_phi00_s, host_phi));
-            MEMCPY_TO_SYMBOL(Deriatives, y2_flat.data(), 2 * phi00_nKnobs * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+            unsigned int phi_nKnobs = _phi00.size();
+            printf("phi_nKnobs %d \n",phi_nKnobs);
+            registerConstant(phi_nKnobs);
 
             registerFunction("ptr_to_AMP_PIPI", ptr_to_AMP_PIPI);
+
+            //load deltaKK
+            std::vector<fptype> host_phi_s;
+            std::vector<fptype> host_phi_real;
+            std::vector<fptype> host_phi_imag;
+            std::vector<fpcomplex> host_phi;
+            for(auto &v : _phi00){
+                host_phi_s.push_back(v.first);
+                host_phi_real.push_back(v.second.real());
+                host_phi_imag.push_back(v.second.imag());
+                host_phi.push_back(fpcomplex(v.second.real(),v.second.imag()));
+            }
+            MEMCPY_TO_SYMBOL(phi_s, host_phi_s.data(), host_phi_s.size()*sizeof(fptype), 0, cudaMemcpyHostToDevice);
+            MEMCPY_TO_SYMBOL(phi_real, host_phi_real.data(), host_phi_s.size()*sizeof(fptype), 0, cudaMemcpyHostToDevice);
+            MEMCPY_TO_SYMBOL(phi_imag, host_phi_imag.data(), host_phi_s.size()*sizeof(fptype), 0, cudaMemcpyHostToDevice);
+
+            std::vector<fptype> y2_flat = make_flatten(calc_complex_derivative(host_phi_s, host_phi));
+            MEMCPY_TO_SYMBOL(Deriatives, y2_flat.data(), 2 * phi_nKnobs * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+
+           
     }
+
 }
+
 }

@@ -2,6 +2,7 @@
 
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
+#include <pybind11/complex.h>
 
 #include <vector>
 

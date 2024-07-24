@@ -5,6 +5,10 @@
 #include <goofit/PDFs/physics/ResonancePdf.h>
 #include <goofit/Variable.h>
 #include <goofit/docs/PDFs/physics/resonances/Resonance.h>
+#include <pybind11/stl.h>
+#include <pybind11/complex.h>
+#include <pybind11/functional.h>
+#include <pybind11/chrono.h>
 
 #if GOOFIT_KMATRIX
 #include <goofit/PDFs/physics/resonances/kMatrix.h>
@@ -171,6 +175,17 @@ void init_ResonancePdf(py::module &m) {
              "cyc"_a,
              "symmDP"_a);
 
+     py::class_<Resonances::Pole, ResonancePdf>(m_ls, "Pole")
+        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int,  bool>(),
+             "Constructor for regular Pole",
+             "name"_a,
+             "ar"_a,
+             "ai"_a,
+             "real"_a,
+             "img"_a,
+             "cyc"_a,
+             "symmDP"_a);
+
     py::class_<Resonances::Spline, ResonancePdf>(m_ls, "Spline")
         .def(py::init<std::string,
                       Variable,
@@ -192,4 +207,28 @@ void init_ResonancePdf(py::module &m) {
              py::keep_alive<1, 5>(),
              py::keep_alive<1, 6>(),
              py::keep_alive<1, 7>());
+
+    py::class_<Resonances::ScatteringAmp, ResonancePdf>(m_ls, "ScatteringAmp")
+        .def(py::init<std::string,
+                      Variable,
+                      Variable,
+                      std::complex<fptype> ,
+                      std::complex<fptype> ,
+                      std::complex<fptype> ,
+                      std::vector<std::pair<fptype,std::complex<fptype>>>,
+                      unsigned int ,
+                      unsigned int ,
+                      bool>(),
+             "Constructor for regular Scattering pipi-kk amp",
+             "name"_a,
+             "ar"_a,
+             "ai"_a,
+             "akk"_a,
+             "apipi"_a,
+             "f0scale"_a,
+             "_phi00"_a,
+             "charge_pos"_a,
+             "cyc"_a,
+             "symmDP"_a = false,
+             py::keep_alive<1, 6>());
 }

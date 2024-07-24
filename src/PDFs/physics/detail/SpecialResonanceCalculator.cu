@@ -46,7 +46,7 @@ __device__ auto SpecialResonanceCalculator::operator()(thrust::tuple<int, fptype
 
     ret = getResonanceAmplitude(m13, m23, m12, pc);
 
-    if(c_SymDp && m13<m23)
+    if(c_SymDp && m13>m23)
         return fpcomplex(0.,0.);
 
   //  printf("Resonance norm = %f \n",sqrt(ret.real()*ret.real() + ret.imag()*ret.imag()));

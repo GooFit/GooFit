@@ -10,10 +10,11 @@ class ScatteringAmp : public ResonancePdf {
 				ScatteringAmp(std::string name,
 						Variable ar,
 						Variable ai,
-						Variable akk,
-						Variable apipi,
-						std::vector<std::pair<fptype,fpcomplex>> &_phi00, // \delta_{KK}
-						bool charge_pos,
+						std::complex<fptype> akk,
+						std::complex<fptype> apipi,
+						std::complex<fptype> f0scale,
+						std::vector<std::pair<fptype,std::complex<fptype>>> _phi00, // \delta_{KK}
+						unsigned int charge_pos,
 						unsigned int cyc,
 						bool symmDP = false);
 				~ScatteringAmp() override = default;

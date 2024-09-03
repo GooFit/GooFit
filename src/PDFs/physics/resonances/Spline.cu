@@ -16,7 +16,7 @@ __device__ auto cubicspline(fptype m13, fptype m23, fptype m12, ParameterContain
     const unsigned int nKnobs        = pc.getConstant(2);
     unsigned int idx                 = 3; // Next index
     unsigned int i                   = 0;
-    const unsigned int pwa_coefs_idx = idx;
+    //const unsigned int pwa_coefs_idx = idx;
     idx += 2 * nKnobs;
     fptype mAB = m13, mAC = m23;
     switch(cyclic_index) {

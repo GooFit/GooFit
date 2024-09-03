@@ -65,7 +65,7 @@ goofit_add_pdf_library(
   lineshapes/NonRes.cu
   lineshapes/One.cu
   ${GOOFIT_KMATRIX_SOURCE}
-  resonances/Resonance.cu
+  resonances/ResonanceUtils.cu
   resonances/FLATTE.cu
   resonances/Gauss.cu
   resonances/GS.cu

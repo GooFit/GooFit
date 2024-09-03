@@ -76,7 +76,6 @@ __device__ auto flatte(fptype m13, fptype m23, fptype m12, ParameterContainer &p
     fptype rho1(0.0), rho2(0.0);
 
     fptype s  = 0.0;
-    fptype m = 0.0;
     fptype m1= 0.0;
     fptype m2= 0.0;
     fptype m3= 0.0;
@@ -86,7 +85,6 @@ __device__ auto flatte(fptype m13, fptype m23, fptype m12, ParameterContainer &p
 
         if(PAIR_12 == cyclic_index){
             s    = m12 ;
-            m    = sqrt(s);
             m1 = c_daug1Mass;
             m2 = c_daug2Mass;
             m3 = c_daug3Mass;
@@ -94,14 +92,12 @@ __device__ auto flatte(fptype m13, fptype m23, fptype m12, ParameterContainer &p
 
         if(PAIR_13 == cyclic_index){
             s    = m13 ;
-            m    = sqrt(s);
             m1 = c_daug1Mass;
             m2 = c_daug3Mass;
             m3 = c_daug2Mass;
         }
          if(PAIR_23 == cyclic_index){
             s    = m23 ;
-            m    = sqrt(s);
             m1 = c_daug2Mass;
             m2 = c_daug3Mass;
             m3 = c_daug1Mass;

@@ -13,7 +13,7 @@ thrust/*
 **/testing/
 *build*/*
 wrkdir/
-*.o
+MeusTestes/*
 *.a
 *.png
 *.eps

@@ -6,14 +6,12 @@
 
 namespace GooFit {
 
+// We use here the covariant formalism for spin: https://journals.aps.org/prd/pdf/10.1103/PhysRevD.51.2247
 
 template <int I>
 __device__ auto plainBW(fptype m13, fptype m23, fptype m12, ParameterContainer &pc) -> fpcomplex {
-    unsigned int spin         = pc.getConstant(0);
+    fptype spin         = pc.getConstant(0);
     unsigned int cyclic_index = pc.getConstant(1);
-    bool bachPframe = pc.getConstant(2);
-    bool ignoreMom = pc.getConstant(3);
-    bool ignoreBW = pc.getConstant(4);
  
     fptype resmass  = pc.getParameter(0);
     fptype reswidth = pc.getParameter(1);
@@ -25,18 +23,6 @@ __device__ auto plainBW(fptype m13, fptype m23, fptype m12, ParameterContainer &
     fptype m1= 0.0;
     fptype m2= 0.0;
     fptype m3= 0.0;
-
-    if(reswidth<0.){
-        reswidth *= -1.;
-    }
-
-    if(resmass<0.){
-        resmass *= -1.;
-    }
-
-    if(resmass<1.e-10 || reswidth<1.e-10){
-        return result;
-    }
 
     fptype resmass2 = resmass*resmass;
     
@@ -66,53 +52,46 @@ __device__ auto plainBW(fptype m13, fptype m23, fptype m12, ParameterContainer &
             m3 = c_daug1Mass;
         }
 
-        if ( resmass - (m1+m2) < 0.0 ) {
-            fptype minMass = (m1+m2);
-            fptype maxMass = c_motherMass - m3;
-            fptype tanhTerm = std::tanh( (resmass - ((minMass + maxMass)/2))/(maxMass-minMass));
-            resmass = minMass + (maxMass-minMass)*(1.+tanhTerm)/2.;
-            resmass2 = resmass*resmass;
-	    }
+        fptype erm = getERM(c_motherMass, m3, m );
+        fptype erm0 = getERM(c_motherMass, m3, resmass );
+        fptype covFactor0 = calcCovFactor( erm0 , spin);
 
 
         fptype q0_ = DaugDecayMomResFrame(resmass2, m1, m2);
+        fptype p0_ =  BachMomParentFrame(c_motherMass, m3 ,resmass2) ; //p0*
 
-        fptype p0_ = bachPframe? 
-                    BachMomParentFrame(c_motherMass, m3 ,resmass2) :
-                    BachMomResFrame(c_motherMass , resmass2, m3);
-
-        fptype q_ = calc_q(s, m1, m2);
-
-        fptype p_  =  bachPframe? 
-                    BachMomParentFrame(c_motherMass, m3 ,s) : //p*
-                    BachMomResFrame(c_motherMass, s , m3); //p
+        if(spin>=2.)
+            covFactor0 = pow(covFactor0, 1.0/spin );  
 
         fptype FR0 = BlattWeisskopfPrime(q0_*c_meson_radius,spin);
-        fptype FP0 = BlattWeisskopfPrime(p0_*c_mother_meson_radius,spin);
+        fptype FP0 = BlattWeisskopfPrime(p0_*covFactor0*c_mother_meson_radius,spin);
 
-        fptype FR = BlattWeisskopfPrime(q_*c_meson_radius,spin);
-        fptype FP = BlattWeisskopfPrime(p_*c_mother_meson_radius,spin);
+        fptype q_ = calc_q(s, m2, m1);
+        fptype p_  =  BachMomParentFrame(c_motherMass, m3 ,s) ; //p*
+        fptype covFactor = calcCovFactor( erm , spin);
 
-        if(q0_<=0 || q_<=0 || p_<=0){
-            ignoreMom = true;
-        }
+        fptype cosHel = cFromM(c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m13, m23, m12, cyclic_index);
+        fptype legPol = calcLegendrePoly(cosHel,spin);
+        fptype ZemachSpinFactor = calcZemachSpinFactor(q_*p_, legPol, spin);
         
-        fptype gamma = ignoreMom ? reswidth : reswidth*pow(q_/q0_,2.0*spin + 1.0)*(resmass/m)*POW2(FR/FR0);
+        if(spin>=2.)
+            covFactor = pow(covFactor, 1.0/spin );  
+
+        ZemachSpinFactor *= covFactor;
+        
+        fptype FR = BlattWeisskopfPrime(q_*c_meson_radius,spin);
+        fptype FP = BlattWeisskopfPrime(p_*covFactor*c_mother_meson_radius,spin);
+        fptype gamma = reswidth*pow(q_/q0_,2.0*spin + 1.0)*(resmass/m)*POW2(FR/FR0);
                   
         fptype A = (resmass2 - s);
         fptype B = gamma*resmass;
         fptype C = 1.0 / (A*A + B*B);
 
         fpcomplex ret(A * C, B * C);
-        ret *= ignoreBW ? 1.0 : (FR/FR0);
-        ret *= ignoreBW ? 1.0 : (FP/FP0);
-
-        fptype cosHel = cFromM(c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m13, m23, m12, cyclic_index);
-        fptype legPol = calcLegendrePoly(cosHel,spin);
-        fptype ZemachSpinFactor = ignoreMom ? calcZemachSpinFactor(1.0, legPol, spin) :calcZemachSpinFactor(q_*p_, legPol, spin);
+        ret *=  (FR/FR0);
+        ret *=  (FP/FP0);
         ret *= ZemachSpinFactor;
     
-
         result += ret;
 
         if(I != 0) {
@@ -122,8 +101,7 @@ __device__ auto plainBW(fptype m13, fptype m23, fptype m12, ParameterContainer &
         }
     }
 
-    
-    pc.incrementIndex(1, 2, 5, 0, 1);
+    pc.incrementIndex(1, 2, 2, 0, 1);
   
     return result;
 }
@@ -140,19 +118,13 @@ RBW::RBW(std::string name,
          Variable width,
          unsigned int sp,
          unsigned int cyc,
-         bool sym,
-         bool bachPframe,
-         bool ignoreMom,
-         bool ignoreBW)
+         bool sym)
     : ResonancePdf("RBW", name, ar, ai) {
+
     registerParameter(mass);
     registerParameter(width);
-
     registerConstant(sp);
     registerConstant(cyc);
-    registerConstant(bachPframe);
-    registerConstant(ignoreMom);
-    registerConstant(ignoreBW);
  
     if(sym)
         registerFunction("ptr_to_RBW_Sym", ptr_to_RBW_Sym);

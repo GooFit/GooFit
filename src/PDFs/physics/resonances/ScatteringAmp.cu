@@ -205,11 +205,6 @@ __device__ auto f0980_Flatte(fptype s, fpcomplex scale) -> fpcomplex {
     }
     
     fptype rho1(0.0), rho2(0.0);
-
-    fptype m = 0.0;
-    fptype m1= 0.0;
-    fptype m2= 0.0;
-    fptype m3= 0.0;
         
     fptype dMSq = resmass2 - s;
 
@@ -308,7 +303,7 @@ __device__ fpcomplex pelaez_pipi2pipi_interpolation(fptype m13, fptype m23, fpty
     }
 
     const fptype mk  = 0.496;
-    const fptype mpi  = 0.13957018; 
+    // const fptype mpi  = 0.13957018; 
             
 
     #pragma unroll

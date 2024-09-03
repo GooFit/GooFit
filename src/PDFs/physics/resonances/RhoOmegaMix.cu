@@ -167,7 +167,7 @@ RhoOmegaMix::RhoOmegaMix(std::string name,
                          Variable delta,
                          unsigned int sp,
                          unsigned int cyc,
-                         bool sym,
+                         bool symDP,
                          bool bachPframe,
                          bool ignoreMom,
                          bool ignoreBW)
@@ -186,7 +186,7 @@ RhoOmegaMix::RhoOmegaMix(std::string name,
     registerConstant(ignoreMom);
     registerConstant(ignoreBW);
 
-    if(sym)
+    if(symDP)
         registerFunction("ptr_to_RHOOMEGAMIX", ptr_to_RHOOMEGAMIX_SYM);
     else
         registerFunction("ptr_to_RHOOMEGAMIX", ptr_to_RHOOMEGAMIX);

@@ -25,7 +25,7 @@ void init_ResonancePdf(py::module &m) {
         .def_static("help", []() { return HelpPrinter(ResonancePdf_docs); });
 
     py::class_<Resonances::RBW, ResonancePdf>(m_ls, "RBW")
-        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int, bool, bool, bool, bool>(),
+        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int, bool>(),
              "Constructor for regular BW",
              "name"_a,
              "ar"_a,
@@ -34,13 +34,10 @@ void init_ResonancePdf(py::module &m) {
              "width"_a,
              "sp"_a,
              "cyc"_a,
-             "sym"_a  = false,
-             "bachPframe"_a = false,
-             "ignoreMom"_a = false,
-             "ignoreBW"_a = false);
+             "sym"_a  = false);
 
     py::class_<Resonances::GS, ResonancePdf>(m_ls, "GS")
-        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int, bool, bool>(),
+        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int, bool>(),
              "Constructor for regular Gounaris-Sakurai",
              "name"_a,
              "ar"_a,
@@ -49,7 +46,6 @@ void init_ResonancePdf(py::module &m) {
              "width"_a,
              "sp"_a,
              "cyc"_a,
-             "norm"_a = true,
              "sym"_a  = false);
 
     py::class_<Resonances::RhoOmegaMix, ResonancePdf>(m_ls, "RhoOmegaMix")

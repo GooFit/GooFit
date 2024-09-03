@@ -204,7 +204,7 @@ Rescattering2::Rescattering2(std::string name,
          Variable ai,
          std::vector<Variable> coefs,
          unsigned int cyc,
-         bool sym)
+         bool symDP)
     : ResonancePdf("Rescattering2", name, ar, ai) {
 
     if(coefs.size()!=16)
@@ -217,7 +217,7 @@ Rescattering2::Rescattering2(std::string name,
 
 
 
-    if(sym)
+    if(symDP)
         registerFunction("ptr_to_Rescattering2_Sym", ptr_to_Rescattering2_Sym);
     else
         registerFunction("ptr_to_Rescattering2", ptr_to_Rescattering2);

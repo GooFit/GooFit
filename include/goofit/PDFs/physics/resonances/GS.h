@@ -1,6 +1,7 @@
 #pragma once
 
 #include <goofit/PDFs/physics/resonances/Resonance.h>
+#include <goofit/PDFs/physics/resonances/ResonanceUtils.h>
 
 namespace GooFit {
 
@@ -16,10 +17,7 @@ class GS : public ResonancePdf {
        Variable width,
        unsigned int sp,
        unsigned int cyc,
-       bool sym  = false,
-       bool bachPframe=false,
-       bool ignoreMom=false,
-      bool ignoreBW=false);
+       bool sym  = false);
     ~GS() override = default;
 };
 

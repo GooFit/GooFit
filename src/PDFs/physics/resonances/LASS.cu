@@ -3,7 +3,7 @@
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/lineshapes/Lineshape.h>
 #include <goofit/PDFs/physics/resonances/Resonance.h>
-
+#include <goofit/PDFs/physics/resonances/ResonanceUtils.h>
 namespace GooFit {
 
 __device__ auto lass(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {

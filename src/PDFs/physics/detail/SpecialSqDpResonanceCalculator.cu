@@ -3,6 +3,7 @@
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/detail/SpecialSqDpResonanceCalculator.h>
 #include <goofit/PDFs/physics/resonances/Resonance.h>
+#include <goofit/PDFs/physics/resonances/ResonanceUtils.h>
 #include <goofit/PDFs/physics/Amp3BodySqDP.h>
 
 namespace GooFit {

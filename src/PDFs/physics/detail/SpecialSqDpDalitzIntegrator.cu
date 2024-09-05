@@ -2,6 +2,7 @@
 #include <goofit/PDFs/physics/Amp3Body_TD.h>
 #include <goofit/PDFs/physics/detail/SpecialSqDpDalitzIntegrator.h>
 #include <goofit/PDFs/physics/resonances/Resonance.h>
+#include <goofit/PDFs/physics/resonances/ResonanceUtils.h>
 #include <goofit/PDFs/physics/Amp3BodySqDP.h>
 #include <thrust/transform_reduce.h>
 

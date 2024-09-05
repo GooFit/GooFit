@@ -14,6 +14,7 @@
 #include <goofit/PDFs/physics/detail/SpecialSqDpResonanceCalculator.h>
 #include <goofit/PDFs/physics/detail/SpecialSqDpResonanceIntegrator.h>
 #include <goofit/PDFs/physics/resonances/Resonance.h>
+#include <goofit/PDFs/physics/resonances/ResonanceUtils.h>
 #include <goofit/detail/Complex.h>
 
 #include <thrust/copy.h>

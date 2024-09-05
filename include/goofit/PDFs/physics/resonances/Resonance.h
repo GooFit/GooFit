@@ -3,7 +3,6 @@
 #include <goofit/PDFs/physics/AmpComponent.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/detail/Complex.h>
-#include <goofit/PDFs/physics/resonances/ResonanceUtils.h>
 
 #define NCHANNELS 5
 

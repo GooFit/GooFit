@@ -43,6 +43,7 @@ class.
 #include <goofit/PDFs/physics/detail/SFCalculator_TD.h>
 #include <goofit/PDFs/physics/lineshapes/Lineshape.h>
 #include <goofit/PDFs/physics/resonances/Resonance.h>
+#include <goofit/PDFs/physics/resonances/ResonanceUtils.h>
 #include <goofit/utilities/DebugTools.h>
 #include <goofit/PDFs/physics/detail/NormEvents_4Body_DeviceCached.h>
 #include <goofit/PDFs/physics/detail/NormEvents_4Body_HostCached.h>

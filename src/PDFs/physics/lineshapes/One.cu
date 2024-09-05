@@ -2,7 +2,7 @@
 
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/resonances/Resonance.h>
-
+#include <goofit/PDFs/physics/resonances/ResonanceUtils.h>
 namespace GooFit {
 
 __device__ auto LS_ONE(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -> fpcomplex {

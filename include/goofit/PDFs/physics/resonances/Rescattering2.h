@@ -1,6 +1,7 @@
 #pragma once
 
 #include <goofit/PDFs/physics/resonances/Resonance.h>
+#include <goofit/PDFs/physics/resonances/ResonanceUtils.h>
 
 namespace GooFit {
 

@@ -2,7 +2,7 @@
 
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/resonances/Resonance.h>
-
+#include <goofit/PDFs/physics/resonances/ResonanceUtils.h>
 namespace GooFit {
 
 __device__ auto nonres(fptype m13, fptype m23, fptype m12, ParameterContainer &pc) -> fpcomplex {

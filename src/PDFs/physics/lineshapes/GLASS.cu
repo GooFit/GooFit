@@ -2,7 +2,7 @@
 
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/resonances/Resonance.h>
-
+#include <goofit/PDFs/physics/resonances/ResonanceUtils.h>
 #include "Common.h"
 
 namespace GooFit {

@@ -5,6 +5,7 @@
 #include <goofit/PDFs/physics/Amplitude.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/resonances/Resonance.h>
+#include <goofit/PDFs/physics/resonances/ResonanceUtils.h>
 #include <goofit/PDFs/physics/DalitzVetoPdf.h>
 #include <goofit/Variable.h>
 

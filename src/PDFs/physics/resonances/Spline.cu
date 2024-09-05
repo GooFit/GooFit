@@ -4,7 +4,7 @@
 #include <goofit/PDFs/detail/ComplexUtils.h>
 #include <goofit/PDFs/physics/lineshapes/Lineshape.h>
 #include <goofit/PDFs/physics/resonances/Resonance.h>
-
+#include <goofit/PDFs/physics/resonances/ResonanceUtils.h>
 namespace GooFit {
 
 __device__ fptype cDeriatives[2 * 100];

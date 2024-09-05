@@ -5,6 +5,7 @@
 #include <goofit/PDFs/physics/detail/SpecialDalitzIntegrator.h>
 #include <goofit/PDFs/physics/detail/SpecialWaveCalculator.h>
 #include <goofit/PDFs/physics/resonances/Resonance.h>
+#include <goofit/PDFs/physics/resonances/ResonanceUtils.h>
 
 #include <thrust/transform_reduce.h>
 

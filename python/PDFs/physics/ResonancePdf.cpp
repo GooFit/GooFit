@@ -5,6 +5,7 @@
 #include <goofit/PDFs/physics/ResonancePdf.h>
 #include <goofit/Variable.h>
 #include <goofit/docs/PDFs/physics/resonances/Resonance.h>
+#include <goofit/PDFs/physics/resonances/ResonanceUtils.h>
 #include <pybind11/stl.h>
 #include <pybind11/complex.h>
 #include <pybind11/functional.h>

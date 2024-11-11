@@ -339,7 +339,7 @@ ThreeGaussResolutionExt::ThreeGaussResolutionExt(Variable cf,
                                                  Variable Tthres,
                                                  Variable constantC)
     : MixingTimeResolution(
-        "ThreeGaussResolutionExt", cf, tf, cb, cs, tb, ts, ob, os, sb_low, sb_high, Tthres, constantC)
+          "ThreeGaussResolutionExt", cf, tf, cb, cs, tb, ts, ob, os, sb_low, sb_high, Tthres, constantC)
     , selectionBias_low(sb_low)
     , selectionBias_high(sb_high)
     , mTthreshold(Tthres)

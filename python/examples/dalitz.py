@@ -109,12 +109,16 @@ def makeSignalPdf(m12, m13, eventNumber, eff=None, fitMasses=False):
 
     rhom = Resonances.RBW(
         "rhom",
-        Variable("rhom_amp_real", 0.714)
-        if fixAmps
-        else Variable("rhom_amp_real", 0.714, 0.001, 0, 0),
-        Variable("rhom_amp_imag", -0.025)
-        if fixAmps
-        else Variable("rhom_amp_imag", -0.025, 0.1, 0, 0),
+        (
+            Variable("rhom_amp_real", 0.714)
+            if fixAmps
+            else Variable("rhom_amp_real", 0.714, 0.001, 0, 0)
+        ),
+        (
+            Variable("rhom_amp_imag", -0.025)
+            if fixAmps
+            else Variable("rhom_amp_imag", -0.025, 0.1, 0, 0)
+        ),
         fixedRhoMass,
         fixedRhoWidth,
         1,
@@ -123,12 +127,16 @@ def makeSignalPdf(m12, m13, eventNumber, eff=None, fitMasses=False):
 
     rho0 = Resonances.RBW(
         "rho0",
-        Variable("rho0_amp_real", 0.565)
-        if fixAmps
-        else Variable("rho0_amp_real", 0.565, 0.001, 0, 0),
-        Variable("rho0_amp_imag", 0.164)
-        if fixAmps
-        else Variable("rho0_amp_imag", 0.164, 0.1, 0, 0),
+        (
+            Variable("rho0_amp_real", 0.565)
+            if fixAmps
+            else Variable("rho0_amp_real", 0.565, 0.001, 0, 0)
+        ),
+        (
+            Variable("rho0_amp_imag", 0.164)
+            if fixAmps
+            else Variable("rho0_amp_imag", 0.164, 0.1, 0, 0)
+        ),
         fixedRhoMass,
         fixedRhoWidth,
         1,
@@ -140,12 +148,16 @@ def makeSignalPdf(m12, m13, eventNumber, eff=None, fitMasses=False):
 
     rhop_1450 = Resonances.RBW(
         "rhop_1450",
-        Variable("rhop_1450_amp_real", -0.174)
-        if fixAmps
-        else Variable("rhop_1450_amp_real", -0.174, 0.001, 0, 0),
-        Variable("rhop_1450_amp_imag", -0.117)
-        if fixAmps
-        else Variable("rhop_1450_amp_imag", -0.117, 0.1, 0, 0),
+        (
+            Variable("rhop_1450_amp_real", -0.174)
+            if fixAmps
+            else Variable("rhop_1450_amp_real", -0.174, 0.001, 0, 0)
+        ),
+        (
+            Variable("rhop_1450_amp_imag", -0.117)
+            if fixAmps
+            else Variable("rhop_1450_amp_imag", -0.117, 0.1, 0, 0)
+        ),
         sharedMass,
         shareWidth,
         1,
@@ -154,12 +166,16 @@ def makeSignalPdf(m12, m13, eventNumber, eff=None, fitMasses=False):
 
     rho0_1450 = Resonances.RBW(
         "rho0_1450",
-        Variable("rho0_1450_amp_real", 0.325)
-        if fixAmps
-        else Variable("rho0_1450_amp_real", 0.325, 0.001, 0, 0),
-        Variable("rho0_1450_amp_imag", 0.057)
-        if fixAmps
-        else Variable("rho0_1450_amp_imag", 0.057, 0.1, 0, 0),
+        (
+            Variable("rho0_1450_amp_real", 0.325)
+            if fixAmps
+            else Variable("rho0_1450_amp_real", 0.325, 0.001, 0, 0)
+        ),
+        (
+            Variable("rho0_1450_amp_imag", 0.057)
+            if fixAmps
+            else Variable("rho0_1450_amp_imag", 0.057, 0.1, 0, 0)
+        ),
         sharedMass,
         shareWidth,
         1,
@@ -168,12 +184,16 @@ def makeSignalPdf(m12, m13, eventNumber, eff=None, fitMasses=False):
 
     rhom_1450 = Resonances.RBW(
         "rhom_1450",
-        Variable("rhom_1450_amp_real", 0.788)
-        if fixAmps
-        else Variable("rhom_1450_amp_real", 0.788, 0.001, 0, 0),
-        Variable("rhom_1450_amp_imag", 0.226)
-        if fixAmps
-        else Variable("rhom_1450_amp_imag", 0.226, 0.1, 0, 0),
+        (
+            Variable("rhom_1450_amp_real", 0.788)
+            if fixAmps
+            else Variable("rhom_1450_amp_real", 0.788, 0.001, 0, 0)
+        ),
+        (
+            Variable("rhom_1450_amp_imag", 0.226)
+            if fixAmps
+            else Variable("rhom_1450_amp_imag", 0.226, 0.1, 0, 0)
+        ),
         sharedMass,
         shareWidth,
         1,
@@ -185,12 +205,16 @@ def makeSignalPdf(m12, m13, eventNumber, eff=None, fitMasses=False):
 
     rhop_1700 = Resonances.RBW(
         "rhop_1700",
-        Variable("rhop_1700_amp_real", 2.151)
-        if fixAmps
-        else Variable("rhop_1700_amp_real", 2.151, 0.001, 0, 0),
-        Variable("rhop_1700_amp_imag", -0.658)
-        if fixAmps
-        else Variable("rhop_1700_amp_imag", -0.658, 0.1, 0, 0),
+        (
+            Variable("rhop_1700_amp_real", 2.151)
+            if fixAmps
+            else Variable("rhop_1700_amp_real", 2.151, 0.001, 0, 0)
+        ),
+        (
+            Variable("rhop_1700_amp_imag", -0.658)
+            if fixAmps
+            else Variable("rhop_1700_amp_imag", -0.658, 0.1, 0, 0)
+        ),
         sharedMass,
         shareWidth,
         1,
@@ -199,12 +223,16 @@ def makeSignalPdf(m12, m13, eventNumber, eff=None, fitMasses=False):
 
     rho0_1700 = Resonances.RBW(
         "rho0_1700",
-        Variable("rho0_1700_amp_real", 2.400)
-        if fixAmps
-        else Variable("rho0_1700_amp_real", 2.400, 0.001, 0, 0),
-        Variable("rho0_1700_amp_imag", -0.734)
-        if fixAmps
-        else Variable("rho0_1700_amp_imag", -0.734, 0.1, 0, 0),
+        (
+            Variable("rho0_1700_amp_real", 2.400)
+            if fixAmps
+            else Variable("rho0_1700_amp_real", 2.400, 0.001, 0, 0)
+        ),
+        (
+            Variable("rho0_1700_amp_imag", -0.734)
+            if fixAmps
+            else Variable("rho0_1700_amp_imag", -0.734, 0.1, 0, 0)
+        ),
         sharedMass,
         shareWidth,
         1,
@@ -213,12 +241,16 @@ def makeSignalPdf(m12, m13, eventNumber, eff=None, fitMasses=False):
 
     rhom_1700 = Resonances.RBW(
         "rhom_1700",
-        Variable("rhom_1700_amp_real", 1.286)
-        if fixAmps
-        else Variable("rhom_1700_amp_real", 1.286, 0.001, 0, 0),
-        Variable("rhom_1700_amp_imag", -1.532)
-        if fixAmps
-        else Variable("rhom_1700_amp_imag", -1.532, 0.1, 0, 0),
+        (
+            Variable("rhom_1700_amp_real", 1.286)
+            if fixAmps
+            else Variable("rhom_1700_amp_real", 1.286, 0.001, 0, 0)
+        ),
+        (
+            Variable("rhom_1700_amp_imag", -1.532)
+            if fixAmps
+            else Variable("rhom_1700_amp_imag", -1.532, 0.1, 0, 0)
+        ),
         sharedMass,
         shareWidth,
         1,
@@ -227,12 +259,16 @@ def makeSignalPdf(m12, m13, eventNumber, eff=None, fitMasses=False):
 
     f0_980 = Resonances.RBW(
         "f0_980",
-        Variable("f0_980_amp_real", 0.008 * (-_mD02))
-        if fixAmps
-        else Variable("f0_980_amp_real", 0.008 * (-_mD02), 0.001, 0, 0),
-        Variable("f0_980_amp_imag", -0.013 * (-_mD02))
-        if fixAmps
-        else Variable("f0_980_amp_imag", -0.013 * (-_mD02), 0.1, 0, 0),
+        (
+            Variable("f0_980_amp_real", 0.008 * (-_mD02))
+            if fixAmps
+            else Variable("f0_980_amp_real", 0.008 * (-_mD02), 0.001, 0, 0)
+        ),
+        (
+            Variable("f0_980_amp_imag", -0.013 * (-_mD02))
+            if fixAmps
+            else Variable("f0_980_amp_imag", -0.013 * (-_mD02), 0.1, 0, 0)
+        ),
         Variable("f0_980_mass", 0.980, 0.01, 0.8, 1.2),
         Variable("f0_980_width", 0.044, 0.001, 0.001, 0.08),
         0,
@@ -241,12 +277,16 @@ def makeSignalPdf(m12, m13, eventNumber, eff=None, fitMasses=False):
 
     f0_1370 = Resonances.RBW(
         "f0_1370",
-        Variable("f0_1370_amp_real", -0.058 * (-_mD02))
-        if fixAmps
-        else Variable("f0_1370_amp_real", -0.058 * (-_mD02), 0.001, 0, 0),
-        Variable("f0_1370_amp_imag", 0.026 * (-_mD02))
-        if fixAmps
-        else Variable("f0_1370_amp_imag", 0.026 * (-_mD02), 0.1, 0, 0),
+        (
+            Variable("f0_1370_amp_real", -0.058 * (-_mD02))
+            if fixAmps
+            else Variable("f0_1370_amp_real", -0.058 * (-_mD02), 0.001, 0, 0)
+        ),
+        (
+            Variable("f0_1370_amp_imag", 0.026 * (-_mD02))
+            if fixAmps
+            else Variable("f0_1370_amp_imag", 0.026 * (-_mD02), 0.1, 0, 0)
+        ),
         Variable("f0_1370_mass", 1.434, 0.01, 1.2, 1.6),
         Variable("f0_1370_width", 0.173, 0.01, 0.01, 0.4),
         0,
@@ -255,12 +295,16 @@ def makeSignalPdf(m12, m13, eventNumber, eff=None, fitMasses=False):
 
     f0_1500 = Resonances.RBW(
         "f0_1500",
-        Variable("f0_1500_amp_real", 0.057 * (-_mD02))
-        if fixAmps
-        else Variable("f0_1500_amp_real", 0.057 * (-_mD02), 0.001, 0, 0),
-        Variable("f0_1500_amp_imag", 0.012 * (-_mD02))
-        if fixAmps
-        else Variable("f0_1500_amp_imag", 0.012 * (-_mD02), 0.1, 0, 0),
+        (
+            Variable("f0_1500_amp_real", 0.057 * (-_mD02))
+            if fixAmps
+            else Variable("f0_1500_amp_real", 0.057 * (-_mD02), 0.001, 0, 0)
+        ),
+        (
+            Variable("f0_1500_amp_imag", 0.012 * (-_mD02))
+            if fixAmps
+            else Variable("f0_1500_amp_imag", 0.012 * (-_mD02), 0.1, 0, 0)
+        ),
         Variable("f0_1500_mass", 1.507, 0.01, 1.3, 1.7),
         Variable("f0_1500_width", 0.109, 0.01, 0.01, 0.3),
         0,
@@ -269,12 +313,16 @@ def makeSignalPdf(m12, m13, eventNumber, eff=None, fitMasses=False):
 
     f0_1710 = Resonances.RBW(
         "f0_1710",
-        Variable("f0_1710_amp_real", 0.070 * (-_mD02))
-        if fixAmps
-        else Variable("f0_1710_amp_real", 0.070 * (-_mD02), 0.001, 0, 0),
-        Variable("f0_1710_amp_imag", 0.087 * (-_mD02))
-        if fixAmps
-        else Variable("f0_1710_amp_imag", 0.087 * (-_mD02), 0.1, 0, 0),
+        (
+            Variable("f0_1710_amp_real", 0.070 * (-_mD02))
+            if fixAmps
+            else Variable("f0_1710_amp_real", 0.070 * (-_mD02), 0.001, 0, 0)
+        ),
+        (
+            Variable("f0_1710_amp_imag", 0.087 * (-_mD02))
+            if fixAmps
+            else Variable("f0_1710_amp_imag", 0.087 * (-_mD02), 0.1, 0, 0)
+        ),
         Variable("f0_1710_mass", 1.714, 0.01, 1.5, 2.9),
         Variable("f0_1710_width", 0.140, 0.01, 0.01, 0.5),
         0,
@@ -283,12 +331,16 @@ def makeSignalPdf(m12, m13, eventNumber, eff=None, fitMasses=False):
 
     f2_1270 = Resonances.RBW(
         "f2_1270",
-        Variable("f2_1270_amp_real", -1.027 * (-_mD02inv))
-        if fixAmps
-        else Variable("f2_1270_amp_real", -1.027 * (-_mD02inv), 0.001, 0, 0),
-        Variable("f2_1270_amp_imag", -0.162 * (-_mD02inv))
-        if fixAmps
-        else Variable("f2_1270_amp_imag", -0.162 * (-_mD02inv), 0.1, 0, 0),
+        (
+            Variable("f2_1270_amp_real", -1.027 * (-_mD02inv))
+            if fixAmps
+            else Variable("f2_1270_amp_real", -1.027 * (-_mD02inv), 0.001, 0, 0)
+        ),
+        (
+            Variable("f2_1270_amp_imag", -0.162 * (-_mD02inv))
+            if fixAmps
+            else Variable("f2_1270_amp_imag", -0.162 * (-_mD02inv), 0.1, 0, 0)
+        ),
         Variable("f2_1270_mass", 1.2754, 0.01, 1.0, 1.5),
         Variable("f2_1270_width", 0.1851, 0.01, 0.01, 0.4),
         2,
@@ -297,12 +349,16 @@ def makeSignalPdf(m12, m13, eventNumber, eff=None, fitMasses=False):
 
     f0_600 = Resonances.RBW(
         "f0_600",
-        Variable("f0_600_amp_real", 0.068 * (-_mD02))
-        if fixAmps
-        else Variable("f0_600_amp_real", 0.068 * (-_mD02), 0.001, 0, 0),
-        Variable("f0_600_amp_imag", 0.010 * (-_mD02))
-        if fixAmps
-        else Variable("f0_600_amp_imag", 0.010 * (-_mD02), 0.1, 0, 0),
+        (
+            Variable("f0_600_amp_real", 0.068 * (-_mD02))
+            if fixAmps
+            else Variable("f0_600_amp_real", 0.068 * (-_mD02), 0.001, 0, 0)
+        ),
+        (
+            Variable("f0_600_amp_imag", 0.010 * (-_mD02))
+            if fixAmps
+            else Variable("f0_600_amp_imag", 0.010 * (-_mD02), 0.1, 0, 0)
+        ),
         Variable("f0_600_mass", 0.500, 0.01, 0.3, 0.7),
         Variable("f0_600_width", 0.400, 0.01, 0.2, 0.6),
         0,
@@ -311,12 +367,16 @@ def makeSignalPdf(m12, m13, eventNumber, eff=None, fitMasses=False):
 
     nonr = Resonances.NonRes(
         "nonr",
-        Variable("nonr_amp_real", 0.5595 * (-1))
-        if fixAmps
-        else Variable("nonr_amp_real", 0.5595 * (-1), 0.001, 0, 0),
-        Variable("nonr_amp_imag", -0.108761 * (-1))
-        if fixAmps
-        else Variable("nonr_amp_imag", -0.108761 * (-1), 0.1, 0, 0),
+        (
+            Variable("nonr_amp_real", 0.5595 * (-1))
+            if fixAmps
+            else Variable("nonr_amp_real", 0.5595 * (-1), 0.001, 0, 0)
+        ),
+        (
+            Variable("nonr_amp_imag", -0.108761 * (-1))
+            if fixAmps
+            else Variable("nonr_amp_imag", -0.108761 * (-1), 0.1, 0, 0)
+        ),
     )
 
     dtop0pp.resonances = (

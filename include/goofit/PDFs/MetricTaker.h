@@ -6,7 +6,9 @@
 
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
 #define cuda_error_check(stat)                                                                                         \
-    { cudaErrCheck_((stat), __FILE__, __LINE__); }
+    {                                                                                                                  \
+        cudaErrCheck_((stat), __FILE__, __LINE__);                                                                     \
+    }
 
 void inline cudaErrCheck_(cudaError_t stat, const char *file, int line) {
     if(stat != cudaSuccess) {

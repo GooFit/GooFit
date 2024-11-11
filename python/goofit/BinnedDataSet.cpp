@@ -21,9 +21,9 @@ void init_BinnedDataSet(py::module &m) {
              }),
              "Takes an unlimited number of Observerables, use 'name=' to set a name if desired")
 
-        .def("getBinCenter", (fptype(BinnedDataSet::*)(size_t, size_t) const) & BinnedDataSet::getBinCenter)
+        .def("getBinCenter", (fptype(BinnedDataSet::*)(size_t, size_t) const)&BinnedDataSet::getBinCenter)
         .def_property_readonly("bin_center",
-                               (fptype(BinnedDataSet::*)(size_t, size_t) const) & BinnedDataSet::getBinCenter)
+                               (fptype(BinnedDataSet::*)(size_t, size_t) const)&BinnedDataSet::getBinCenter)
 
         // clang-format off
         ADD_PROP_RO(bin_number, getBinNumber, BinnedDataSet)

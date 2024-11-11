@@ -61,7 +61,7 @@ struct genExp {
     __host__ __device__ genExp(unsigned int c, fptype d, unsigned int _seed)
         : gamma(d)
         , offset(c)
-        , seed(_seed){};
+        , seed(_seed) {};
 
     __host__ __device__ auto operator()(unsigned int x) const -> fptype {
         thrust::random::default_random_engine rand(seed);
@@ -275,13 +275,13 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
                                   const std::vector<long> &normSeeds,
                                   unsigned int numNormEventsToGenPerBatch)
     : Amp4Body_TD(
-        n,
-        observables,
-        decay,
-        Tres,
-        efficiency,
-        mistag,
-        NormEvents_4Body_HostCached::buildBatches(normSeeds, numNormEventsToGenPerBatch, decay.particle_masses)) {
+          n,
+          observables,
+          decay,
+          Tres,
+          efficiency,
+          mistag,
+          NormEvents_4Body_HostCached::buildBatches(normSeeds, numNormEventsToGenPerBatch, decay.particle_masses)) {
     GOOFIT_INFO("Built Amp4Body_TD model where the MC events used for normalization are stored on the host side.");
     GOOFIT_INFO("This may result in much longer computation times!");
     GOOFIT_INFO("Use the alternate Amp4Body_TD constructor for maximum speed!");

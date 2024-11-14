@@ -50,7 +50,7 @@ class FitManagerMinuit2 {
     // Run Minos error calculation
     void setMinos(bool minos_flag = 1) { minos = minos_flag; }
 
-    void setStrategy(int strat) {m_strategy = strat; }
+    void setStrategy(int strat) { m_strategy = strat; }
 
   private:
     Params upar_;

@@ -42,7 +42,8 @@ auto FitManagerMinuit2::fit() -> Minuit2::FunctionMinimum {
 
     CLI::Timer timer{"The minimization took"};
 
-    Minuit2::MnMigrad migrad{fcn_, upar_};
+    Minuit2::MnStrategy strat(m_strategy);
+    Minuit2::MnMigrad migrad{fcn_, upar_, strat};
 
     // Do the minimization
     if(verbosity > 0)
@@ -50,6 +51,9 @@ auto FitManagerMinuit2::fit() -> Minuit2::FunctionMinimum {
 
     CLI::Timer avetimer{"Average time per call"};
     Minuit2::FunctionMinimum min = migrad(maxfcn_);
+    // if(min.IsAboveMaxEdm()) {
+    //     min = migrad(maxfcn_);
+    // }
 
     if(minos) {
         Minuit2::MnMinos minos{fcn_, min}; // Create MINOS errors

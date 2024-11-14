@@ -30,7 +30,11 @@ class ThreeGaussResolutionSplice : public MixingTimeResolution {
                                std::vector<Variable> a0,
                                std::vector<Variable> a1,
                                std::vector<Variable> a2,
-                               std::vector<Variable> a3);
+                               std::vector<Variable> a3,
+                               Variable common_bias_offset,
+                               Variable common_width_scale,
+                               Variable common_bias_offset2,
+                               Variable common_width_scale2);
     ~ThreeGaussResolutionSplice() override;
 
     fptype normalization(

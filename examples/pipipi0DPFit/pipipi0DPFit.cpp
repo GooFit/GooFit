@@ -771,7 +771,11 @@ Amp3Body_TD *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0
                                                       tailScaleFactor,
                                                       constantZero,
                                                       constantOne,
-                                                      constantZero);
+                                                      constantZero,
+                                                      constantZero,
+                                                      constantOne,
+                                                      constantZero,
+                                                      constantOne);
                 resList.push_back(resolution);
             }
         } else {
@@ -799,7 +803,11 @@ Amp3Body_TD *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0
                                                       tailScaleFactor,
                                                       constantZero,
                                                       constantOne,
-                                                      constantZero);
+                                                      constantZero,
+                                                      constantZero,
+                                                      constantOne,
+                                                      constantZero,
+                                                      constantOne);
             else {
                 coreBias.setValue(0);
                 coreScaleFactor.setValue(1);
@@ -812,7 +820,11 @@ Amp3Body_TD *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0
                                                       constantOne,
                                                       constantZero,
                                                       constantOne,
-                                                      constantZero);
+                                                      constantZero,
+                                                      constantZero,
+                                                      constantOne,
+                                                      constantZero,
+                                                      constantOne);
             }
         }
     }

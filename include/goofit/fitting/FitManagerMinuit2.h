@@ -50,6 +50,8 @@ class FitManagerMinuit2 {
     // Run Minos error calculation
     void setMinos(bool minos_flag = 1) { minos = minos_flag; }
 
+    void setStrategy(int strat) {m_strategy = strat; }
+
   private:
     Params upar_;
     FCN fcn_;
@@ -58,5 +60,6 @@ class FitManagerMinuit2 {
     int verbosity{3};
     std::vector<std::pair<double, double>> minos_errors;
     bool minos{0};
+    int m_strategy = 1;
 };
 } // namespace GooFit

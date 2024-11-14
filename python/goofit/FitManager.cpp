@@ -37,6 +37,7 @@ void init_FitManager(py::module &m) {
         .def("getMnScan", &FitManagerMinuit2::getMnScan)
         .def("__int__", &FitManagerMinuit2::operator int)
         .def("setMinos", &FitManagerMinuit2::setMinos)
+        .def("setStrategy", &FitManagerMinuit2::setStrategy)
         .def("__bool__", &FitManagerMinuit2::operator bool)    // Py3
         .def("__nonzero__", &FitManagerMinuit2::operator bool) // Py2
 

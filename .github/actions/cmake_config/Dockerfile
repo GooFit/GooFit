@@ -1,10 +1,9 @@
-FROM nvidia/cuda:10.2-devel-ubuntu18.04
+FROM nvidia/cuda:13.0.1-devel-ubuntu24.04
 
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
         g++ \
         wget \
-        libidn11 \
         ca-certificates \
         make \
         python3-dev \

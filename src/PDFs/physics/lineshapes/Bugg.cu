@@ -56,13 +56,13 @@ __device__ auto bugg_MINT(fptype Mpair, fptype m1, fptype m2, ParameterContainer
 
     fpcomplex gamma_2pi = fpcomplex(
         g1sq * (s - sA * mPiPlus * mPiPlus) / (M * M - sA * mPiPlus * mPiPlus) * bugg_rho2(s, mPiPlus).real(), 0);
-    fpcomplex gamma_2K = g_2K * g1sq * s / (M * M)
-                         * exp((-1) * alpha * sqrt((s - 4. * mKPlus * mKPlus) * (s - 4. * mKPlus * mKPlus)))
-                         * bugg_rho2(s, mKPlus);
+    fpcomplex gamma_2K   = g_2K * g1sq * s / (M * M)
+                           * exp((-1) * alpha * sqrt((s - 4. * mKPlus * mKPlus) * (s - 4. * mKPlus * mKPlus)))
+                           * bugg_rho2(s, mKPlus);
     fpcomplex gamma_2eta = g_2eta * g1sq * s / (M * M)
                            * exp((-1) * alpha * sqrt((s - 4. * mEta * mEta) * (s - 4. * mEta * mEta)))
                            * bugg_rho2(s, mEta);
-    fpcomplex gamma_4pi = fpcomplex(bugg_Gamma_4pi(s, mPiPlus, g_4pi, M, lambda_4pi, s0_4pi), 0);
+    fpcomplex gamma_4pi  = fpcomplex(bugg_Gamma_4pi(s, mPiPlus, g_4pi, M, lambda_4pi, s0_4pi), 0);
 
     fpcomplex Gamma_tot = gamma_2pi + gamma_2K + gamma_2eta + gamma_4pi;
 

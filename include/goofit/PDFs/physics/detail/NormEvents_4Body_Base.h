@@ -31,8 +31,7 @@ class NormEvents_4Body_Base {
                                            bool spinsCalculated,
                                            const std::vector<bool> &lineshapeChanged,
                                            const std::vector<unsigned int> &sfFunctionIndices,
-                                           const std::vector<unsigned int> &lsFunctionIndices)
-        = 0;
+                                           const std::vector<unsigned int> &lsFunctionIndices) = 0;
 
   protected:
     __host__ static unsigned int generate4BodyNormEvents(long normSeed,

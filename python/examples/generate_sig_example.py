@@ -295,7 +295,7 @@ def plot_multi_body_resonance(amplitude, index):
 
     DK3P_DI_amp.meson_radius = 1.5
     DK3P_DI_amp.particle_masses = (_mD0, piPlusMass, piPlusMass, KmMass, piPlusMass)
-    DK3P_DI_amp.amplitudes = [(amplitude)]
+    DK3P_DI_amp.amplitudes = [amplitude]
     # create an Amp4Body_TD with a single amplitude
     mistag = None
     res = TruthResolution()

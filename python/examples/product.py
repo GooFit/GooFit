@@ -31,4 +31,4 @@ product.setData(data)
 fitter = FitManager(product)
 fitter.fit()
 
-sys.exit(int(int(fitter)))
+sys.exit(int(fitter))

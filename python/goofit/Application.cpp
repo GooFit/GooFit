@@ -27,6 +27,5 @@ void init_Application(py::module &m) {
           &Application::set_floating_exceptions,
           "Enable floating point exceptions as Exceptions");
 
-    m.def(
-        "__main__", []() { print_goofit_info(0); }, py::call_guard<py::scoped_ostream_redirect>());
+    m.def("__main__", []() { print_goofit_info(0); }, py::call_guard<py::scoped_ostream_redirect>());
 }

@@ -110,7 +110,7 @@ class RunAll(cli.Application):
             fit = ", ".join(MIN_TIME.findall(result["stdout"]))
             print(
                 (colors.success if result["code"] == 0 else colors.warn)
-                | "{0[name]:20}:\t{0[time]}\t{1}".format(result, fit)
+                | f"{result['name']:20}:\t{result['time']}\t{fit}"
             )
         if threads:
             colors.info.print("OMP Threads:", threads)

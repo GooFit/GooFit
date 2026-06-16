@@ -29,7 +29,8 @@ jobs:
         submodules: true
 
     - name: Configure
-      run: cmake -S . -B build -DGOOFIT_DEVICE=OMP -DCMAKE_CXX_STANDARD=14
+      # ROOT 6.32 requires C++17, so build GooFit with a matching standard.
+      run: cmake -S . -B build -DGOOFIT_DEVICE=OMP -DCMAKE_CXX_STANDARD=17
     - name: Build
       run: cmake --build build -j "$(getconf _NPROCESSORS_ONLN)"
     - name: Run Tests

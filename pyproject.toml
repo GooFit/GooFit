@@ -1,5 +1,5 @@
 [build-system]
-requires = ["scikit-build-core>=0.3"]
+requires = ["scikit-build-core>=0.11"]
 build-backend = "scikit_build_core.build"
 
 [project]
@@ -7,7 +7,7 @@ name = "goofit"
 version = "2.4.0"
 description = "GooFit fitting package"
 readme = "README-python.rst"
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Science/Research",
@@ -18,7 +18,6 @@ classifiers = [
     "Programming Language :: C++",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -48,9 +47,8 @@ dev = [
 
 
 [tool.scikit-build]
-minimum-version = "0.3"
+minimum-version = "build-system.requires"
 build-dir = "build/{wheel_tag}"
-cmake.minimum-version = "3.16"
 
 [tool.scikit-build.cmake.define]
 GOOFIT_PYTHON = "ON"
@@ -98,6 +96,8 @@ ignore = [
   "F405",
   "PLR",
 ]
+exclude = []
+show-fixes = true
 flake8-unused-arguments.ignore-variadic-names = true
 isort.known-first-party = ["goofit"]
 mccabe.max-complexity = 12

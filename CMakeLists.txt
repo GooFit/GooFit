@@ -78,7 +78,6 @@ if(NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/cmake_utils/FindThrust.cmake"
    OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/CLI11/CMakeLists.txt"
    OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/catch2/CMakeLists.txt"
    OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/Eigen/CMakeLists.txt"
-   OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/FeatureDetector/CMakeLists.txt"
    OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/MCBooster/CMakeLists.txt"
    OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/thrust/README.md")
   message(
@@ -473,12 +472,6 @@ set(CLI11_TESTING OFF)
 add_subdirectory("extern/CLI11")
 mark_as_advanced(CLI_CXX_STD CLI_EXAMPLES CLI_SINGLE_FILE CLI_SINGLE_FILE_TESTS CLI_TESTING)
 target_link_libraries(GooFit_Common INTERFACE CLI11::CLI11)
-
-add_subdirectory("extern/FeatureDetector")
-set_target_properties(FeatureDetector PROPERTIES FOLDER extern)
-target_link_libraries(GooFit_Common INTERFACE FeatureDetector)
-
-target_compile_options(FeatureDetector PRIVATE $<BUILD_INTERFACE:${GOOFIT_OPTI}>)
 
 ## Format
 add_subdirectory("extern/fmt")

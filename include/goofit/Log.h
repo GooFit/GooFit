@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include <fmt/format.h>
+#include <fmt/printf.h>
 #include <goofit/Color.h>
 
 namespace GooFit {

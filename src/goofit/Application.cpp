@@ -5,13 +5,10 @@
 #include <goofit/PDFs/detail/Globals.h>
 #include <goofit/Version.h>
 #include <goofit/VersionGit.h>
+#include <goofit/detail/CpuFeatures.h>
 #include <goofit/detail/fenv.h>
 
 #include <thrust/detail/config/device_system.h>
-
-#ifndef _MSC_VER
-#include <x86/cpu_x86.h>
-#endif
 
 #ifdef GOOFIT_MPI
 #include <mpi.h>
@@ -139,7 +136,7 @@ void print_goofit_info(int gpuDev_) {
 
     // Print out warnings if not fully optimized
     std::cout << red;
-    FeatureDetector::cpu_x86::print_warnings();
+    std::cout << cpu_feature_warnings();
     std::cout << GooFit::reset << std::flush;
 
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA

@@ -78,7 +78,6 @@ if(NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/cmake_utils/FindThrust.cmake"
    OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/CLI11/CMakeLists.txt"
    OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/catch2/CMakeLists.txt"
    OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/Eigen/CMakeLists.txt"
-   OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/FeatureDetector/CMakeLists.txt"
    OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/MCBooster/CMakeLists.txt"
    OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/thrust/README.md")
   message(
@@ -474,12 +473,6 @@ add_subdirectory("extern/CLI11")
 mark_as_advanced(CLI_CXX_STD CLI_EXAMPLES CLI_SINGLE_FILE CLI_SINGLE_FILE_TESTS CLI_TESTING)
 target_link_libraries(GooFit_Common INTERFACE CLI11::CLI11)
 
-add_subdirectory("extern/FeatureDetector")
-set_target_properties(FeatureDetector PROPERTIES FOLDER extern)
-target_link_libraries(GooFit_Common INTERFACE FeatureDetector)
-
-target_compile_options(FeatureDetector PRIVATE $<BUILD_INTERFACE:${GOOFIT_OPTI}>)
-
 ## Format
 add_subdirectory("extern/fmt")
 set_target_properties(fmt PROPERTIES FOLDER extern)
@@ -507,6 +500,12 @@ option(GOOFIT_SPLASH "Show a unicode splash or a small plain text one" ON)
 include(CheckIPOSupported)
 check_ipo_supported(RESULT SUPPORTS_IPO_LOCAL)
 message(STATUS "Compiler supports IPO: ${SUPPORTS_IPO_LOCAL}")
+
+# CUDA device LTO (what INTERPROCEDURAL_OPTIMIZATION enables for nvcc) hangs the
+# device linker, so keep IPO off for the CUDA backend even when it is supported.
+if(GOOFIT_DEVICE STREQUAL CUDA)
+  set(SUPPORTS_IPO_LOCAL NO)
+endif()
 
 # Make this universally available (even when using submodule)
 set(SUPPORTS_IPO
@@ -580,10 +579,10 @@ function(GOOFIT_ADD_EXECUTABLE NAMEEXE)
   set_target_properties(${NAMEEXE} PROPERTIES FOLDER projects)
   source_group("Source Files" REGULAR_EXPRESSION ".*\\.c[uc]")
 
-  set_target_properties(${GNAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION ${SUPPORTS_IPO})
+  set_target_properties(${NAMEEXE} PROPERTIES INTERPROCEDURAL_OPTIMIZATION ${SUPPORTS_IPO})
 
   if(CLANG_TIDY_EXE)
-    set_target_properties(${GNAME} PROPERTIES CXX_CLANG_TIDY "${DO_CLANG_TIDY}")
+    set_target_properties(${NAMEEXE} PROPERTIES CXX_CLANG_TIDY "${DO_CLANG_TIDY}")
   endif()
 endfunction()
 

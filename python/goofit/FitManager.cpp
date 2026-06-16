@@ -31,7 +31,7 @@ void init_FitManager(py::module &m) {
         ;
 
     py::class_<FitManagerMinuit2>(m, "FitManager")
-        .def(py::init<PdfBase *>())
+        .def(py::init<PdfBase *>(), py::keep_alive<1, 2>())
         .def("fit", &FitManagerMinuit2::fit, py::call_guard<py::scoped_ostream_redirect>())
         .def("getMinosErrors", &FitManagerMinuit2::getMinosErrors)
         .def("getMnScan", &FitManagerMinuit2::getMnScan)

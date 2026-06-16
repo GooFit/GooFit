@@ -16,6 +16,10 @@ log_cli_level = "info"
 testpaths = ["python/tests"]
 
 [tool.ruff]
+target-version = "py37"
+exclude = []
+
+[tool.ruff.lint]
 select = [
   "E", "F", "W", # flake8
   "B", "B904",   # flake8-bugbear
@@ -41,8 +45,10 @@ ignore = [
   "F405",
   "PLR",
 ]
-target-version = "py37"
-exclude = []
 flake8-unused-arguments.ignore-variadic-names = true
 isort.known-first-party = ["goofit"]
 mccabe.max-complexity = 12
+
+[tool.ruff.lint.per-file-ignores]
+# Example notebooks intentionally use Unicode math names (μ, σ, φ) for teaching.
+"python/examples/*.ipynb" = ["PLC2401"]

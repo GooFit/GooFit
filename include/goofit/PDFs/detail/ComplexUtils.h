@@ -19,7 +19,7 @@ auto flatten(const std::vector<thrust::complex<T>> &input) -> std::vector<T> {
 
 auto complex_derivative(const std::vector<fptype> &x, const std::vector<fpcomplex> &y) -> std::vector<fpcomplex> {
     if(x.size() != y.size()) // Must be a valid pointer
-        throw GeneralError("x and y must have the same diminsions!");
+        throw GeneralError("x and y must have the same dimensions!");
 
     int i, k;
     unsigned int n = x.size();

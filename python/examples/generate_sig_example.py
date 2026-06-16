@@ -306,7 +306,7 @@ def plot_multi_body_resonance(amplitude, index):
         numEvents = 50000
         dp_amp.setGenerationOffset(k * numEvents)
         print("Using accept-reject method", end=" ")
-        particles, variables, weights, flags = dp_amp.GenerateSig(numEvents)
+        _particles, variables, _weights, flags = dp_amp.GenerateSig(numEvents)
         accepted = int(np.sum(flags))
         print("would leave you with", accepted, "out of", numEvents, "events")
         accepted_m12_amp.append((variables[0])[flags])

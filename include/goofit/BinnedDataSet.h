@@ -34,7 +34,7 @@ class BinnedDataSet : public DataSet {
     auto getBinVolume(size_t bin) const -> fptype;
     auto getBinError(size_t bin) const -> fptype;
 
-    /// Get the size of each diminsion
+    /// Get the size of each dimension
     auto getDiminsions() const -> std::vector<size_t> { return binsizes; }
 
     auto getNumBins() const -> size_t;

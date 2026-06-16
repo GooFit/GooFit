@@ -964,7 +964,7 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
     if(wmax > maxWeight && maxWeight != 0) {
         throw GooFit::GeneralError(
             "WARNING: you just encountered a higher maximum weight than observed in previous iterations.\n"
-            "WARNING: Consider recalculating your AccRej flags and acceping based upon these.\n"
+            "WARNING: Consider recalculating your AccRej flags and accepting based upon these.\n"
             "WARNING: previous weight: {}, new weight: {}\n",
             maxWeight,
             wmax);
@@ -990,7 +990,7 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
     // thrust::counting_iterator<mcbooster::GLong_t> last = first + nAcc;
 
     // we do not want to copy the whole class to the GPU so capturing *this is not a great option
-    // therefore perpare local copies to capture the variables we need
+    // therefore prepare local copies to capture the variables we need
     unsigned int tmpoff   = generation_offset;
     unsigned int tmpparam = 6;
     wmax                  = maxWeight;

@@ -30,7 +30,7 @@ UnbinnedDataSet::UnbinnedDataSet(std::initializer_list<Observable> vars, std::st
 
 auto UnbinnedDataSet::getValue(const Observable &var, size_t idx) const -> fptype {
     if(idx >= getNumEvents()) {
-        throw GooFit::GeneralError("UnbinnedDataSet: Attepted to find {} in event {} when only {} events exits",
+        throw GooFit::GeneralError("UnbinnedDataSet: Attempted to find {} in event {} when only {} events exits",
                                    var.getName(),
                                    idx,
                                    getNumEvents());

@@ -452,7 +452,7 @@ def runToyFit(toyFileName):
 
 def main():
     filename = GOOFIT_SOURCE_DIR + "/examples/dalitz/dalitz_toyMC_000.txt"
-    fitman, signal, m12, m23 = runToyFit(filename)
+    fitman, signal, _m12, _m23 = runToyFit(filename)
 
     # A wrapper to avoid segfaulting when accessing a complex component
     prodpdf = ProdPdf("prodpdf", [signal])

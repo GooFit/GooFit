@@ -38,5 +38,12 @@ struct binary_function {
     using second_argument_type = Argument2;
     using result_type          = Result;
 };
+// thrust::identity was also dropped; a couple of examples still use it.
+template <typename T>
+struct identity {
+    using argument_type = T;
+    using result_type   = T;
+    __host__ __device__ constexpr auto operator()(const T &x) const -> T { return x; }
+};
 } // namespace thrust
 #endif

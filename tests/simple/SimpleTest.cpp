@@ -5,7 +5,8 @@
 #include <goofit/Variable.h>
 
 using namespace GooFit;
-using Catch::Matchers::Contains;
+// Catch2 v3 renamed the substring matcher; bare Contains is now the range matcher.
+using Catch::Matchers::ContainsSubstring;
 
 TEST_CASE("Adding values to unbinned dataset", "[simple][dataset]") {
     // Independent variable.
@@ -143,5 +144,5 @@ TEST_CASE("Argus variable output", "[output]") {
 
     CHECK(str.str() == output);
 
-    CHECK_THAT(str.str(), Contains("ptr_to_Argus_Upper"));
+    CHECK_THAT(str.str(), ContainsSubstring("ptr_to_Argus_Upper"));
 }

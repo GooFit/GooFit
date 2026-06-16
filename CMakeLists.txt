@@ -138,12 +138,12 @@ configure_file("${GOOFIT_SOURCE_DIR}/include/goofit/detail/ThrustOverrideConfig.
                "${GOOFIT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h")
 
 set(CMAKE_CXX_STANDARD
-    "11"
+    "17"
     CACHE STRING
-          "Set a version of C++ standard (11,14,...) to use. Must match ROOT if using ROOT.")
+          "Set a version of C++ standard (17,20,...) to use. Must match ROOT if using ROOT.")
 set(CMAKE_CUDA_STANDARD
-    "11"
-    CACHE STRING "Set a version of C++ standard (11,14,...) to use in CUDA.")
+    "17"
+    CACHE STRING "Set a version of C++ standard (17,20,...) to use in CUDA.")
 
 ### C++ settings ###
 macro(GOOFIT_SETUP_STD)

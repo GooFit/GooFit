@@ -46,7 +46,7 @@ https://github.com/GooFit/GooFit/labels/critical https://github.com/GooFit/GooFi
 
 <details><summary>If using OpenMP: (click to expand)</summary><p>
 
-* A compiler supporting OpenMP and C++11 (GCC 4.8+, Clang, and Intel 17 tested, GCC 4.7 not supported)
+* A compiler supporting OpenMP and C++17 (GCC 7+ and Clang tested)
 * Note that TBB is also available as a backend, but it still requires OpenMP to be present.
 * On macOS, this backend requires `brew install libomp` or a custom compiler.
 
@@ -228,7 +228,7 @@ git submodule update --init --recursive
 Then, you'll need a CMakeLists that looks something like this:
 
 ```bash
-cmake_minimum_required(VERSION 3.24...3.31)
+cmake_minimum_required(VERSION 3.24...4.1)
 
 project(my_external_package LANGUAGES CXX)
 

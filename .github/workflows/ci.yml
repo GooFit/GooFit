@@ -65,9 +65,7 @@ jobs:
       matrix:
         cuda:
           - 12.9.1-devel-ubuntu24.04
-          # CUDA 13 relocated the CCCL/Thrust headers; deferring until that
-          # is handled.
-          # - 13.0.1-devel-ubuntu24.04
+          - 13.0.1-devel-ubuntu24.04
 
     container: "nvidia/cuda:${{matrix.cuda}}"
     steps:

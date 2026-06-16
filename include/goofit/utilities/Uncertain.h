@@ -110,3 +110,7 @@ inline auto operator<<(std::ostream &stream, Uncertain value) -> std::ostream & 
 }
 
 } // namespace GooFit
+
+// fmt 9+ no longer bridges operator<< automatically; opt in explicitly.
+template <>
+struct fmt::formatter<GooFit::Uncertain> : fmt::ostream_formatter {};

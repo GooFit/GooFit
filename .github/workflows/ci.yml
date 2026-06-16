@@ -39,6 +39,38 @@ jobs:
         CTEST_OUTPUT_ON_FAILURE: true
         GTEST_COLOR: true
 
+  python:
+    name: OMP / Python
+    runs-on: ubuntu-latest
+    container:
+      # ROOT 6.34 reworked the Minuit2 MnMigrad constructor; build the Python
+      # bindings against it so that API break is caught here. Stay on ubuntu24.04
+      # (GCC 13): the newer ubuntu25.10 image ships GCC 15, whose libstdc++ drops
+      # std::allocator<>::reference and fails to compile the bundled thrust.
+      image: rootproject/root:6.34.00-ubuntu24.04
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+
+    - name: Install Python dev and test tools
+      run: apt-get update && apt-get install -y python3-dev python3-numpy python3-pytest
+
+    - name: Configure
+      # ROOT 6.34 requires C++17. Only the Python bindings are needed here.
+      run: >
+        cmake -S . -B build
+        -DGOOFIT_DEVICE=OMP
+        -DGOOFIT_PYTHON=ON
+        -DGOOFIT_TESTS=OFF
+        -DGOOFIT_EXAMPLES=OFF
+        -DCMAKE_CXX_STANDARD=17
+    - name: Build
+      run: cmake --build build -j "$(getconf _NPROCESSORS_ONLN)"
+    - name: Run Python tests
+      run: PYTHONPATH="$PWD/build" python3 -m pytest python/tests -v
+
   clang-tidy:
     runs-on: ubuntu-latest
     container: silkeh/clang:15

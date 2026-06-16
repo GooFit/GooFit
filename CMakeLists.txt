@@ -362,6 +362,10 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
   # CUDA 13 relocated the bundled CCCL (Thrust/CUB/libcu++) under include/cccl.
   if(EXISTS "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}/cccl/thrust/version.h")
     set(THRUST_INCLUDE_DIR "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}/cccl")
+    # Host (.cpp) units still need the toolkit runtime headers (driver_types.h,
+    # etc.), which stay in the main toolkit include, not under cccl.
+    target_include_directories(GooFit_Common SYSTEM
+                               INTERFACE "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
   endif()
 
   # CCCL 3.0 (CUDA 13) removed thrust::unary_function/binary_function. Force a

@@ -9,11 +9,9 @@ rm -rf cmake_dir/* build_tmp/*
 
 v=$1
 
-if [[ $v == 3.2* ]]; then
-    fn=cmake-$v-linux-x86_64.tar.gz
-else
-    fn=cmake-$v-Linux-x86_64.tar.gz
-fi
+# CMake >= 3.20 ships lowercase "linux" tarballs (earlier ones used "Linux").
+# Only modern versions are tested here, so always use the lowercase name.
+fn=cmake-$v-linux-x86_64.tar.gz
 
 if [ ! -f "cmake_souces/$fn" ]; then
     wget -qO "cmake_sources/$fn" "https://cmake.org/files/v${v%.*}/$fn"

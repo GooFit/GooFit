@@ -13,7 +13,7 @@ AmpCalc_TD::AmpCalc_TD(unsigned int nPerm, unsigned int ampIdx)
     : _nPerm(nPerm)
     , _AmpIdx(ampIdx) {}
 
-__device__ auto AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex {
+__device__ auto AmpCalc_TD::operator()(unsigned int evtNum) const -> fpcomplex {
     ParameterContainer pc;
 
     while(pc.funcIdx < dalitzFuncId)
@@ -26,7 +26,6 @@ __device__ auto AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t) cons
     unsigned int offset     = totalLS + totalSF;
     unsigned int numLS      = AmpIndices[totalAMP + _AmpIdx];
     unsigned int numSF      = AmpIndices[totalAMP + _AmpIdx + 1];
-    unsigned int evtNum     = thrust::get<0>(t);
 
     fpcomplex returnVal(0, 0);
     unsigned int SF_step = numSF / _nPerm;

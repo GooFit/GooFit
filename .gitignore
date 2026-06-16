@@ -53,3 +53,7 @@ dist
 cmake-*/*
 /*env*
 pip-wheel-metadata/*
+
+# Symlink to AGENTS.md
+CLAUDE.md
+.claude/

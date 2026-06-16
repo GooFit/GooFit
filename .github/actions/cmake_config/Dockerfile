@@ -1,10 +1,12 @@
-FROM nvidia/cuda:10.2-devel-ubuntu18.04
+FROM nvidia/cuda:12.9.1-devel-ubuntu24.04
 
-RUN apt-get update \
+# Drop the NVIDIA CUDA apt repo (intermittently out-of-sync mirror); only base
+# Ubuntu packages are needed here.
+RUN rm -f /etc/apt/sources.list.d/cuda*.list /etc/apt/sources.list.d/nvidia*.list \
+ && apt-get update \
  && apt-get install -y --no-install-recommends \
         g++ \
         wget \
-        libidn11 \
         ca-certificates \
         make \
         python3-dev \

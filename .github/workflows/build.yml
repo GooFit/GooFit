@@ -37,12 +37,12 @@ jobs:
         cp build/GooFit-*-Source.tar.gz GooFit-Source
         cp build/GooFit-*-Source.tar.gz .
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: GooFit Source
         path: GooFit-Source
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: Python SDist
         path: dist
@@ -54,7 +54,7 @@ jobs:
         password: ${{ secrets.pypi_password }}
 
     - name: Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       with:
         files: |

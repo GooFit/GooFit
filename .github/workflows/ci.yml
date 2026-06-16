@@ -64,25 +64,38 @@ jobs:
       fail-fast: false
       matrix:
         cuda:
-          - 8.0-devel-ubuntu16.04
-          - 9.2-devel-ubuntu18.04
-          # - 11.2.2-devel-ubuntu18.04 - needs built-in thrust support
+          - 12.9.1-devel-ubuntu24.04
+          - 13.0.1-devel-ubuntu24.04
 
     container: "nvidia/cuda:${{matrix.cuda}}"
     steps:
-    - uses: actions/checkout@v1
+    # git must exist before checkout so submodules can be fetched; the CUDA
+    # images do not ship it.
+    - name: Add compiler, git, wget and python3
+      # Only base Ubuntu packages are needed; drop the NVIDIA CUDA apt repo,
+      # whose mirror is intermittently out of sync and fails apt-get update.
+      run: |
+        rm -f /etc/apt/sources.list.d/cuda*.list /etc/apt/sources.list.d/nvidia*.list
+        apt-get update && apt-get install -y g++ make git wget python3-dev
+    - uses: actions/checkout@v4
       with:
         submodules: true
-    - name: Add wget and python3
-      run: apt-get update && apt-get install -y wget python3-dev
     - name: Install Modern CMake
-      run: wget -qO- "https://cmake.org/files/v3.23/cmake-3.23.2-linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C /usr/local
+      run: wget -qO- "https://cmake.org/files/v3.31/cmake-3.31.6-linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C /usr/local
     - name: Configure
-      run: cmake -S . -B build -DGOOFIT_ARCH=3.5 -DGOOFIT_SPLASH=OFF
+      # CUDA 12/13 ship their own Thrust, so the bundled copy must be disabled.
+      # arch 7.5 is the oldest supported by CUDA 13.
+      run: >
+        cmake -S . -B build
+        -DGOOFIT_DEVICE=CUDA
+        -DCMAKE_CUDA_ARCHITECTURES=75
+        -DGOOFIT_FORCE_LOCAL_THRUST=OFF
+        -DCMAKE_CXX_STANDARD=17
+        -DCMAKE_CUDA_STANDARD=17
+        -DGOOFIT_SPLASH=OFF
     - name: Build
       run: cmake --build build -j2 -v
     - name: Verify Python built
-      if: matrix.cuda != '8.0-devel-ubuntu16.04'
       run: PYTHONPATH=./build python3 -m goofit
 
   configure:
@@ -92,19 +105,6 @@ jobs:
     - uses: actions/checkout@v3
       with:
         submodules: true
-
-    - name: CMake 3.18 OMP
-      uses: ./.github/actions/cmake_config
-      with:
-        version: 3.18.6
-        options: -DGOOFIT_DEVICE=OMP
-      if: success() || failure()
-    - name: CMake 3.18 CUDA
-      uses: ./.github/actions/cmake_config
-      with:
-        version: 3.18.6
-        options: -DGOOFIT_DEVICE=CUDA
-      if: success() || failure()
 
     - name: CMake 3.23 OMP
       uses: ./.github/actions/cmake_config
@@ -116,5 +116,18 @@ jobs:
       uses: ./.github/actions/cmake_config
       with:
         version: 3.23.1
-        options: -DGOOFIT_DEVICE=CUDA
+        options: -DGOOFIT_DEVICE=CUDA -DCMAKE_CUDA_ARCHITECTURES=75 -DGOOFIT_FORCE_LOCAL_THRUST=OFF -DCMAKE_CXX_STANDARD=17 -DCMAKE_CUDA_STANDARD=17
+      if: success() || failure()
+
+    - name: CMake 3.31 OMP
+      uses: ./.github/actions/cmake_config
+      with:
+        version: 3.31.6
+        options: -DGOOFIT_DEVICE=OMP
+      if: success() || failure()
+    - name: CMake 3.31 CUDA
+      uses: ./.github/actions/cmake_config
+      with:
+        version: 3.31.6
+        options: -DGOOFIT_DEVICE=CUDA -DCMAKE_CUDA_ARCHITECTURES=75 -DGOOFIT_FORCE_LOCAL_THRUST=OFF -DCMAKE_CXX_STANDARD=17 -DCMAKE_CUDA_STANDARD=17
       if: success() || failure()

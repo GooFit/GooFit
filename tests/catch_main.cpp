@@ -1,7 +1,9 @@
-#define CATCH_CONFIG_RUNNER
-#include <catch2/catch.hpp>
+#include <catch2/catch_session.hpp>
 
 #include <functional>
+#include <iostream>
+#include <sstream>
+#include <string>
 
 /// class to ensure that the buffer is replaced regardless of how the function exits
 class CoutRedirect {

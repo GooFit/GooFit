@@ -86,6 +86,12 @@ if(NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/cmake_utils/FindThrust.cmake"
   )
 endif()
 
+# Bundled submodules still declare cmake_minimum_required < 3.5, which CMake 4
+# rejects outright. Floor their requested policy version so they keep configuring.
+if(NOT DEFINED CMAKE_POLICY_VERSION_MINIMUM)
+  set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+endif()
+
 set(CMAKE_MODULE_PATH "${GOOFIT_SOURCE_DIR}/extern/cmake_utils" ${CMAKE_MODULE_PATH})
 include("${GOOFIT_SOURCE_DIR}/extern/modern_cmake/ModernCMakeUtils.cmake")
 include("${GOOFIT_SOURCE_DIR}/extern/modern_cmake/ModernCUDA.cmake")
@@ -704,17 +710,12 @@ configure_file("${GOOFIT_SOURCE_DIR}/include/goofit/Version.h.in"
 configure_file("${GOOFIT_SOURCE_DIR}/include/goofit/VersionGit.h.in"
                "${GOOFIT_BINARY_DIR}/include/goofit/VersionGit.h")
 
-# This allows GOOFIT_PYTHON to be automatic
-set(CMAKE_MODULE_PATH "${GOOFIT_SOURCE_DIR}/extern/pybind11/tools" ${CMAKE_MODULE_PATH})
-find_package(PythonLibsNew)
+# This allows GOOFIT_PYTHON to be automatic. Use CMake's modern FindPython; the
+# legacy FindPythonLibs/FindPythonInterp path was removed in CMake 4.
+find_package(Python COMPONENTS Interpreter Development.Module)
 
-if(PYTHONLIBS_FOUND)
-  if(EXISTS "${PYTHON_LIBRARIES}")
-    option(GOOFIT_PYTHON "Python bindings for goofit" ${CUR_PROJ})
-  else()
-    message(STATUS "Found Python, but library location ${PYTHON_LIBRARIES} does not exist")
-    option(GOOFIT_PYTHON "Python bindings for goofit" OFF)
-  endif()
+if(Python_FOUND)
+  option(GOOFIT_PYTHON "Python bindings for goofit" ${CUR_PROJ})
 else()
   message(
     STATUS "Did not find the development files for Python, turning off automatic Python bindings")
@@ -722,16 +723,16 @@ else()
 endif()
 
 if(GOOFIT_PYTHON)
-  if(PYTHONLIBS_FOUND AND EXISTS "${PYTHON_LIBRARIES}")
-    message(STATUS "Found Python at ${PYTHON_LIBRARIES}, building bindings")
-  else()
+  if(NOT Python_FOUND)
     message(
       FATAL_ERROR
         "Did not find Python development libraries, make sure the development package for Python is installed or turn off Python bindings"
     )
   endif()
+  message(STATUS "Found Python ${Python_VERSION} at ${Python_EXECUTABLE}, building bindings")
 
-  unset(PYTHON_VERSION)
+  # Make pybind11 reuse the FindPython result above instead of the legacy path.
+  set(PYBIND11_FINDPYTHON ON)
   add_subdirectory("extern/pybind11")
 
   add_subdirectory(python)

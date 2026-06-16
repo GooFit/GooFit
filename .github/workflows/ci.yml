@@ -19,10 +19,12 @@ jobs:
 
     runs-on: ubuntu-latest
     container:
-      image: rootproject/root:6.24.06-ubuntu20.04
+      # Ubuntu 24.04 base ships CMake 3.28, above the 3.24 minimum (the old
+      # 20.04 image only had 3.16).
+      image: rootproject/root:6.32.04-ubuntu24.04
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v4
       with:
         submodules: true
 

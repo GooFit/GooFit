@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import sys
 from math import cos, pi, sin, sqrt
 
@@ -189,7 +188,6 @@ def make_toy_data(dp, m12, m13, eventNumber):
 
 
 def main():
-
     nBins = 10
     m12 = Observable("m12", 0, 3)
     m13 = Observable("m13", 0, 3)
@@ -198,7 +196,7 @@ def main():
     eventNumber = EventNumber("eventNumber")
 
     signal = makeSignalPdf(m12, m13, eventNumber)
-    dataset = make_toy_data(signal, m12, m13, eventNumber)
+    make_toy_data(signal, m12, m13, eventNumber)
 
 
 if __name__ == "__main__":

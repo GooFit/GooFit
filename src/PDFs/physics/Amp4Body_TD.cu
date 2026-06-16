@@ -61,7 +61,7 @@ struct genExp {
     __host__ __device__ genExp(unsigned int c, fptype d, unsigned int _seed)
         : gamma(d)
         , offset(c)
-        , seed(_seed){};
+        , seed(_seed) {};
 
     __host__ __device__ auto operator()(unsigned int x) const -> fptype {
         thrust::random::default_random_engine rand(seed);
@@ -275,13 +275,13 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
                                   const std::vector<long> &normSeeds,
                                   unsigned int numNormEventsToGenPerBatch)
     : Amp4Body_TD(
-        n,
-        observables,
-        decay,
-        Tres,
-        efficiency,
-        mistag,
-        NormEvents_4Body_HostCached::buildBatches(normSeeds, numNormEventsToGenPerBatch, decay.particle_masses)) {
+          n,
+          observables,
+          decay,
+          Tres,
+          efficiency,
+          mistag,
+          NormEvents_4Body_HostCached::buildBatches(normSeeds, numNormEventsToGenPerBatch, decay.particle_masses)) {
     GOOFIT_INFO("Built Amp4Body_TD model where the MC events used for normalization are stored on the host side.");
     GOOFIT_INFO("This may result in much longer computation times!");
     GOOFIT_INFO("Use the alternate Amp4Body_TD constructor for maximum speed!");
@@ -964,7 +964,7 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
     if(wmax > maxWeight && maxWeight != 0) {
         throw GooFit::GeneralError(
             "WARNING: you just encountered a higher maximum weight than observed in previous iterations.\n"
-            "WARNING: Consider recalculating your AccRej flags and acceping based upon these.\n"
+            "WARNING: Consider recalculating your AccRej flags and accepting based upon these.\n"
             "WARNING: previous weight: {}, new weight: {}\n",
             maxWeight,
             wmax);
@@ -990,7 +990,7 @@ __host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std:
     // thrust::counting_iterator<mcbooster::GLong_t> last = first + nAcc;
 
     // we do not want to copy the whole class to the GPU so capturing *this is not a great option
-    // therefore perpare local copies to capture the variables we need
+    // therefore prepare local copies to capture the variables we need
     unsigned int tmpoff   = generation_offset;
     unsigned int tmpparam = 6;
     wmax                  = maxWeight;

@@ -74,7 +74,7 @@ class GooPdf : public PdfBase {
 
     __host__ void listAllComponents(PdfBase *someComponent);
 
-    /// Produce a list of probabilies at points
+    /// Produce a list of probabilities at points
     __host__ auto getCompProbsAtDataPoints() -> std::vector<std::vector<fptype>>;
 
     /// Set an equidistant grid based on the stored variable binning

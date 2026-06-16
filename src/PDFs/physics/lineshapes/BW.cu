@@ -55,8 +55,8 @@ __device__ auto BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -
 
     fptype gamma = mass * sqrt((mass * mass + width * width));
     fptype k     = (2.0 * sqrt(2.0) / M_PI) * mass * width * gamma
-               / sqrt(mass * mass + gamma); // Note added additional factor of 2*sqrt(2)/PI here so results are
-                                            // comparable to MINT3. MINT2 doesn't have include this.
+                   / sqrt(mass * mass + gamma); // Note added additional factor of 2*sqrt(2)/PI here so results are
+                                                // comparable to MINT3. MINT2 doesn't have include this.
 
     fpcomplex BW(mass * mass - mumsRecoMass2, mass * GofM);
     fptype den = (mass * mass - mumsRecoMass2) * (mass * mass - mumsRecoMass2) + mass * GofM * mass * GofM;

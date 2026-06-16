@@ -25,7 +25,7 @@ class __align__(16) gpuLVec {
         : X(x)
         , Y(y)
         , Z(z)
-        , E(e){};
+        , E(e) {};
 
     __device__ void SetXYZE(fptype x, fptype y, fptype z, fptype e) {
         X = x;
@@ -34,34 +34,34 @@ class __align__(16) gpuLVec {
         E = e;
     }
 
-    __device__ auto Dot(const gpuLVec &rhs) const->fptype { return E * rhs.E - X * rhs.X - Y * rhs.Y - Z * rhs.Z; }
-    __device__ inline auto GetX() const->fptype { return X; }
-    __device__ inline auto GetY() const->fptype { return Y; }
-    __device__ inline auto GetZ() const->fptype { return Z; }
-    __device__ inline auto GetE() const->fptype { return E; }
+    __device__ auto Dot(const gpuLVec &rhs) const -> fptype { return E * rhs.E - X * rhs.X - Y * rhs.Y - Z * rhs.Z; }
+    __device__ inline auto GetX() const -> fptype { return X; }
+    __device__ inline auto GetY() const -> fptype { return Y; }
+    __device__ inline auto GetZ() const -> fptype { return Z; }
+    __device__ inline auto GetE() const -> fptype { return E; }
 
-    __device__ inline auto Mag2() const->fptype { return this->Dot(*this); }
-    __device__ inline auto M() const->fptype { return sqrt(this->Mag2()); }
+    __device__ inline auto Mag2() const -> fptype { return this->Dot(*this); }
+    __device__ inline auto M() const -> fptype { return sqrt(this->Mag2()); }
     __device__ inline void SetX(fptype a) { X = a; }
     __device__ inline void SetY(fptype a) { Y = a; }
     __device__ inline void SetZ(fptype a) { Z = a; }
     __device__ inline void SetE(fptype a) { E = a; }
 
-    __device__ auto operator+=(const gpuLVec &rhs)->gpuLVec & {
+    __device__ auto operator+=(const gpuLVec &rhs) -> gpuLVec & {
         X += rhs.X;
         Y += rhs.Y;
         Z += rhs.Z;
         E += rhs.E;
         return *this;
     }
-    __device__ auto operator-=(const gpuLVec &rhs)->gpuLVec & {
+    __device__ auto operator-=(const gpuLVec &rhs) -> gpuLVec & {
         X -= rhs.X;
         Y -= rhs.Y;
         Z -= rhs.Z;
         E -= rhs.E;
         return *this;
     }
-    __device__ auto operator*=(const fptype rhs)->gpuLVec & {
+    __device__ auto operator*=(const fptype rhs) -> gpuLVec & {
         X *= rhs;
         Y *= rhs;
         Z *= rhs;
@@ -250,7 +250,7 @@ class SymmLorentzMatrix : public LorentzMatrix {
     __device__ SymmLorentzMatrix()
         : LorentzMatrix() {}
     __device__ SymmLorentzMatrix(const gpuLVec p[4])
-        : LorentzMatrix(p){};
+        : LorentzMatrix(p) {};
 
     __device__ SymmLorentzMatrix(const gpuLVec p) {
         X().SetX(p.GetX() * p.GetX());

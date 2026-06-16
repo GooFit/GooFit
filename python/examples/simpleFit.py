@@ -57,7 +57,7 @@ def fitAndPlot(total, data, xvar, filename):
     fitter.fit()
 
     if not fitter:
-        sys.exit(int(int(fitter)))
+        sys.exit(int(fitter))
 
     grid = total.makeGrid()
     total.setData(grid)

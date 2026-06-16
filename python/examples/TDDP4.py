@@ -177,7 +177,7 @@ def main():
         numEvents = 800000
 
         dp.setGenerationOffset(k * numEvents)
-        particles, variables, weights, flags = dp.GenerateSig(numEvents)
+        _particles, _variables, _weights, _flags = dp.GenerateSig(numEvents)
 
     return 0
 

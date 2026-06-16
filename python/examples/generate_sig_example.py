@@ -295,7 +295,7 @@ def plot_multi_body_resonance(amplitude, index):
 
     DK3P_DI_amp.meson_radius = 1.5
     DK3P_DI_amp.particle_masses = (_mD0, piPlusMass, piPlusMass, KmMass, piPlusMass)
-    DK3P_DI_amp.amplitudes = [(amplitude)]
+    DK3P_DI_amp.amplitudes = [amplitude]
     # create an Amp4Body_TD with a single amplitude
     mistag = None
     res = TruthResolution()
@@ -306,7 +306,7 @@ def plot_multi_body_resonance(amplitude, index):
         numEvents = 50000
         dp_amp.setGenerationOffset(k * numEvents)
         print("Using accept-reject method", end=" ")
-        particles, variables, weights, flags = dp_amp.GenerateSig(numEvents)
+        _particles, variables, _weights, flags = dp_amp.GenerateSig(numEvents)
         accepted = int(np.sum(flags))
         print("would leave you with", accepted, "out of", numEvents, "events")
         accepted_m12_amp.append((variables[0])[flags])

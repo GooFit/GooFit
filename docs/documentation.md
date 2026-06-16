@@ -336,7 +336,7 @@ used in the device function to acquire the same value.  The PDF constructor
 should also call `registerObservable` on each of the event variables it depends on.
 
 The method used for the indices arrays favors using more memory to have more memory-coherent reads. GooFit v2.1 and below favored
-re-using memory as much as possible, which requires a larger amount of reads.  This method is used to provide better GPU
+reusing memory as much as possible, which requires a larger amount of reads.  This method is used to provide better GPU
 performance.
 
 The `initialize` method configures the PDF to use a negative log-likelihood
@@ -649,7 +649,7 @@ First thing to note is grabbing the number of resonances, which for this PDF is 
 constant in the constant array `pc.getConstant(0);`.  We don't specifically know the number
 of observables that were passed, but we can ask the `pc` object to give us the total
 amount with `pc.getNumObservables()` since it is stored in the constant array; then hold on to this value
-for when we call incrementIndex. If possible, it is best to re-use information rather than fetch;
+for when we call incrementIndex. If possible, it is best to reuse information rather than fetch;
 it is expensive to fetch values from the ParameterContainer.
 
 When looping over the resonances PDFs, please note that we can't use the fast incrementIndex version.

@@ -386,7 +386,7 @@ __host__ void Amp4Body::setDataSize(unsigned int dataSize, unsigned int evtSize)
 #ifdef GOOFIT_MPI
     cachedAMPs = new thrust::device_vector<fpcomplex>(m_iEventsPerTask * (AmpCalcs.size()));
 #else
-    cachedAMPs                     = new thrust::device_vector<fpcomplex>(dataSize * (AmpCalcs.size()));
+    cachedAMPs = new thrust::device_vector<fpcomplex>(dataSize * (AmpCalcs.size()));
 #endif
     void *dummy2 = thrust::raw_pointer_cast(cachedAMPs->data());
     MEMCPY_TO_SYMBOL(Amps_DP, &dummy2, sizeof(fpcomplex *), cacheToUse * sizeof(fpcomplex *), cudaMemcpyHostToDevice);

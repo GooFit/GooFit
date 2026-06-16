@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.16...3.23)
+cmake_minimum_required(VERSION 3.24...4.1)
 
 project(
   GOOFIT
-  VERSION 2.3.0
+  VERSION 2.4.0
   LANGUAGES CXX)
 
 #set(GOOFIT_TAG "dev")
@@ -84,6 +84,12 @@ if(NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/cmake_utils/FindThrust.cmake"
     FATAL_ERROR
       "The submodules were not downloaded! GOOFIT_SUBMODULE was turned off or failed. Please update submodules and try again."
   )
+endif()
+
+# Bundled submodules still declare cmake_minimum_required < 3.5, which CMake 4
+# rejects outright. Floor their requested policy version so they keep configuring.
+if(NOT DEFINED CMAKE_POLICY_VERSION_MINIMUM)
+  set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 endif()
 
 set(CMAKE_MODULE_PATH "${GOOFIT_SOURCE_DIR}/extern/cmake_utils" ${CMAKE_MODULE_PATH})
@@ -189,7 +195,6 @@ set(GOOFIT_HOST
     Auto
     CACHE STRING "The compute device, options are ${HOST_LISTING}")
 
-# Requires CMake 3.3 or greater
 if(NOT ${GOOFIT_DEVICE} IN_LIST DEVICE_LISTING)
   message(FATAL_ERROR "You must select a device from ${DEVICE_LISTING}, not ${GOOFIT_DEVICE}")
 endif()
@@ -416,7 +421,7 @@ if(GOOFIT_FORCE_LOCAL_THRUST)
   message(STATUS "Using CUDA from ${THRUST_INCLUDE_DIRS}")
   target_include_directories(GooFit_Common SYSTEM BEFORE
                              INTERFACE "${GOOFIT_SOURCE_DIR}/extern/thrust")
-  if(GOOFIT_DEVICE STREQUAL CUDA AND NOT CMAKE_VERSION VERSION_LESS 3.12)
+  if(GOOFIT_DEVICE STREQUAL CUDA)
     target_compile_options(GooFit_Common INTERFACE "SHELL:-isystem ${THRUST_INCLUDE_DIRS}")
   else()
     target_include_directories(GooFit_Common SYSTEM INTERFACE "${THRUST_INCLUDE_DIRS}")
@@ -705,17 +710,12 @@ configure_file("${GOOFIT_SOURCE_DIR}/include/goofit/Version.h.in"
 configure_file("${GOOFIT_SOURCE_DIR}/include/goofit/VersionGit.h.in"
                "${GOOFIT_BINARY_DIR}/include/goofit/VersionGit.h")
 
-# This allows GOOFIT_PYTHON to be automatic
-set(CMAKE_MODULE_PATH "${GOOFIT_SOURCE_DIR}/extern/pybind11/tools" ${CMAKE_MODULE_PATH})
-find_package(PythonLibsNew)
+# This allows GOOFIT_PYTHON to be automatic. Use CMake's modern FindPython; the
+# legacy FindPythonLibs/FindPythonInterp path was removed in CMake 4.
+find_package(Python COMPONENTS Interpreter Development.Module)
 
-if(PYTHONLIBS_FOUND)
-  if(EXISTS "${PYTHON_LIBRARIES}")
-    option(GOOFIT_PYTHON "Python bindings for goofit" ${CUR_PROJ})
-  else()
-    message(STATUS "Found Python, but library location ${PYTHON_LIBRARIES} does not exist")
-    option(GOOFIT_PYTHON "Python bindings for goofit" OFF)
-  endif()
+if(Python_FOUND)
+  option(GOOFIT_PYTHON "Python bindings for goofit" ${CUR_PROJ})
 else()
   message(
     STATUS "Did not find the development files for Python, turning off automatic Python bindings")
@@ -723,16 +723,16 @@ else()
 endif()
 
 if(GOOFIT_PYTHON)
-  if(PYTHONLIBS_FOUND AND EXISTS "${PYTHON_LIBRARIES}")
-    message(STATUS "Found Python at ${PYTHON_LIBRARIES}, building bindings")
-  else()
+  if(NOT Python_FOUND)
     message(
       FATAL_ERROR
         "Did not find Python development libraries, make sure the development package for Python is installed or turn off Python bindings"
     )
   endif()
+  message(STATUS "Found Python ${Python_VERSION} at ${Python_EXECUTABLE}, building bindings")
 
-  unset(PYTHON_VERSION)
+  # Make pybind11 reuse the FindPython result above instead of the legacy path.
+  set(PYBIND11_FINDPYTHON ON)
   add_subdirectory("extern/pybind11")
 
   add_subdirectory(python)

@@ -48,6 +48,7 @@ class ConvolutionPdf : public CombinePdf {
     thrust::device_vector<fptype> *modelWorkSpace;
     thrust::device_vector<fptype> *resolWorkSpace;
     int workSpaceIndex;
+    bool workspacesFilled{false};
 };
 
 } // namespace GooFit

@@ -19,15 +19,18 @@ jobs:
 
     runs-on: ubuntu-latest
     container:
-      image: rootproject/root:6.24.06-ubuntu20.04
+      # Ubuntu 24.04 base ships CMake 3.28, above the 3.24 minimum (the old
+      # 20.04 image only had 3.16).
+      image: rootproject/root:6.32.04-ubuntu24.04
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
     - name: Configure
-      run: cmake -S . -B build -DGOOFIT_DEVICE=OMP -DCMAKE_CXX_STANDARD=14
+      # ROOT 6.32 requires C++17, so build GooFit with a matching standard.
+      run: cmake -S . -B build -DGOOFIT_DEVICE=OMP -DCMAKE_CXX_STANDARD=17
     - name: Build
       run: cmake --build build -j "$(getconf _NPROCESSORS_ONLN)"
     - name: Run Tests
@@ -106,28 +109,28 @@ jobs:
       with:
         submodules: true
 
-    - name: CMake 3.23 OMP
+    - name: CMake 3.24 OMP
       uses: ./.github/actions/cmake_config
       with:
-        version: 3.23.1
+        version: 3.24.0
         options: -DGOOFIT_DEVICE=OMP
       if: success() || failure()
-    - name: CMake 3.23 CUDA
+    - name: CMake 3.24 CUDA
       uses: ./.github/actions/cmake_config
       with:
-        version: 3.23.1
+        version: 3.24.0
         options: -DGOOFIT_DEVICE=CUDA -DCMAKE_CUDA_ARCHITECTURES=75 -DGOOFIT_FORCE_LOCAL_THRUST=OFF -DCMAKE_CXX_STANDARD=17 -DCMAKE_CUDA_STANDARD=17
       if: success() || failure()
 
-    - name: CMake 3.31 OMP
+    - name: CMake 4.2 OMP
       uses: ./.github/actions/cmake_config
       with:
-        version: 3.31.6
+        version: 4.2.0
         options: -DGOOFIT_DEVICE=OMP
       if: success() || failure()
-    - name: CMake 3.31 CUDA
+    - name: CMake 4.2.0 CUDA
       uses: ./.github/actions/cmake_config
       with:
-        version: 3.31.6
+        version: 4.2.0
         options: -DGOOFIT_DEVICE=CUDA -DCMAKE_CUDA_ARCHITECTURES=75 -DGOOFIT_FORCE_LOCAL_THRUST=OFF -DCMAKE_CXX_STANDARD=17 -DCMAKE_CUDA_STANDARD=17
       if: success() || failure()

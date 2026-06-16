@@ -29,12 +29,12 @@ https://github.com/GooFit/GooFit/labels/critical https://github.com/GooFit/GooFi
 
 ## Requirements
 
-* A recent version of CMake is required. The minimum is 3.9. CMake is incredibly easy to install, you can even use `pip` (see [the system install page](./docs/SYSTEM_INSTALL.md)). GooFit developers have supplied patches to CMake 3.12, so at least that is highly recommended. CMake 3.16 does not currently work with the Python bindings.
+* A recent version of CMake is required. The minimum is 3.24. CMake is incredibly easy to install, you can even use `pip` (see [the system install page](./docs/SYSTEM_INSTALL.md)).
 * A ROOT 6 build highly recommended -- GooFit will use the included Minuit2 submodule if ROOT is not found, and the Minuit1 based fitter will not be available. Supports 6.04-6.24 (6.10+ recommended).
 
 <details><summary>If using CUDA: (click to expand)</summary><p>
 
-* CMake 3.9+
+* CMake 3.24+
 * CUDA 8.0+ (with caveats below)
     * CUDA 8: Supported
     * CUDA 9.2, 10.0: Some warnings from Eigen, supported
@@ -228,7 +228,7 @@ git submodule update --init --recursive
 Then, you'll need a CMakeLists that looks something like this:
 
 ```bash
-cmake_minimum_required(VERSION 3.9...3.16)
+cmake_minimum_required(VERSION 3.24...3.31)
 
 project(my_external_package LANGUAGES CXX)
 

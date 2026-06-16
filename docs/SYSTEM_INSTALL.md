@@ -203,7 +203,7 @@ Or, to select a newer version of CMake:
 ```bash
 docker run --rm -v $PWD:/goofit -it nvidia/cuda:9.2-devel-ubuntu18.04 bash
 apt update && apt install -y wget
-wget -qO- "https://cmake.org/files/v3.16/cmake-3.16.3-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C /usr/local
+wget -qO- "https://cmake.org/files/v3.24/cmake-3.24.4-linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C /usr/local
 cmake -S goofit -B build -DGOOFIT_ARCH=3.5
 cmake --build build -j4
 ```
@@ -215,7 +215,7 @@ cmake --build build -j4
 While other install methods for CMake, like `pip`, are easier, this way should always work. On Linux, you can manually get a version of CMake using:
 
 ```bash
-mkdir cmake && wget -qO- "https://cmake.org/files/v3.16/cmake-3.16.3-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake
+mkdir cmake && wget -qO- "https://cmake.org/files/v3.24/cmake-3.24.4-linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake
 export PATH=`pwd`/cmake/bin:$PATH
 ```
 
@@ -224,7 +224,7 @@ The second line will need to be rerun whenever use a new shell. Feel free to mak
 If you are a fan of using `~/.local` and already have `~/.local/bin` in your path, you can instead use:
 
 ```bash
-wget -qO- "https://cmake.org/files/v3.16/cmake-3.16.3-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C ~/.local
+wget -qO- "https://cmake.org/files/v3.24/cmake-3.24.4-linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C ~/.local
 ```
 
 </p></details>

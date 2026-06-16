@@ -244,6 +244,9 @@ __host__ void ConvolutionPdf::setIntegrationConstants(fptype lo, fptype hi, fpty
         delete resolWorkSpace;
     }
 
+    // Fresh workspaces start zero-filled, so force them to be recomputed on the next normalize().
+    workspacesFilled = false;
+
     auto numbins = static_cast<int>(floor((host_iConsts[1] - host_iConsts[0]) / step + 0.5));
     // Different format for integration range!
     modelWorkSpace = new thrust::device_vector<fptype>(numbins);
@@ -319,7 +322,12 @@ __host__ auto ConvolutionPdf::normalize() -> fptype {
     thrust::constant_iterator<int> eventSize(1);
     thrust::counting_iterator<int> binIndex(0);
 
-    if(model->parametersChanged()) {
+    // The workspaces are caches that persist across calls: each branch below is only re-run when its
+    // sub-PDF's parameters changed. On the very first call nothing has filled them yet, so force both
+    // fills once. (Minuit round-trips bounded parameters through its limit transform, which can leave
+    // a free parameter bit-identical and thus flagged "unchanged" on the first evaluation - without
+    // this the matching workspace stays zero and normalization aborts as non-positive.)
+    if(!workspacesFilled || model->parametersChanged()) {
         // Calculate model function at every point in integration space
         MetricTaker modalor(model, getMetricPointer(EvalFunc::Eval));
         thrust::transform(
@@ -330,7 +338,7 @@ __host__ auto ConvolutionPdf::normalize() -> fptype {
         cudaDeviceSynchronize();
     }
 
-    if(resolution->parametersChanged()) {
+    if(!workspacesFilled || resolution->parametersChanged()) {
         // Same for resolution function.
         thrust::constant_iterator<fptype *> arrayAddress2(dev_iConsts + 3);
         thrust::constant_iterator<int> resFunc(resolution->getFunctionIndex());
@@ -341,6 +349,8 @@ __host__ auto ConvolutionPdf::normalize() -> fptype {
             resolWorkSpace->begin(),
             resalor);
     }
+
+    workspacesFilled = true;
 
     // Then return usual integral
     fptype ret = GooPdf::normalize();

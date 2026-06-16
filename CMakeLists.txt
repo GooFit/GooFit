@@ -501,6 +501,12 @@ include(CheckIPOSupported)
 check_ipo_supported(RESULT SUPPORTS_IPO_LOCAL)
 message(STATUS "Compiler supports IPO: ${SUPPORTS_IPO_LOCAL}")
 
+# CUDA device LTO (what INTERPROCEDURAL_OPTIMIZATION enables for nvcc) hangs the
+# device linker, so keep IPO off for the CUDA backend even when it is supported.
+if(GOOFIT_DEVICE STREQUAL CUDA)
+  set(SUPPORTS_IPO_LOCAL NO)
+endif()
+
 # Make this universally available (even when using submodule)
 set(SUPPORTS_IPO
     "${SUPPORTS_IPO_LOCAL}"

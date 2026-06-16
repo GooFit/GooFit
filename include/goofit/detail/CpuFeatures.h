@@ -23,7 +23,7 @@ inline auto feature_warning(const std::string &name) -> std::string {
 // Each warning fires only when the host advertises the feature (runtime) and
 // the matching compile-time macro is absent. The macro half is folded in at
 // preprocess time so the host check is skipped entirely on a fully optimized build.
-#if(defined(__GNUC__) || defined(__clang__)) && (defined(__x86_64__) || defined(__i386__))
+#if (defined(__GNUC__) || defined(__clang__)) && (defined(__x86_64__) || defined(__i386__))
 #ifdef __SSE__
 #define GOOFIT_COMP_SSE true
 #else
@@ -73,7 +73,7 @@ inline auto feature_warning(const std::string &name) -> std::string {
 inline auto cpu_feature_warnings() -> std::string {
     std::string output;
 
-#if(defined(__GNUC__) || defined(__clang__)) && (defined(__x86_64__) || defined(__i386__))
+#if (defined(__GNUC__) || defined(__clang__)) && (defined(__x86_64__) || defined(__i386__))
     if(!GOOFIT_COMP_SSE && __builtin_cpu_supports("sse"))
         output += detail::feature_warning("SSE");
     if(!GOOFIT_COMP_SSE2 && __builtin_cpu_supports("sse2"))
@@ -97,7 +97,7 @@ inline auto cpu_feature_warnings() -> std::string {
 
 } // namespace GooFit
 
-#if(defined(__GNUC__) || defined(__clang__)) && (defined(__x86_64__) || defined(__i386__))
+#if (defined(__GNUC__) || defined(__clang__)) && (defined(__x86_64__) || defined(__i386__))
 #undef GOOFIT_COMP_SSE
 #undef GOOFIT_COMP_SSE2
 #undef GOOFIT_COMP_SSE3

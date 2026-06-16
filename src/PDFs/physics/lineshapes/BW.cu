@@ -142,7 +142,6 @@ __device__ auto lass_MINT(fptype Mpair, fptype m1, fptype m2, ParameterContainer
     fpcomplex BG        = SF / den;
     fpcomplex returnVal = BG + phaseshift * BW(Mpair, m1, m2, pc);
 
-    pc.incrementIndex(1, 2, 4, 0, 1);
     // The call to BW does the increment for us
 
     return returnVal;

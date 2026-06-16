@@ -74,6 +74,11 @@ __device__ auto cubicspline(fptype m12, fptype m13, fptype m23, ParameterContain
         khiAB = khiAC;
         mAB   = mAC;
     }
+
+    // Registered: 2*nKnobs parameters (real/imag per knob), 3 + nKnobs constants
+    // (cyclic_index, doSwap, nKnobs, then nKnobs bin limits), and one normalization.
+    pc.incrementIndex(1, 2 * nKnobs, 3 + nKnobs, 0, 1);
+
     return ret;
 }
 

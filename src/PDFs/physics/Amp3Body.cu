@@ -301,9 +301,7 @@ __host__ auto Amp3Body::normalize() -> fptype {
 #else
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
-                // was this correct before?
-                // thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
-                thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
+                thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
                 strided_range<thrust::device_vector<fpcomplex>::iterator>(
                     cachedWaves[i]->begin(), cachedWaves[i]->end(), 1)
                     .begin(),
@@ -369,8 +367,7 @@ __host__ auto Amp3Body::sumCachedWave(size_t i) const -> fpcomplex {
 }
 
 __host__ auto Amp3Body::getCachedWave(size_t i) const -> const std::vector<std::complex<fptype>> {
-    // TODO: This calls itself immediately ?
-    auto ret_thrust = getCachedWave(i);
+    const auto &ret_thrust = getCachedWaveNoCopy(i);
     std::vector<std::complex<fptype>> ret(ret_thrust.size());
     thrust::copy(ret_thrust.begin(), ret_thrust.end(), ret.begin());
     return ret;

@@ -14,7 +14,8 @@ void init_AddPdf(py::module &m) {
              AddPdf_docs.c_str(),
              "name"_a,
              "weights"_a,
-             "comps"_a)
+             "comps"_a,
+             py::keep_alive<1, 4>())
 
         .def(py::init<std::string, Variable, PdfBase *, PdfBase *>(),
              AddPdf_docs.c_str(),

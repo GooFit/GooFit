@@ -14,7 +14,8 @@ void init_EventWeightedAddPdf(py::module &m) {
              EventWeightedAddPdf_docs.c_str(),
              "name"_a,
              "weights"_a,
-             "comps"_a)
+             "comps"_a,
+             py::keep_alive<1, 4>())
 
         .def_static("help", []() { return HelpPrinter(EventWeightedAddPdf_docs); })
 

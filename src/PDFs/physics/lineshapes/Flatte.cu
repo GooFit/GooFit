@@ -41,7 +41,7 @@ __device__ auto Flatte_MINT(fptype Mpair, fptype m1, fptype m2, ParameterContain
     // printf("%.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",Gpipi.real, Gpipi.imag, GKK.real, GKK.imag, FlatteWidth.real,
     // FlatteWidth.imag, Mpair, pABSq);
 
-    frFactor     = BL2(pABSq * meson_radius * meson_radius, orbital);
+    frFactor = BL2(pABSq * meson_radius * meson_radius, orbital);
     fpcomplex BW
         = sqrt(frFactor) / (fpcomplex(resmass * resmass - rMass2, 0) - fpcomplex(0, 1) * resmass * FlatteWidth);
 

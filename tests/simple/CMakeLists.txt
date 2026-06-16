@@ -1,5 +1,6 @@
 goofit_catch_test(VectorsTest)
 goofit_catch_test(NormalizeTest)
+goofit_catch_test(AddNormTest)
 goofit_catch_test(SimpleTest)
 goofit_catch_test(BinningTest)
 

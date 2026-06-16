@@ -4,7 +4,7 @@
 namespace GooFit {
 
 /// Pass event, parameters, index into parameters.
-typedef fptype (*device_metric_ptr)(fptype, fptype *, fptype);
+using device_metric_ptr = fptype (*)(fptype, fptype *, fptype);
 
 auto getMetricPointer(EvalFunc val) -> void *;
 

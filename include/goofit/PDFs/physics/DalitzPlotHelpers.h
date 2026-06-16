@@ -183,7 +183,7 @@ typedef struct {
     fptype bi_imag;
 } WaveHolder_s;
 
-typedef thrust::tuple<fptype, fptype, fptype, fptype> WaveHolder;
-typedef thrust::tuple<fptype, fptype, fptype, fptype, fptype, fptype> ThreeComplex;
+using WaveHolder   = thrust::tuple<fptype, fptype, fptype, fptype>;
+using ThreeComplex = thrust::tuple<fptype, fptype, fptype, fptype, fptype, fptype>;
 
 } // namespace GooFit

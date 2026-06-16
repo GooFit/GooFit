@@ -9,7 +9,7 @@ namespace GooFit {
 
 struct ParameterContainer;
 
-typedef fptype (*device_function_ptr)(fptype *, ParameterContainer &);
+using device_function_ptr = fptype (*)(fptype *, ParameterContainer &);
 
 extern SmartVector<fptype> host_parameters;
 extern SmartVector<fptype> host_constants;

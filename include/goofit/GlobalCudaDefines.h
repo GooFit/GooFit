@@ -22,8 +22,16 @@ extern int host_callnumber;
 #define _Pragma(x) __pragma(x)
 #endif
 
-// Allow code to work on non-CUDA systems (beyond what is provided with thrust)
+// Allow code to work on non-CUDA systems (beyond what is provided with thrust).
+// Older Thrust defined __host__/__device__ for non-CUDA backends; modern CCCL
+// (3.x) no longer does, so define them here for plain-C++ compilation.
 #if THRUST_DEVICE_SYSTEM != THRUST_DEVICE_SYSTEM_CUDA
+#ifndef __host__
+#define __host__
+#endif
+#ifndef __device__
+#define __device__
+#endif
 #define __align__(n)
 inline void cudaDeviceSynchronize() {}
 #define __shared__

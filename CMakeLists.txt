@@ -372,13 +372,6 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
                                INTERFACE "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
   endif()
 
-  # CCCL 3.0 (CUDA 13) removed thrust::unary_function/binary_function. Force a
-  # compatibility shim into every GooFit translation unit (before any functor
-  # definition, regardless of include order) so the existing functors compile.
-  target_compile_options(
-    GooFit_Common
-    INTERFACE "SHELL:-include ${GOOFIT_SOURCE_DIR}/include/goofit/detail/ThrustForwardCompat.h")
-
   find_library(CUDART_LIB cudart HINTS "${CUDA_TOOLKIT_ROOT_DIR}/lib64"
                                        "${CUDA_TOOLKIT_ROOT_DIR}/lib" "${CUDA_TOOLKIT_ROOT_DIR}")
 
@@ -406,30 +399,46 @@ target_compile_options(
   GooFit_Common INTERFACE $<${cxx_lang_rel}:$<BUILD_INTERFACE:${GOOFIT_OPTI}>>
                           $<${cuda_lang_rel}:$<BUILD_INTERFACE:-Xcompiler=${GOOFIT_OPTI_CUDA}>>)
 
-find_package(Thrust QUIET)
-if(NOT THRUST_FOUND)
-  set(THRUST_INCLUDE_DIR "${GOOFIT_SOURCE_DIR}/extern/thrust")
-  find_package(Thrust REQUIRED)
-endif()
-
 option(GOOFIT_FORCE_LOCAL_THRUST
-       "GooFit will use the GitHub version of Thrust by default (CUDA 9 and 10's Thrust is buggy)"
-       ON)
+       "Use the bundled CCCL (Thrust/CUB/libcu++) instead of the system/toolkit copy" ON)
+
 if(GOOFIT_FORCE_LOCAL_THRUST)
-  message(
-    STATUS "Forcing local thrust. GOOFIT_FORCE_LOCAL_THRUST=OFF to disable. Requires CUDA < 10.1")
-  message(STATUS "Using CUDA from ${THRUST_INCLUDE_DIRS}")
-  target_include_directories(GooFit_Common SYSTEM BEFORE
-                             INTERFACE "${GOOFIT_SOURCE_DIR}/extern/thrust")
+  # extern/thrust is NVIDIA/CCCL: Thrust, CUB and libcu++ live in sibling
+  # subtrees, so all three include roots go on the path (CUB is only used by the
+  # CUDA backend, but adding it is harmless elsewhere).
+  set(GOOFIT_CCCL_DIR "${GOOFIT_SOURCE_DIR}/extern/thrust")
+  if(NOT EXISTS "${GOOFIT_CCCL_DIR}/thrust/thrust/version.h")
+    message(FATAL_ERROR "Bundled CCCL not found at ${GOOFIT_CCCL_DIR}. "
+                        "Run 'git submodule update --init --recursive'.")
+  endif()
+  set(THRUST_INCLUDE_DIRS "${GOOFIT_CCCL_DIR}/thrust" "${GOOFIT_CCCL_DIR}/cub"
+                          "${GOOFIT_CCCL_DIR}/libcudacxx/include")
+  message(STATUS "Using bundled CCCL (Thrust/CUB/libcu++) from ${GOOFIT_CCCL_DIR}")
   if(GOOFIT_DEVICE STREQUAL CUDA)
-    target_compile_options(GooFit_Common INTERFACE "SHELL:-isystem ${THRUST_INCLUDE_DIRS}")
+    foreach(_inc IN LISTS THRUST_INCLUDE_DIRS)
+      target_compile_options(GooFit_Common INTERFACE "SHELL:-isystem ${_inc}")
+    endforeach()
   else()
-    target_include_directories(GooFit_Common SYSTEM INTERFACE "${THRUST_INCLUDE_DIRS}")
+    target_include_directories(GooFit_Common SYSTEM BEFORE INTERFACE ${THRUST_INCLUDE_DIRS})
   endif()
 else()
+  # Use the copy that ships with the CUDA toolkit (THRUST_INCLUDE_DIR is set in
+  # the CUDA block above, accounting for the CUDA 13 cccl/ relocation).
+  find_package(Thrust QUIET)
+  if(NOT THRUST_FOUND)
+    find_package(Thrust REQUIRED)
+  endif()
   target_include_directories(GooFit_Common SYSTEM INTERFACE "${THRUST_INCLUDE_DIRS}")
   message(STATUS "Using Thrust and CUDA from ${THRUST_INCLUDE_DIRS}")
 endif()
+
+# CCCL 3.0 removed thrust::unary_function/binary_function. Force a compatibility
+# shim into every GooFit translation unit (before any functor definition,
+# regardless of include order) so the existing functors compile. The shim is
+# version-guarded, so it is inert against older Thrust (e.g. CUDA 12's CCCL 2.x).
+target_compile_options(
+  GooFit_Common
+  INTERFACE "SHELL:-include ${GOOFIT_SOURCE_DIR}/include/goofit/detail/ThrustForwardCompat.h")
 
 if(GOOFIT_DEVICE STREQUAL OMP
    OR GOOFIT_HOST STREQUAL OMP

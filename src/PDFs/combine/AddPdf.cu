@@ -39,9 +39,10 @@ __device__ auto device_AddPdfs(fptype *evt, ParameterContainer &pc) -> fptype {
         ret += weight * curr * norm;
     }
 
-    // previous functions incremented the indices appropriately, so now we need to get the norm again
-    // NOTE: this is the weight for the function about to be called.
-    fptype normFactor = local_pc.getNormalization(0);
+    // The loop above advanced pc to the last (unweighted) component, so read *its*
+    // normalization here - not local_pc's, which points back at the AddPdf node and
+    // would leave the final component unnormalized.
+    fptype normFactor = pc.getNormalization(0);
 
     fptype last = callFunction(evt, pc);
     ret += (1 - totalWeight) * last * normFactor;

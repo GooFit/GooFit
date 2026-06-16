@@ -15,8 +15,7 @@ __device__ inline auto Q2(fptype Msq, fptype M1sq, fptype M2sq) -> fptype {
     return (Msq / 4. - (M1sq + M2sq) / 2. + (M1sq - M2sq) * (M1sq - M2sq) / (4 * Msq));
 }
 
-__device__ inline auto BlattWeisskopf_Norm(const fptype z2, const fptype z02, unsigned int L)
-    -> fptype {
+__device__ inline auto BlattWeisskopf_Norm(const fptype z2, const fptype z02, unsigned int L) -> fptype {
     if(L == 0)
         return 1;
     else if(L == 1)

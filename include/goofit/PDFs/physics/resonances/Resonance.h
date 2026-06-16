@@ -8,7 +8,7 @@
 
 namespace GooFit {
 
-typedef fpcomplex (*resonance_function_ptr)(fptype, fptype, fptype, ParameterContainer &pc);
+using resonance_function_ptr = fpcomplex (*)(fptype, fptype, fptype, ParameterContainer &pc);
 
 __device__ auto dh_dsFun(double s, double daug2Mass, double daug3Mass) -> fptype;
 

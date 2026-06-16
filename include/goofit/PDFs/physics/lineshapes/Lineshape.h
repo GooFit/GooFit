@@ -47,20 +47,8 @@ class Lineshape : public AmpComponent {
     virtual std::ostream &print(std::ostream &out) const;
 
     auto operator==(const Lineshape &L) const -> bool {
-        // bool namesEqual = this->getName() == L.getName();
-        // std::cout << "Names equal? " << namesEqual << std::endl;
-
         bool typesEqual = typeid(*this) == typeid(L);
-        // std::cout << "Types equal? " << typesEqual << std::endl;
-
         bool equalByVal = this->isEqualByValue(L);
-        // std::cout << "Equal vals? " << equalByVal << std::endl;
-
-        // std::cout << "This name: " << this->getName() << std::endl;
-        // std::cout << "That name: " << L.getName() << std::endl;
-        // std::cout << "This type: " << typeid(*this).name() << std::endl;
-        // std::cout << "That type: " << typeid(L).name() << std::endl << std::endl;;
-
         return typesEqual && equalByVal;
     }
 };

@@ -13,7 +13,7 @@ See *.cu file for more details
 
 namespace GooFit {
 
-typedef fptype (*spin_function_ptr)(fptype *, ParameterContainer &);
+using spin_function_ptr = fptype (*)(fptype *, ParameterContainer &);
 
 enum class SF_4Body {
     DtoPP1_PtoSP2_StoP3P4,

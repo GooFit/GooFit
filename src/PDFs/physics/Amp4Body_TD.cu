@@ -711,7 +711,7 @@ __host__ std::vector<bool> Amp4Body_TD::areAmplitudeComponentsChanged() const {
     if(!_forceRedoIntegrals) {
         for(int a = 0; a < _NUM_AMPLITUDES; a++) {
             Amplitude *amp = dynamic_cast<Amplitude *>(components[a]);
-            if(amp == NULL) {
+            if(amp == nullptr) {
                 throw GeneralError("Error retrieving amplitude components.");
             }
 

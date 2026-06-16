@@ -5,9 +5,9 @@
 
 namespace GooFit {
 
-typedef fptype (*device_resfunction_ptr)(
-    fptype, fptype, fptype, fptype, fptype, fptype, fptype, fptype, fptype, ParameterContainer &pc);
-typedef fptype (*device_calc_tau_fcn_ptr)(fptype, fptype, fptype, fptype, fptype, fptype, fptype);
+using device_resfunction_ptr
+    = fptype (*)(fptype, fptype, fptype, fptype, fptype, fptype, fptype, fptype, fptype, ParameterContainer &pc);
+using device_calc_tau_fcn_ptr = fptype (*)(fptype, fptype, fptype, fptype, fptype, fptype, fptype);
 
 /**
 The abstract base class of

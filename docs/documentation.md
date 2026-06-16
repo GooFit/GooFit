@@ -1161,7 +1161,6 @@ example is the Gaussian PDF.
 - GooFit::InterHistPdf
 - GooFit::JohnsonSUPdf
 - GooFit::KinLimitBWPdf
-- GooFit::LandauPdf
 - GooFit::NovosibirskPdf
 - GooFit::PolynomialPdf
 - GooFit::ScaledGaussianPdf

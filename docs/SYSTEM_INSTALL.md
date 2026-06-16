@@ -2,6 +2,16 @@
 
 The following commands show you how to get a *minimal* install of GooFit on a vanilla system; you will probably want to add ROOT for your system, and possibly CUDA if you have a graphics card. If you do not have ROOT, some functionality, such as the Minuit1 version of the fitter, will not be available, and most of the examples will not be included in the build. Since ROOT is such a common addition, some of the system also have a note on installing ROOT.
 
+You can build Minuit yourself with:
+
+```bash
+git clone https://github.com/root-project/root
+cmake -Sroot/math/minuit2 -Bbuild-minuit2 -DCMAKE_INSTALL_PREFIX=$HOME/minuit2
+cmake --build build-minuit2 -j4
+cmake --install build-minuit2
+# Then set -DMinuit2_ROOT=$HOME/minuit2 when building GooFit
+```
+
 <details><summary>CentOS 7: (click to expand)</summary><p>
 
 For simplicity, this uses EPEL to get access to `python-pip`, and uses the pip version of CMake. Feel free to download CMake directly from Kitware instead. If you want to use Docker, you can start with `docker run --rm -it centos`.

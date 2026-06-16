@@ -30,7 +30,6 @@ void init_GaussianPdf(py::module &);
 void init_InterHistPdf(py::module &);
 void init_JohnsonSUPdf(py::module &);
 void init_KinLimitBWPdf(py::module &);
-void init_LandauPdf(py::module &);
 void init_NovosibirskPdf(py::module &);
 void init_PolynomialPdf(py::module &);
 void init_ScaledGaussianPdf(py::module &);
@@ -104,7 +103,6 @@ PYBIND11_MODULE(_goofit, m) {
     init_InterHistPdf(m);
     init_JohnsonSUPdf(m);
     init_KinLimitBWPdf(m);
-    init_LandauPdf(m);
     init_NovosibirskPdf(m);
     init_PolynomialPdf(m);
     init_ScaledGaussianPdf(m);

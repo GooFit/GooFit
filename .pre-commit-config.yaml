@@ -40,7 +40,7 @@ repos:
   rev: v2.2.4
   hooks:
   - id: codespell
-    args: ["-L", "sur,falsy,gaus,hist,lsit,nd,parms,retur,ue,ba,claus,fo"]
+    args: ["-L", "sur,falsy,gaus,hist,lsit,nd,parms,retur,ue,ba,claus,fo,strat"]
 
 - repo: https://github.com/pre-commit/pygrep-hooks
   rev: v1.10.0

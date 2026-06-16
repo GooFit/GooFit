@@ -16,7 +16,10 @@ class AmpCalc : public thrust::unary_function<unsigned int, fpcomplex> {
     // void setpIdx(unsigned int pIdx){_parameters = pIdx;}
     void setDalitzId(int idx) { dalitzFuncId = idx; }
     void setAmplitudeId(int idx) { _AmpIdx = idx; }
-    __device__ auto operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex;
+    // Called via a unary transform over a counting iterator, so it takes the
+    // event index directly. (Older Thrust silently let an int convert to a
+    // single-element-initialized tuple; CCCL 2.x no longer does.)
+    __device__ auto operator()(unsigned int evtNum) const -> fpcomplex;
 
   private:
     unsigned int dalitzFuncId;

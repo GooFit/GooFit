@@ -74,7 +74,11 @@ jobs:
     # git must exist before checkout so submodules can be fetched; the CUDA
     # images do not ship it.
     - name: Add compiler, git, wget and python3
-      run: apt-get update && apt-get install -y g++ make git wget python3-dev
+      # Only base Ubuntu packages are needed; drop the NVIDIA CUDA apt repo,
+      # whose mirror is intermittently out of sync and fails apt-get update.
+      run: |
+        rm -f /etc/apt/sources.list.d/cuda*.list /etc/apt/sources.list.d/nvidia*.list
+        apt-get update && apt-get install -y g++ make git wget python3-dev
     - uses: actions/checkout@v4
       with:
         submodules: true

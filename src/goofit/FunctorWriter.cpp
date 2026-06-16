@@ -44,10 +44,10 @@ void readFromFile(PdfBase *pdf, const char *fname) {
         Variable *var = tempMap[buffer];
 
         fptype value, error, lowerlimit, upperlimit;
-        size_t numbins;
 
         if(var) {
-            reader >> value >> error >> numbins >> lowerlimit >> upperlimit;
+            // Field order must match writeToFile(): name value error lower upper.
+            reader >> value >> error >> lowerlimit >> upperlimit;
 
             var->setValue(value);
             var->setError(error);

@@ -5,7 +5,8 @@
 
 namespace GooFit {
 
-__device__ auto factorial(int n) -> int {
+// Returns fptype, not int: int overflows at 13! and Bernstein degrees can exceed that.
+__device__ auto factorial(int n) -> fptype {
     if(n == 0)
         return 1;
     else

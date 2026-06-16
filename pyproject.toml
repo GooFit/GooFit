@@ -67,8 +67,8 @@ log_level = "INFO"
 testpaths = ["python/tests"]
 
 [tool.ruff]
-target-version = "py37"
 exclude = []
+show-fixes = true
 
 [tool.ruff.lint]
 select = [
@@ -97,7 +97,6 @@ ignore = [
   "PLR",
 ]
 exclude = []
-show-fixes = true
 flake8-unused-arguments.ignore-variadic-names = true
 isort.known-first-party = ["goofit"]
 mccabe.max-complexity = 12

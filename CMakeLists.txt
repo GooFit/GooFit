@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16...3.25)
+cmake_minimum_required(VERSION 3.24...4.1)
 
 project(
   GOOFIT
@@ -189,7 +189,6 @@ set(GOOFIT_HOST
     Auto
     CACHE STRING "The compute device, options are ${HOST_LISTING}")
 
-# Requires CMake 3.3 or greater
 if(NOT ${GOOFIT_DEVICE} IN_LIST DEVICE_LISTING)
   message(FATAL_ERROR "You must select a device from ${DEVICE_LISTING}, not ${GOOFIT_DEVICE}")
 endif()
@@ -416,7 +415,7 @@ if(GOOFIT_FORCE_LOCAL_THRUST)
   message(STATUS "Using CUDA from ${THRUST_INCLUDE_DIRS}")
   target_include_directories(GooFit_Common SYSTEM BEFORE
                              INTERFACE "${GOOFIT_SOURCE_DIR}/extern/thrust")
-  if(GOOFIT_DEVICE STREQUAL CUDA AND NOT CMAKE_VERSION VERSION_LESS 3.12)
+  if(GOOFIT_DEVICE STREQUAL CUDA)
     target_compile_options(GooFit_Common INTERFACE "SHELL:-isystem ${THRUST_INCLUDE_DIRS}")
   else()
     target_include_directories(GooFit_Common SYSTEM INTERFACE "${THRUST_INCLUDE_DIRS}")

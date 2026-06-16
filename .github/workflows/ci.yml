@@ -106,28 +106,28 @@ jobs:
       with:
         submodules: true
 
-    - name: CMake 3.23 OMP
+    - name: CMake 3.24 OMP
       uses: ./.github/actions/cmake_config
       with:
-        version: 3.23.1
+        version: 3.24.0
         options: -DGOOFIT_DEVICE=OMP
       if: success() || failure()
-    - name: CMake 3.23 CUDA
+    - name: CMake 3.24 CUDA
       uses: ./.github/actions/cmake_config
       with:
-        version: 3.23.1
+        version: 3.24.0
         options: -DGOOFIT_DEVICE=CUDA -DCMAKE_CUDA_ARCHITECTURES=75 -DGOOFIT_FORCE_LOCAL_THRUST=OFF -DCMAKE_CXX_STANDARD=17 -DCMAKE_CUDA_STANDARD=17
       if: success() || failure()
 
-    - name: CMake 3.31 OMP
+    - name: CMake 4.2 OMP
       uses: ./.github/actions/cmake_config
       with:
-        version: 3.31.6
+        version: 4.2.0
         options: -DGOOFIT_DEVICE=OMP
       if: success() || failure()
-    - name: CMake 3.31 CUDA
+    - name: CMake 4.2.0 CUDA
       uses: ./.github/actions/cmake_config
       with:
-        version: 3.31.6
+        version: 4.2.0
         options: -DGOOFIT_DEVICE=CUDA -DCMAKE_CUDA_ARCHITECTURES=75 -DGOOFIT_FORCE_LOCAL_THRUST=OFF -DCMAKE_CXX_STANDARD=17 -DCMAKE_CUDA_STANDARD=17
       if: success() || failure()

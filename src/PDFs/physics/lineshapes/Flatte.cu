@@ -42,7 +42,8 @@ __device__ auto Flatte_MINT(fptype Mpair, fptype m1, fptype m2, ParameterContain
     // FlatteWidth.imag, Mpair, pABSq);
 
     frFactor     = BL2(pABSq * meson_radius * meson_radius, orbital);
-    fpcomplex BW = sqrt(frFactor) / fpcomplex(resmass * resmass - rMass2, 0) - fpcomplex(0, 1) * resmass * FlatteWidth;
+    fpcomplex BW
+        = sqrt(frFactor) / (fpcomplex(resmass * resmass - rMass2, 0) - fpcomplex(0, 1) * resmass * FlatteWidth);
 
     pc.incrementIndex(1, 1, 3, 0, 1);
     return BW;

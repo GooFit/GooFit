@@ -368,8 +368,8 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
   # compatibility shim into every GooFit translation unit (before any functor
   # definition, regardless of include order) so the existing functors compile.
   target_compile_options(
-    GooFit_Common INTERFACE
-    "SHELL:-include ${GOOFIT_SOURCE_DIR}/include/goofit/detail/ThrustForwardCompat.h")
+    GooFit_Common
+    INTERFACE "SHELL:-include ${GOOFIT_SOURCE_DIR}/include/goofit/detail/ThrustForwardCompat.h")
 
   find_library(CUDART_LIB cudart HINTS "${CUDA_TOOLKIT_ROOT_DIR}/lib64"
                                        "${CUDA_TOOLKIT_ROOT_DIR}/lib" "${CUDA_TOOLKIT_ROOT_DIR}")

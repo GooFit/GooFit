@@ -573,10 +573,10 @@ function(GOOFIT_ADD_EXECUTABLE NAMEEXE)
   set_target_properties(${NAMEEXE} PROPERTIES FOLDER projects)
   source_group("Source Files" REGULAR_EXPRESSION ".*\\.c[uc]")
 
-  set_target_properties(${GNAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION ${SUPPORTS_IPO})
+  set_target_properties(${NAMEEXE} PROPERTIES INTERPROCEDURAL_OPTIMIZATION ${SUPPORTS_IPO})
 
   if(CLANG_TIDY_EXE)
-    set_target_properties(${GNAME} PROPERTIES CXX_CLANG_TIDY "${DO_CLANG_TIDY}")
+    set_target_properties(${NAMEEXE} PROPERTIES CXX_CLANG_TIDY "${DO_CLANG_TIDY}")
   endif()
 endfunction()
 

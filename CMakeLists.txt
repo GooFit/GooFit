@@ -303,10 +303,6 @@ endif()
 configure_file("${GOOFIT_SOURCE_DIR}/include/goofit/detail/Backtrace.h.in"
                "${GOOFIT_BINARY_DIR}/include/goofit/detail/Backtrace.h")
 
-set(GOOFIT_ARCH
-    Auto
-    CACHE STRING "The GPU Architecture, can be Auto, All, Common, a number, or a name")
-
 option(GOOFIT_MPI "Turn on MPI for goofit" OFF)
 
 if(GOOFIT_MPI)
@@ -340,9 +336,7 @@ macro(GOOFIT_OPTIONAL_CUDA)
 endmacro()
 
 if(GOOFIT_DEVICE STREQUAL CUDA)
-  # The old FindCUDA method
   goofit_optional_cuda()
-  set(CUDA_VERSION ${CMAKE_CUDA_COMPILER_VERSION})
 
   message(
     STATUS
@@ -352,8 +346,6 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
   set(CUDA_TOOLKIT_ROOT_DIR "${CMAKE_CUDA_COMPILER}")
   get_filename_component(CUDA_TOOLKIT_ROOT_DIR "${CUDA_TOOLKIT_ROOT_DIR}" DIRECTORY)
   get_filename_component(CUDA_TOOLKIT_ROOT_DIR "${CUDA_TOOLKIT_ROOT_DIR}" DIRECTORY)
-
-  include(CUDAUtilities)
 
   set(cuda_lang "$<COMPILE_LANGUAGE:CUDA>")
 
@@ -454,11 +446,10 @@ endif()
 
 if(GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
   find_package(TBB COMPONENTS tbbmalloc tbbmalloc_proxy tbb_preview)
-  target_include_directories(goofit_mt SYSTEM INTERFACE "${TBB_INCLUDE_DIRS}")
+  target_include_directories(GooFit_Common SYSTEM INTERFACE "${TBB_INCLUDE_DIRS}")
   target_link_libraries(GooFit_Common INTERFACE ${TBB_LIBRARIES})
 endif()
 
-# Include directories are not picked up by FindCUDA
 option(GOOFIT_CERNROOT "Look for the ROOT library (turned off for Python)" ON)
 
 if(GOOFIT_CERNROOT)
@@ -506,7 +497,6 @@ target_link_libraries(GooFit_Common INTERFACE Eigen)
 if(ROOT_FOUND)
   set(GOOFIT_ROOT_FOUND ROOT_FOUND)
 endif()
-set(GOOFIT_ARCH_FLAGS ARCH_FLAGS)
 
 option(GOOFIT_SPLASH "Show a unicode splash or a small plain text one" ON)
 
@@ -660,10 +650,6 @@ macro(GOOFIT_ADD_PACKAGE PACKAGE_NAME)
   elseif(ROOT IN_LIST OPTS AND NOT ROOT_FOUND)
     message(
       WARNING "Requested package ${PACKAGE_NAME} but ROOT was not found! Not building package.")
-    return()
-  elseif(OLD_CUDA IN_LIST OPTS AND GOOFIT_DEVICE STREQUAL CUDA)
-    message(
-      WARNING "Requested package ${PACKAGE_NAME} but NEW_CUDA is enabled! Not building package.")
     return()
   endif()
 endmacro()

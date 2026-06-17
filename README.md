@@ -130,7 +130,7 @@ Valid options are `CUDA` (device only), `OMP`, `TBB`, and `CPP`. The Thrust `TBB
 Other custom options supported along with the defaults:
 
 * `-DGOOFIT_DEVICE=Auto`: The device to use for computation (`CUDA`, `OMP`, `TBB`, or `CPP`). Default setting of `Auto` looks for CUDA first, then OpenMP, then CPP.
-* `-DGOOFIT_ARCH=Auto`: (`Auto`, `Common`, `All`, valid number(s) or name(s)): sets the compute architecture. See [CUDA_SELECT_NVCC_ARCH_FLAGS][]. Can be set to `OFF` to avoid adding any flags.
+* `-DCMAKE_CUDA_ARCHITECTURES=75`: Sets the CUDA compute architecture(s); uses CMake's standard [CUDA_ARCHITECTURES][] handling (e.g. `75`, `80;86`, `native`, or `all`).
 * `-DGOOFIT_EXAMPLES=ON`: Build the examples
 * `-DGOOFIT_PACKAGES=ON`: Build any packages found with the name `goofit_*`
 * `-DGOOFIT_DEBUG=ON` and `-DGOOFIT_TRACE=ON` will enable the matching printout macros
@@ -341,7 +341,7 @@ to get a permissive version of GooFit.
 [license-badge]:     https://img.shields.io/badge/License-BSD-blue.svg
 [1005530]:           https://nsf.gov/awardsearch/showAward?AWD_ID=1005530
 [1414736]:           https://nsf.gov/awardsearch/showAward?AWD_ID=1414736
-[CUDA_SELECT_NVCC_ARCH_FLAGS]: https://cmake.org/cmake/help/v3.7/module/FindCUDA.html
+[CUDA_ARCHITECTURES]: https://cmake.org/cmake/help/latest/prop_tgt/CUDA_ARCHITECTURES.html
 [Plumbum]:           https://plumbum.readthedocs.io/en/latest/
 [FindBoost]:         https://cmake.org/cmake/help/v3.7/module/FindBoost.html
 [CLI11]:             https://github.com/CLIUtils/CLI11

@@ -11,7 +11,10 @@ SpecialResonanceCalculator::SpecialResonanceCalculator(int pIdx, unsigned int re
 
 __device__ auto SpecialResonanceCalculator::operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex {
     // Calculates the BW values for a specific resonance.
-    fpcomplex ret;
+    // Zero-initialize: CCCL 3.x thrust::complex (= cuda::std::complex) has a
+    // trivial default constructor (old Thrust zeroed it). This value is returned
+    // as-is for out-of-Dalitz events, so it must be 0, not garbage.
+    fpcomplex ret(0, 0);
     int evtNum  = thrust::get<0>(t);
     fptype *evt = thrust::get<1>(t) + (evtNum * thrust::get<2>(t));
 

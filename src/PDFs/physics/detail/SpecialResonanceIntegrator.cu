@@ -18,7 +18,10 @@ __device__ auto device_DalitzPlot_calcIntegrals(fptype m12, fptype m13, int res_
     fptype daug2Mass  = c_daug2Mass;  // RO_CACHE(pc.constants[pc.constantIdx + 6]);
     fptype daug3Mass  = c_daug3Mass;  // RO_CACHE(pc.constants[pc.constantIdx + 7]);
 
-    fpcomplex ret;
+    // Zero-initialize: CCCL 3.x thrust::complex (= cuda::std::complex) has a
+    // trivial default constructor (old Thrust zeroed it). This value is returned
+    // as-is for out-of-Dalitz grid bins, so it must be 0, not garbage.
+    fpcomplex ret(0, 0);
 
     if(!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass))
         return ret;

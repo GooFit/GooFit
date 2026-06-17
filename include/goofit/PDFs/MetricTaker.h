@@ -1,6 +1,7 @@
 #pragma once
 
 #include <thrust/functional.h>
+#include <thrust/tuple.h>
 
 #include <goofit/PdfBase.h>
 

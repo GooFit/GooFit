@@ -12,7 +12,7 @@
 	url = ../../GooFit/Minuit2.git
 [submodule "extern/thrust"]
 	path = extern/thrust
-	url = ../../thrust/thrust.git
+	url = ../../NVIDIA/cccl.git
 [submodule "extern/rang"]
 	path = extern/rang
 	url = ../../agauniyal/rang.git

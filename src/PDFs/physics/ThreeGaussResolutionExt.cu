@@ -153,8 +153,10 @@ __device__ void gaussian_high(fptype &_P1,
 
     fptype _Ig0 = SQRTPIo2 * erfc(u1);
     fptype _Ig1 = 0.5 * exp(-1 * u1 * u1);
-    fptype _Ig2 = _Ig1 * 1 + 0.5 * _Ig0;
-    fptype _Ig3 = _Ig1 * (u1 + 1);
+    // Moments int_{u1}^inf s^n exp(-s^2) ds: the lower limit is u1, not _u0.
+    // (cf. gaussian_low above and mygaussian_high in ThreeGaussResolutionSplice.cu.)
+    fptype _Ig2 = _Ig1 * u1 + 0.5 * _Ig0;
+    fptype _Ig3 = _Ig1 * (u1 * u1 + 1);
 
     fptype _R   = xmixing * _Gamma * _1oSqrtA;
     fptype _R2  = _R * _R;

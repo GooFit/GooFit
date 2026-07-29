@@ -23,7 +23,7 @@ repos:
   - id: trailing-whitespace
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: "v0.15.17"
+  rev: "v0.16.0"
   hooks:
   - id: ruff-check
     args: ["--fix"]
@@ -37,7 +37,7 @@ repos:
     files: (\.cmake|CMakeLists.txt)(.in)?$
 
 - repo: https://github.com/codespell-project/codespell
-  rev: v2.4.2
+  rev: v2.4.3
   hooks:
   - id: codespell
     args: ["-L", "sur,falsy,gaus,hist,lsit,nd,parms,retur,ue,ba,claus,fo,strat,normls,norml,diminsions"]
@@ -58,7 +58,7 @@ repos:
     exclude: .pre-commit-config.yaml
 
 - repo: https://github.com/pre-commit/mirrors-clang-format
-  rev: v22.1.5
+  rev: v22.1.8
   hooks:
    - id: clang-format
      types_or: [c++, c, cuda]

@@ -24,7 +24,7 @@ jobs:
       image: rootproject/root:6.32.04-ubuntu24.04
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
       with:
         submodules: true
 
@@ -50,7 +50,7 @@ jobs:
       image: rootproject/root:6.38.00-ubuntu25.10
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
       with:
         submodules: true
 
@@ -77,7 +77,7 @@ jobs:
     steps:
     - name: Get Git
       run: apt update && apt install -y git
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v7
       with:
         submodules: true
     - name: Configure
@@ -112,7 +112,7 @@ jobs:
       run: |
         rm -f /etc/apt/sources.list.d/cuda*.list /etc/apt/sources.list.d/nvidia*.list
         apt-get update && apt-get install -y g++ make git wget python3-dev
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
       with:
         submodules: true
     - name: Install Modern CMake
@@ -137,7 +137,7 @@ jobs:
     name: Configure
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v7
       with:
         submodules: true
 

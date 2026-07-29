@@ -16,11 +16,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v7
       with:
         submodules: true
 
-    - uses: actions/setup-python@v4
+    - uses: actions/setup-python@v7
 
     - name: Build sdist for Python
       run: pipx run build --sdist
@@ -37,12 +37,12 @@ jobs:
         cp build/GooFit-*-Source.tar.gz GooFit-Source
         cp build/GooFit-*-Source.tar.gz .
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v7
       with:
         name: GooFit Source
         path: GooFit-Source
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v7
       with:
         name: Python SDist
         path: dist
@@ -54,7 +54,7 @@ jobs:
         password: ${{ secrets.pypi_password }}
 
     - name: Release
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       with:
         files: |

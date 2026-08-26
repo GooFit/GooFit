@@ -32,6 +32,9 @@ class UnbinnedDataSet : public DataSet {
         numEventsAdded = 0;
     }
 
+    // Get the number of events in the dataset.
+    size_t numberOfEvents();
+
     /// Replace the current dataset with a grid
     void fillWithGrid();
 

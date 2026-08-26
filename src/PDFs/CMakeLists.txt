@@ -8,6 +8,7 @@ set(GOOPDF_FILE_LISTING
     detail/Globals.cpp
     GooPdf.cpp
     GooPdf.cu
+    GooPdfBkgSub.cu
     MetricPointer.cu
     MetricTaker.cu
     ParameterContainer.cu

@@ -101,12 +101,15 @@ __device__ resonance_function_ptr ptr_to_Spline = Spline_TDP;
 
 auto make_spline_curvatures(std::vector<Variable> vars, Lineshapes::spline_t SplineInfo) -> std::vector<fptype> {
     size_t size = std::get<2>(SplineInfo) - 2;
-    Eigen::Matrix<fptype, Eigen::Dynamic, Eigen::Dynamic> m(size, size);
+    // Eigen does not value-initialize dynamic matrices, so start from Zero(): the
+    // off-tridiagonal entries must be 0, otherwise the inverse is garbage.
+    Eigen::Matrix<fptype, Eigen::Dynamic, Eigen::Dynamic> m
+        = Eigen::Matrix<fptype, Eigen::Dynamic, Eigen::Dynamic>::Zero(size, size);
     for(size_t i = 0; i < size; i++) {
         m(i, i) = 4;
         if(i != size - 1) {
             m(i, i + 1) = 1;
-            m(i + 1, 1) = 1;
+            m(i + 1, i) = 1; // sub-diagonal: column i, not a hard-coded 1
         }
     }
     m = m.inverse();
@@ -115,8 +118,9 @@ auto make_spline_curvatures(std::vector<Variable> vars, Lineshapes::spline_t Spl
     for(unsigned int i = 0; i < size; ++i)
         L[i] = vars[i + 2].getValue() - 2 * vars[i + 1].getValue() + vars[i].getValue();
 
-    auto mtv       = m * L;
-    fptype spacing = (std::get<0>(SplineInfo) - std::get<1>(SplineInfo)) / std::get<2>(SplineInfo);
+    auto mtv = m * L;
+    // Knot spacing must match the device evaluator getSpline(): (s_max - s_min) / (nBins - 1).
+    fptype spacing = (std::get<1>(SplineInfo) - std::get<0>(SplineInfo)) / (std::get<2>(SplineInfo) - 1);
 
     std::vector<fptype> ret(vars.size(), 0);
     for(unsigned int i = 0; i < size; ++i) {

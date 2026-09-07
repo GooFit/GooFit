@@ -60,7 +60,7 @@ __device__ auto device_Faddeeva_2(const fpcomplex &z) -> fpcomplex {
         fpcomplex zz = z * z;
         v = exp(zz); // Note lower-case! This is our own already-templated exp function for thrust::complex, no need for
                      // float/double define.
-        c  = C[0];
+        c = C[0];
         d2 = D[0];
 
         for(i = 1; i <= 6; i++) {
@@ -137,7 +137,7 @@ __device__ fpcomplex device_Faddeeva_2(const fpcomplex &z) {
         fpcomplex zz = z * z;
         v = exp(zz); // Note lower-case! This is our own already-templated exp function for thrust::complex, no need for
                      // float/double define.
-        c  = C[0];
+        c = C[0];
         d2 = D[0];
 
         for(int i = 1; i < 7; ++i) {

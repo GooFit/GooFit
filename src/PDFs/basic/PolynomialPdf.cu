@@ -64,7 +64,7 @@ __device__ auto device_MultiPolynomial(fptype *evt, ParameterContainer &pc) -> f
 
     int coeffNumber = num_observables; // Index of first coefficient is 2 + nO, not 1 + nO, due to maxDegree. (nO comes
                                        // from offsets.)
-    fptype ret = pc.getParameter(coeffNumber); // Coefficient of constant term.
+    fptype ret      = pc.getParameter(coeffNumber); // Coefficient of constant term.
     coeffNumber++;
 
     for(int i = 1; i < numBoxes;

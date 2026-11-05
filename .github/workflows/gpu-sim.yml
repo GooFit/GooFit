@@ -1,0 +1,56 @@
+name: GPU tests (simulated)
+
+# Optional, non-required check. The runners have no GPU, so this runs the CUDA
+# tests on a simulated NVIDIA H100 (https://github.com/pantheongpu/pantheonsim).
+# A simulator cannot reproduce hardware-specific behaviour or timing, so it
+# complements real-GPU testing and does not replace it. The job takes about
+# 1.5 hours, so it only runs when started by hand (Actions > Run workflow).
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gpu-sim-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gpu-tests:
+    name: ctest on a simulated H100
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          persist-credentials: false
+
+      - name: Set up the simulated GPU and CUDA toolkit
+        uses: pantheongpu/setup-pantheonsim@dda0c8df8d72627c295edbae525354ba2bcb1687 # v0.1.4
+        with:
+          gpu: nvidia/h100
+          cuda-toolkit: "13.0"
+
+      - name: Configure
+        # CUDA 13 ships its own Thrust, so the bundled copy is disabled.
+        # 80-virtual embeds PTX only: the simulator JIT-compiles PTX and does not run SASS.
+        run: >
+          cmake -S . -B build
+          -DGOOFIT_DEVICE=CUDA
+          -DGOOFIT_TESTS=ON
+          -DGOOFIT_EXAMPLES=OFF
+          -DGOOFIT_PYTHON=OFF
+          -DGOOFIT_FORCE_LOCAL_THRUST=OFF
+          -DGOOFIT_SPLASH=OFF
+          -DCMAKE_CXX_STANDARD=17
+          -DCMAKE_CUDA_STANDARD=17
+          -DCMAKE_CUDA_ARCHITECTURES=80-virtual
+          -DCMAKE_CUDA_RUNTIME_LIBRARY=Shared
+
+      - name: Build
+        run: vgpu run --preload cmake --build build -j2
+
+      - name: Test
+        run: vgpu run ctest --test-dir build --output-on-failure --timeout 1800
